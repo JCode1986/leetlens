@@ -6,8 +6,12 @@ import { createEdgeCasesTextObjects, getEdgeCasesPageCount } from './edgeCases'
 import { createTextObjects } from './g2Layout'
 import { createHintTextObjects, getHintPageCount } from './hint'
 import { createHomeTextObjects } from './home'
+import { createLanguageTextObjects } from './language'
+import { createCollectionsTextObjects } from './collections'
+import { createPatternsTextObjects } from './patterns'
 import { createProblemTextObjects } from './problem'
 import { createProblemListTextObjects } from './problemList'
+import { createSettingsTextObjects } from './settings'
 import { createSolutionTextObjects, getSolutionPageCount } from './solution'
 
 export function createScreenTextObjects(state: NavigationState): TextContainerProperty[] {
@@ -17,6 +21,22 @@ export function createScreenTextObjects(state: NavigationState): TextContainerPr
 
   if (state.currentScreen === 'categories') {
     return createCategoriesTextObjects(state)
+  }
+
+  if (state.currentScreen === 'patterns') {
+    return createPatternsTextObjects(state)
+  }
+
+  if (state.currentScreen === 'collections') {
+    return createCollectionsTextObjects(state)
+  }
+
+  if (state.currentScreen === 'settings') {
+    return createSettingsTextObjects(state)
+  }
+
+  if (state.currentScreen === 'language') {
+    return createLanguageTextObjects(state)
   }
 
   if (state.currentScreen === 'problemList') {

@@ -1,22 +1,34 @@
-import { HOME_MENU_ITEMS, PROBLEM_TABS } from '../types/navigation'
-import type { NavigationState, ProblemTab } from '../types/navigation'
+import { HOME_MENU_ITEMS, PROBLEM_TABS, SETTINGS_MENU_ITEMS } from '../types/navigation'
+import type { NavigationState, ProblemListSource, ProblemTab } from '../types/navigation'
 import type { Problem, ProblemId } from '../types/problem'
+import {
+  getSelectableLanguageIndex,
+  SELECTABLE_PROGRAMMING_LANGUAGES,
+} from '../utils/language'
+import type { SelectableProgrammingLanguage } from '../utils/language'
 
 export type NavigationInput = 'up' | 'down' | 'select' | 'back'
 
 export interface NavigationContext {
   categories: string[]
-  categoryProblems: Problem[]
+  patterns: string[]
+  collections: string[]
+  problemListProblems: Problem[]
   pageCount: number
 }
 
-export function createInitialNavigationState(): NavigationState {
+export function createInitialNavigationState(
+  selectedLanguage: SelectableProgrammingLanguage = 'javascript',
+): NavigationState {
   return {
     currentScreen: 'home',
     selectedMenuIndex: 0,
     selectedCategory: undefined,
+    selectedPattern: undefined,
+    selectedCollection: undefined,
+    problemListSource: undefined,
     selectedProblemId: undefined,
-    selectedLanguage: 'javascript',
+    selectedLanguage,
     selectedProblemTab: 'hint',
     codePageIndex: 0,
   }
@@ -64,12 +76,16 @@ function problemTabIndex(tab: ProblemTab): number {
   return Math.max(0, PROBLEM_TABS.findIndex((candidate) => candidate.screen === tab))
 }
 
-function getCategoryIndex(categories: string[], selectedCategory: string | undefined): number {
-  if (!selectedCategory) {
+function getHomeMenuIndex(screen: NavigationState['currentScreen']): number {
+  return Math.max(0, HOME_MENU_ITEMS.findIndex((candidate) => candidate.screen === screen))
+}
+
+function getStringIndex(items: string[], selectedItem: string | undefined): number {
+  if (!selectedItem) {
     return 0
   }
 
-  return clampIndex(categories.indexOf(selectedCategory), categories.length)
+  return clampIndex(items.indexOf(selectedItem), items.length)
 }
 
 function getProblemIndex(
@@ -86,6 +102,30 @@ function getProblemIndex(
   )
 }
 
+function getSourceScreen(source: ProblemListSource | undefined): NavigationState['currentScreen'] {
+  if (source === 'pattern') {
+    return 'patterns'
+  }
+
+  if (source === 'collection') {
+    return 'collections'
+  }
+
+  return 'categories'
+}
+
+function getSourceIndex(state: NavigationState, context: NavigationContext): number {
+  if (state.problemListSource === 'pattern') {
+    return getStringIndex(context.patterns, state.selectedPattern)
+  }
+
+  if (state.problemListSource === 'collection') {
+    return getStringIndex(context.collections, state.selectedCollection)
+  }
+
+  return getStringIndex(context.categories, state.selectedCategory)
+}
+
 function selectCurrentItem(
   state: NavigationState,
   context: NavigationContext,
@@ -93,14 +133,60 @@ function selectCurrentItem(
   if (state.currentScreen === 'home') {
     const selectedItem = HOME_MENU_ITEMS[clampHomeMenuIndex(state.selectedMenuIndex)]
 
-    if (selectedItem.screen !== 'categories') {
+    if (
+      selectedItem.screen !== 'categories' &&
+      selectedItem.screen !== 'patterns' &&
+      selectedItem.screen !== 'collections' &&
+      selectedItem.screen !== 'settings'
+    ) {
       return state
     }
 
     return {
       ...state,
-      currentScreen: 'categories',
-      selectedMenuIndex: getCategoryIndex(context.categories, state.selectedCategory),
+      currentScreen: selectedItem.screen,
+      selectedMenuIndex: selectedItem.screen === 'categories'
+        ? getStringIndex(context.categories, state.selectedCategory)
+        : selectedItem.screen === 'patterns'
+          ? getStringIndex(context.patterns, state.selectedPattern)
+          : selectedItem.screen === 'collections'
+            ? getStringIndex(context.collections, state.selectedCollection)
+            : 0,
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'settings') {
+    const selectedItem = SETTINGS_MENU_ITEMS[clampIndex(
+      state.selectedMenuIndex,
+      SETTINGS_MENU_ITEMS.length,
+    )]
+
+    if (!selectedItem) {
+      return state
+    }
+
+    return {
+      ...state,
+      currentScreen: selectedItem.screen,
+      selectedMenuIndex: getSelectableLanguageIndex(state.selectedLanguage),
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'language') {
+    const selectedLanguage = SELECTABLE_PROGRAMMING_LANGUAGES[clampIndex(
+      state.selectedMenuIndex,
+      SELECTABLE_PROGRAMMING_LANGUAGES.length,
+    )]
+
+    if (!selectedLanguage) {
+      return state
+    }
+
+    return {
+      ...state,
+      selectedLanguage,
       codePageIndex: 0,
     }
   }
@@ -119,15 +205,56 @@ function selectCurrentItem(
       ...state,
       currentScreen: 'problemList',
       selectedCategory,
+      problemListSource: 'category',
+      selectedMenuIndex: 0,
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'patterns') {
+    const selectedPattern = context.patterns[clampIndex(
+      state.selectedMenuIndex,
+      context.patterns.length,
+    )]
+
+    if (!selectedPattern) {
+      return state
+    }
+
+    return {
+      ...state,
+      currentScreen: 'problemList',
+      selectedPattern,
+      problemListSource: 'pattern',
+      selectedMenuIndex: 0,
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'collections') {
+    const selectedCollection = context.collections[clampIndex(
+      state.selectedMenuIndex,
+      context.collections.length,
+    )]
+
+    if (!selectedCollection) {
+      return state
+    }
+
+    return {
+      ...state,
+      currentScreen: 'problemList',
+      selectedCollection,
+      problemListSource: 'collection',
       selectedMenuIndex: 0,
       codePageIndex: 0,
     }
   }
 
   if (state.currentScreen === 'problemList') {
-    const selectedProblem = context.categoryProblems[clampIndex(
+    const selectedProblem = context.problemListProblems[clampIndex(
       state.selectedMenuIndex,
-      context.categoryProblems.length,
+      context.problemListProblems.length,
     )]
 
     if (!selectedProblem) {
@@ -164,6 +291,42 @@ function goBack(state: NavigationState, context: NavigationContext): NavigationS
     return {
       ...state,
       currentScreen: 'home',
+      selectedMenuIndex: getHomeMenuIndex('categories'),
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'patterns') {
+    return {
+      ...state,
+      currentScreen: 'home',
+      selectedMenuIndex: getHomeMenuIndex('patterns'),
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'collections') {
+    return {
+      ...state,
+      currentScreen: 'home',
+      selectedMenuIndex: getHomeMenuIndex('collections'),
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'settings') {
+    return {
+      ...state,
+      currentScreen: 'home',
+      selectedMenuIndex: getHomeMenuIndex('settings'),
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'language') {
+    return {
+      ...state,
+      currentScreen: 'settings',
       selectedMenuIndex: 0,
       codePageIndex: 0,
     }
@@ -172,8 +335,8 @@ function goBack(state: NavigationState, context: NavigationContext): NavigationS
   if (state.currentScreen === 'problemList') {
     return {
       ...state,
-      currentScreen: 'categories',
-      selectedMenuIndex: getCategoryIndex(context.categories, state.selectedCategory),
+      currentScreen: getSourceScreen(state.problemListSource),
+      selectedMenuIndex: getSourceIndex(state, context),
       codePageIndex: 0,
     }
   }
@@ -182,7 +345,7 @@ function goBack(state: NavigationState, context: NavigationContext): NavigationS
     return {
       ...state,
       currentScreen: 'problemList',
-      selectedMenuIndex: getProblemIndex(context.categoryProblems, state.selectedProblemId),
+      selectedMenuIndex: getProblemIndex(context.problemListProblems, state.selectedProblemId),
       codePageIndex: 0,
     }
   }
@@ -227,8 +390,24 @@ export function transitionNavigation(
     return moveSelectedMenu(state, delta, context.categories.length)
   }
 
+  if (state.currentScreen === 'patterns') {
+    return moveSelectedMenu(state, delta, context.patterns.length)
+  }
+
+  if (state.currentScreen === 'collections') {
+    return moveSelectedMenu(state, delta, context.collections.length)
+  }
+
+  if (state.currentScreen === 'settings') {
+    return moveSelectedMenu(state, delta, SETTINGS_MENU_ITEMS.length)
+  }
+
+  if (state.currentScreen === 'language') {
+    return moveSelectedMenu(state, delta, SELECTABLE_PROGRAMMING_LANGUAGES.length)
+  }
+
   if (state.currentScreen === 'problemList') {
-    return moveSelectedMenu(state, delta, context.categoryProblems.length)
+    return moveSelectedMenu(state, delta, context.problemListProblems.length)
   }
 
   if (state.currentScreen === 'problem') {

@@ -20,7 +20,7 @@ function getSolutionLines(state: NavigationState): string[] {
 
   if (!solution) {
     return wrapText(
-      `Solution unavailable for ${LANGUAGE_LABELS[state.selectedLanguage].displayName}.`,
+      `${LANGUAGE_LABELS[state.selectedLanguage].displayName} solution unavailable. Double Click to go back.`,
       30,
     )
   }

@@ -10,7 +10,18 @@ import {
   transitionNavigation,
 } from './navigation/navigationState'
 import type { NavigationContext, NavigationInput } from './navigation/navigationState'
-import { getCategories, getProblemsByCategory } from './services/problemService'
+import {
+  loadDefaultLanguagePreference,
+  saveDefaultLanguagePreference,
+} from './services/preferencesService'
+import {
+  getCategories,
+  getCollection,
+  getCollections,
+  getPatterns,
+  getProblemsByCategory,
+  getProblemsByPattern,
+} from './services/problemService'
 import {
   createRebuildPage,
   createStartUpPage,
@@ -247,15 +258,31 @@ function logEvenHubInput(input: NormalizedEvenHubInput, navigationInput?: Naviga
 }
 
 async function startLeetLens(): Promise<void> {
-  let navigationState = createInitialNavigationState()
+  let navigationState = createInitialNavigationState(loadDefaultLanguagePreference())
   let nativeRenderQueue = Promise.resolve()
 
   function getNavigationContext(state: NavigationState): NavigationContext {
+    const problemListProblems = (() => {
+      if (state.problemListSource === 'pattern' && state.selectedPattern) {
+        return getProblemsByPattern(state.selectedPattern)
+      }
+
+      if (state.problemListSource === 'collection' && state.selectedCollection) {
+        return getCollection(state.selectedCollection)
+      }
+
+      if (state.selectedCategory) {
+        return getProblemsByCategory(state.selectedCategory)
+      }
+
+      return []
+    })()
+
     return {
       categories: getCategories(),
-      categoryProblems: state.selectedCategory
-        ? getProblemsByCategory(state.selectedCategory)
-        : [],
+      patterns: getPatterns(),
+      collections: getCollections(),
+      problemListProblems,
       pageCount: getCurrentScreenPageCount(state),
     }
   }
@@ -281,11 +308,17 @@ async function startLeetLens(): Promise<void> {
   }
 
   function applyInput(input: NavigationInput, bridge?: EvenAppBridge): void {
+    const previousLanguage = navigationState.selectedLanguage
+
     navigationState = transitionNavigation(
       navigationState,
       input,
       getNavigationContext(navigationState),
     )
+
+    if (navigationState.selectedLanguage !== previousLanguage) {
+      saveDefaultLanguagePreference(navigationState.selectedLanguage)
+    }
 
     renderBrowserPreview()
 
