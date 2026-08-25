@@ -6,7 +6,12 @@ import {
 import type { EvenAppBridge, EvenHubEvent } from '@evenrealities/even_hub_sdk'
 import './style.css'
 import {
+  applyVoiceSearchDecision,
+  beginVoiceListening,
   createInitialNavigationState,
+  setVoiceError,
+  setVoiceProcessing,
+  setVoiceTranscript,
   transitionNavigation,
 } from './navigation/navigationState'
 import type { NavigationContext, NavigationInput } from './navigation/navigationState'
@@ -15,13 +20,19 @@ import {
   saveDefaultLanguagePreference,
 } from './services/preferencesService'
 import {
+  getAllProblems,
   getCategories,
   getCollection,
   getCollections,
+  getProblemById,
   getPatterns,
   getProblemsByCategory,
+  getProblemsByDifficulty,
   getProblemsByPattern,
 } from './services/problemService'
+import { decideSearchResult } from './services/searchService'
+import type { TranscriptUpdate } from './services/transcriptionService'
+import { VoiceService } from './services/voiceService'
 import {
   createRebuildPage,
   createStartUpPage,
@@ -30,6 +41,7 @@ import {
 } from './screens/g2Layout'
 import { createScreenTextObjects, getCurrentScreenPageCount } from './screens/renderScreen'
 import type { NavigationState } from './types/navigation'
+import type { Problem } from './types/problem'
 
 type EvenHostWindow = Window & {
   flutter_inappwebview?: {
@@ -260,29 +272,47 @@ function logEvenHubInput(input: NormalizedEvenHubInput, navigationInput?: Naviga
 async function startLeetLens(): Promise<void> {
   let navigationState = createInitialNavigationState(loadDefaultLanguagePreference())
   let nativeRenderQueue = Promise.resolve()
+  let voiceService = new VoiceService()
+  let voiceRunId = 0
+  let lastVoiceTranscriptRenderMs = 0
+
+  function getProblemListProblems(state: NavigationState): Problem[] {
+    if (state.problemListSource === 'pattern' && state.selectedPattern) {
+      return getProblemsByPattern(state.selectedPattern)
+    }
+
+    if (state.problemListSource === 'collection' && state.selectedCollection) {
+      return getCollection(state.selectedCollection)
+    }
+
+    if (state.problemListSource === 'all') {
+      return getAllProblems()
+    }
+
+    if (state.problemListSource === 'difficulty' && state.selectedDifficulty) {
+      return getProblemsByDifficulty(state.selectedDifficulty)
+    }
+
+    if (state.selectedCategory) {
+      return getProblemsByCategory(state.selectedCategory)
+    }
+
+    return []
+  }
+
+  function getVoiceResultProblems(state: NavigationState): Problem[] {
+    return state.voiceResultProblemIds
+      .map((problemId) => getProblemById(problemId))
+      .filter((problem): problem is Problem => problem !== undefined)
+  }
 
   function getNavigationContext(state: NavigationState): NavigationContext {
-    const problemListProblems = (() => {
-      if (state.problemListSource === 'pattern' && state.selectedPattern) {
-        return getProblemsByPattern(state.selectedPattern)
-      }
-
-      if (state.problemListSource === 'collection' && state.selectedCollection) {
-        return getCollection(state.selectedCollection)
-      }
-
-      if (state.selectedCategory) {
-        return getProblemsByCategory(state.selectedCategory)
-      }
-
-      return []
-    })()
-
     return {
       categories: getCategories(),
       patterns: getPatterns(),
       collections: getCollections(),
-      problemListProblems,
+      problemListProblems: getProblemListProblems(state),
+      voiceResultProblems: getVoiceResultProblems(state),
       pageCount: getCurrentScreenPageCount(state),
     }
   }
@@ -307,14 +337,10 @@ async function startLeetLens(): Promise<void> {
     }
   }
 
-  function applyInput(input: NavigationInput, bridge?: EvenAppBridge): void {
+  function applyNavigationState(nextState: NavigationState, bridge?: EvenAppBridge): void {
     const previousLanguage = navigationState.selectedLanguage
 
-    navigationState = transitionNavigation(
-      navigationState,
-      input,
-      getNavigationContext(navigationState),
-    )
+    navigationState = nextState
 
     if (navigationState.selectedLanguage !== previousLanguage) {
       saveDefaultLanguagePreference(navigationState.selectedLanguage)
@@ -328,7 +354,113 @@ async function startLeetLens(): Promise<void> {
     }
   }
 
+  function applyVoiceTranscriptUpdate(update: TranscriptUpdate, bridge?: EvenAppBridge): void {
+    const now = Date.now()
+
+    if (
+      !update.isFinal &&
+      now - lastVoiceTranscriptRenderMs < 250
+    ) {
+      return
+    }
+
+    lastVoiceTranscriptRenderMs = now
+    applyNavigationState(setVoiceTranscript(navigationState, update.transcript), bridge)
+  }
+
+  async function startVoiceSearch(bridge?: EvenAppBridge): Promise<void> {
+    const runId = voiceRunId + 1
+    voiceRunId = runId
+    lastVoiceTranscriptRenderMs = 0
+
+    applyNavigationState(beginVoiceListening(navigationState), bridge)
+
+    const startResult = await voiceService.startListening({
+      onTranscript: (update) => {
+        if (runId !== voiceRunId) {
+          return
+        }
+
+        applyVoiceTranscriptUpdate(update, bridge)
+      },
+      onError: (message) => {
+        if (runId !== voiceRunId) {
+          return
+        }
+
+        voiceRunId += 1
+        void voiceService.cancel()
+        applyNavigationState(setVoiceError(navigationState, message), bridge)
+      },
+    })
+
+    if (runId !== voiceRunId) {
+      return
+    }
+
+    if (startResult.status !== 'success') {
+      applyNavigationState(setVoiceError(navigationState, startResult.message), bridge)
+    }
+  }
+
+  async function finishVoiceSearch(bridge?: EvenAppBridge): Promise<void> {
+    const runId = voiceRunId
+
+    applyNavigationState(setVoiceProcessing(navigationState), bridge)
+
+    const transcription = await voiceService.stopListeningAndTranscribe()
+
+    if (runId !== voiceRunId) {
+      return
+    }
+
+    if (transcription.status !== 'success') {
+      applyNavigationState(setVoiceError(navigationState, transcription.message), bridge)
+      return
+    }
+
+    applyNavigationState(
+      applyVoiceSearchDecision(navigationState, decideSearchResult(transcription.transcript)),
+      bridge,
+    )
+  }
+
+  function applyInput(input: NavigationInput, bridge?: EvenAppBridge): void {
+    if (
+      input === 'back' &&
+      navigationState.currentScreen === 'voiceSearch' &&
+      (
+        navigationState.voiceSearchStatus === 'listening' ||
+        navigationState.voiceSearchStatus === 'processing'
+      )
+    ) {
+      voiceRunId += 1
+      void voiceService.cancel()
+    }
+
+    if (
+      input === 'select' &&
+      navigationState.currentScreen === 'voiceSearch' &&
+      navigationState.voiceSearchStatus !== 'processing'
+    ) {
+      if (navigationState.voiceSearchStatus === 'listening') {
+        void finishVoiceSearch(bridge)
+      } else {
+        void startVoiceSearch(bridge)
+      }
+
+      return
+    }
+
+    applyNavigationState(
+      transitionNavigation(navigationState, input, getNavigationContext(navigationState)),
+      bridge,
+    )
+  }
+
   function handleEvenHubInput(event: EvenHubEvent, bridge: EvenAppBridge): void {
+    voiceService.handleEvenHubEvent(event)
+
     const debugInfo = getEvenHubInputDebugInfo(event)
     const doubleClickDetected = isEvenHubDoubleClickEvent(event)
     const clickDetected = isEvenHubClickEvent(event)
@@ -387,6 +519,7 @@ async function startLeetLens(): Promise<void> {
   }
 
   const bridge = await waitForEvenAppBridge()
+  voiceService = new VoiceService(bridge)
   const startupTextObject = createScreenTextObjects(navigationState)
   const startupCaptureCount = countEventCaptureContainers(startupTextObject)
 

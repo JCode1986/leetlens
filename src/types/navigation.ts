@@ -1,14 +1,20 @@
 import type { SelectableProgrammingLanguage } from '../utils/language'
+import type { Difficulty } from './problem'
 
 export const NAVIGATION_SCREENS = [
   'home',
   'categories',
   'patterns',
   'collections',
+  'find',
   'search',
   'favorites',
   'settings',
   'language',
+  'voiceSearch',
+  'voiceMatch',
+  'voiceResults',
+  'difficultyList',
   'problemList',
   'problem',
   'hint',
@@ -32,7 +38,7 @@ export const HOME_MENU_ITEMS = [
   { label: 'Categories', screen: 'categories' },
   { label: 'Patterns', screen: 'patterns' },
   { label: 'Collections', screen: 'collections' },
-  { label: 'Search', screen: 'search' },
+  { label: 'Find', screen: 'find' },
   { label: 'Favorites', screen: 'favorites' },
   { label: 'Settings', screen: 'settings' },
 ] as const
@@ -45,7 +51,18 @@ export const SETTINGS_MENU_ITEMS = [
 
 export type SettingsMenuItem = (typeof SETTINGS_MENU_ITEMS)[number]
 
-export type ProblemListSource = 'category' | 'pattern' | 'collection'
+export const FIND_MENU_ITEMS = [
+  { label: 'Voice Search', screen: 'voiceSearch' },
+  { label: 'All Problems', screen: 'problemList' },
+  { label: 'By Difficulty', screen: 'difficultyList' },
+] as const
+
+export type FindMenuItem = (typeof FIND_MENU_ITEMS)[number]
+
+export type ProblemListSource = 'category' | 'pattern' | 'collection' | 'all' | 'difficulty'
+export type ProblemEntrySource = 'problemList' | 'voiceMatch' | 'voiceResults'
+export type VoiceSearchStatus = 'idle' | 'listening' | 'processing' | 'error'
+export type VoiceResultMode = 'exact' | 'possible' | 'related' | 'none'
 
 export interface NavigationState {
   currentScreen: NavigationScreen
@@ -53,9 +70,16 @@ export interface NavigationState {
   selectedCategory: string | undefined
   selectedPattern: string | undefined
   selectedCollection: string | undefined
+  selectedDifficulty: Difficulty | undefined
   problemListSource: ProblemListSource | undefined
   selectedProblemId: number | undefined
+  problemEntrySource: ProblemEntrySource | undefined
   selectedLanguage: SelectableProgrammingLanguage
   selectedProblemTab: ProblemTab
   codePageIndex: number
+  voiceSearchStatus: VoiceSearchStatus
+  voiceTranscript: string
+  voiceError: string | undefined
+  voiceResultMode: VoiceResultMode | undefined
+  voiceResultProblemIds: number[]
 }

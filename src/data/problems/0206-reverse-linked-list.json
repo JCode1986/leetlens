@@ -5,6 +5,20 @@
   "difficulty": "Easy",
   "categories": ["Linked Lists"],
   "patterns": ["Iterative Pointer Manipulation"],
+  "aliases": [
+    "reverse a linked list",
+    "reverse list",
+    "reverse nodes",
+    "reverse singly linked list"
+  ],
+  "keywords": [
+    "linked list",
+    "node",
+    "reverse",
+    "pointer",
+    "iterative",
+    "in place"
+  ],
   "summary": "Reverse a singly linked list in place and return the new head node.",
   "hint": "Keep the previous node, redirect the current node's next pointer, then advance.",
   "approach": [

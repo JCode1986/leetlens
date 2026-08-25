@@ -3,6 +3,8 @@ import type { NavigationState } from '../types/navigation'
 import { createApproachTextObjects, getApproachPageCount } from './approach'
 import { createCategoriesTextObjects } from './categories'
 import { createEdgeCasesTextObjects, getEdgeCasesPageCount } from './edgeCases'
+import { createDifficultyListTextObjects } from './difficultyList'
+import { createFindTextObjects } from './find'
 import { createTextObjects } from './g2Layout'
 import { createHintTextObjects, getHintPageCount } from './hint'
 import { createHomeTextObjects } from './home'
@@ -13,6 +15,9 @@ import { createProblemTextObjects } from './problem'
 import { createProblemListTextObjects } from './problemList'
 import { createSettingsTextObjects } from './settings'
 import { createSolutionTextObjects, getSolutionPageCount } from './solution'
+import { createVoiceMatchTextObjects } from './voiceMatch'
+import { createVoiceResultsTextObjects } from './voiceResults'
+import { createVoiceSearchTextObjects } from './voiceSearch'
 
 export function createScreenTextObjects(state: NavigationState): TextContainerProperty[] {
   if (state.currentScreen === 'home') {
@@ -29,6 +34,26 @@ export function createScreenTextObjects(state: NavigationState): TextContainerPr
 
   if (state.currentScreen === 'collections') {
     return createCollectionsTextObjects(state)
+  }
+
+  if (state.currentScreen === 'find') {
+    return createFindTextObjects(state)
+  }
+
+  if (state.currentScreen === 'voiceSearch') {
+    return createVoiceSearchTextObjects(state)
+  }
+
+  if (state.currentScreen === 'voiceMatch') {
+    return createVoiceMatchTextObjects(state)
+  }
+
+  if (state.currentScreen === 'voiceResults') {
+    return createVoiceResultsTextObjects(state)
+  }
+
+  if (state.currentScreen === 'difficultyList') {
+    return createDifficultyListTextObjects(state)
   }
 
   if (state.currentScreen === 'settings') {

@@ -1,4 +1,10 @@
-import { getCollection, getProblemsByCategory, getProblemsByPattern } from '../services/problemService'
+import {
+  getAllProblems,
+  getCollection,
+  getProblemsByCategory,
+  getProblemsByDifficulty,
+  getProblemsByPattern,
+} from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
 import type { Problem } from '../types/problem'
 import { createSelectableListTextObjects } from './selectableList'
@@ -12,6 +18,14 @@ function getProblemListTitle(state: NavigationState): string {
     return state.selectedCollection ?? 'Collection'
   }
 
+  if (state.problemListSource === 'all') {
+    return 'All Problems'
+  }
+
+  if (state.problemListSource === 'difficulty') {
+    return state.selectedDifficulty ?? 'Difficulty'
+  }
+
   return state.selectedCategory ?? 'Category'
 }
 
@@ -22,6 +36,14 @@ function getProblemListProblems(state: NavigationState): Problem[] {
 
   if (state.problemListSource === 'collection' && state.selectedCollection) {
     return getCollection(state.selectedCollection)
+  }
+
+  if (state.problemListSource === 'all') {
+    return getAllProblems()
+  }
+
+  if (state.problemListSource === 'difficulty' && state.selectedDifficulty) {
+    return getProblemsByDifficulty(state.selectedDifficulty)
   }
 
   if (state.selectedCategory) {

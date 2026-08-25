@@ -5,6 +5,20 @@
   "difficulty": "Medium",
   "categories": ["Strings", "Hash Maps", "Sliding Window"],
   "patterns": ["Hash Map", "Sliding Window"],
+  "aliases": [
+    "longest substring",
+    "substring without repeating",
+    "longest unique substring",
+    "longest substring no duplicates"
+  ],
+  "keywords": [
+    "string",
+    "substring",
+    "sliding window",
+    "hash map",
+    "unique characters",
+    "repeating characters"
+  ],
   "summary": "Return the length of the longest contiguous substring that contains no repeated characters.",
   "hint": "Move the left side of the window only when a repeated character is inside the current window.",
   "approach": [

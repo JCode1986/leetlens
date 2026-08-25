@@ -129,6 +129,10 @@ export function getProblemsByPattern(pattern: string): Problem[] {
   return resolveProblemIds(patterns[pattern] ?? [])
 }
 
+export function getProblemsByDifficulty(difficulty: Difficulty): Problem[] {
+  return getAllProblems().filter((problem) => problem.difficulty === difficulty)
+}
+
 export function getCollection(name: string): Problem[] {
   return resolveProblemIds(collections[name] ?? [])
 }

@@ -1,6 +1,8 @@
-import { HOME_MENU_ITEMS, PROBLEM_TABS, SETTINGS_MENU_ITEMS } from '../types/navigation'
+import { FIND_MENU_ITEMS, HOME_MENU_ITEMS, PROBLEM_TABS, SETTINGS_MENU_ITEMS } from '../types/navigation'
 import type { NavigationState, ProblemListSource, ProblemTab } from '../types/navigation'
+import { DIFFICULTIES } from '../types/problem'
 import type { Problem, ProblemId } from '../types/problem'
+import type { SearchDecision } from '../services/searchService'
 import {
   getSelectableLanguageIndex,
   SELECTABLE_PROGRAMMING_LANGUAGES,
@@ -14,6 +16,7 @@ export interface NavigationContext {
   patterns: string[]
   collections: string[]
   problemListProblems: Problem[]
+  voiceResultProblems: Problem[]
   pageCount: number
 }
 
@@ -26,11 +29,18 @@ export function createInitialNavigationState(
     selectedCategory: undefined,
     selectedPattern: undefined,
     selectedCollection: undefined,
+    selectedDifficulty: undefined,
     problemListSource: undefined,
     selectedProblemId: undefined,
+    problemEntrySource: undefined,
     selectedLanguage,
     selectedProblemTab: 'hint',
     codePageIndex: 0,
+    voiceSearchStatus: 'idle',
+    voiceTranscript: '',
+    voiceError: undefined,
+    voiceResultMode: undefined,
+    voiceResultProblemIds: [],
   }
 }
 
@@ -80,6 +90,10 @@ function getHomeMenuIndex(screen: NavigationState['currentScreen']): number {
   return Math.max(0, HOME_MENU_ITEMS.findIndex((candidate) => candidate.screen === screen))
 }
 
+function getFindMenuIndex(screen: NavigationState['currentScreen']): number {
+  return Math.max(0, FIND_MENU_ITEMS.findIndex((candidate) => candidate.screen === screen))
+}
+
 function getStringIndex(items: string[], selectedItem: string | undefined): number {
   if (!selectedItem) {
     return 0
@@ -103,6 +117,14 @@ function getProblemIndex(
 }
 
 function getSourceScreen(source: ProblemListSource | undefined): NavigationState['currentScreen'] {
+  if (source === 'all') {
+    return 'find'
+  }
+
+  if (source === 'difficulty') {
+    return 'difficultyList'
+  }
+
   if (source === 'pattern') {
     return 'patterns'
   }
@@ -115,12 +137,20 @@ function getSourceScreen(source: ProblemListSource | undefined): NavigationState
 }
 
 function getSourceIndex(state: NavigationState, context: NavigationContext): number {
+  if (state.problemListSource === 'all') {
+    return getFindMenuIndex('problemList')
+  }
+
   if (state.problemListSource === 'pattern') {
     return getStringIndex(context.patterns, state.selectedPattern)
   }
 
   if (state.problemListSource === 'collection') {
     return getStringIndex(context.collections, state.selectedCollection)
+  }
+
+  if (state.problemListSource === 'difficulty') {
+    return getStringIndex([...DIFFICULTIES], state.selectedDifficulty)
   }
 
   return getStringIndex(context.categories, state.selectedCategory)
@@ -137,6 +167,7 @@ function selectCurrentItem(
       selectedItem.screen !== 'categories' &&
       selectedItem.screen !== 'patterns' &&
       selectedItem.screen !== 'collections' &&
+      selectedItem.screen !== 'find' &&
       selectedItem.screen !== 'settings'
     ) {
       return state
@@ -151,8 +182,40 @@ function selectCurrentItem(
           ? getStringIndex(context.patterns, state.selectedPattern)
           : selectedItem.screen === 'collections'
             ? getStringIndex(context.collections, state.selectedCollection)
+            : selectedItem.screen === 'find'
+              ? 0
             : 0,
       codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'find') {
+    const selectedItem = FIND_MENU_ITEMS[clampIndex(
+      state.selectedMenuIndex,
+      FIND_MENU_ITEMS.length,
+    )]
+
+    if (!selectedItem) {
+      return state
+    }
+
+    if (selectedItem.screen === 'problemList') {
+      return {
+        ...state,
+        currentScreen: 'problemList',
+        problemListSource: 'all',
+        selectedMenuIndex: 0,
+        codePageIndex: 0,
+      }
+    }
+
+    return {
+      ...state,
+      currentScreen: selectedItem.screen,
+      selectedMenuIndex: 0,
+      codePageIndex: 0,
+      voiceSearchStatus: selectedItem.screen === 'voiceSearch' ? 'idle' : state.voiceSearchStatus,
+      voiceError: selectedItem.screen === 'voiceSearch' ? undefined : state.voiceError,
     }
   }
 
@@ -187,6 +250,26 @@ function selectCurrentItem(
     return {
       ...state,
       selectedLanguage,
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'difficultyList') {
+    const selectedDifficulty = DIFFICULTIES[clampIndex(
+      state.selectedMenuIndex,
+      DIFFICULTIES.length,
+    )]
+
+    if (!selectedDifficulty) {
+      return state
+    }
+
+    return {
+      ...state,
+      currentScreen: 'problemList',
+      selectedDifficulty,
+      problemListSource: 'difficulty',
+      selectedMenuIndex: 0,
       codePageIndex: 0,
     }
   }
@@ -265,6 +348,57 @@ function selectCurrentItem(
       ...state,
       currentScreen: 'problem',
       selectedProblemId: selectedProblem.id,
+      problemEntrySource: 'problemList',
+      selectedProblemTab: 'hint',
+      selectedMenuIndex: 0,
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'voiceMatch') {
+    if (state.voiceResultMode === 'exact' && state.selectedMenuIndex === 0) {
+      const matchedProblem = context.voiceResultProblems[0]
+
+      if (!matchedProblem) {
+        return state
+      }
+
+      return {
+        ...state,
+        currentScreen: 'problem',
+        selectedProblemId: matchedProblem.id,
+        problemEntrySource: 'voiceMatch',
+        selectedProblemTab: 'hint',
+        selectedMenuIndex: 0,
+        codePageIndex: 0,
+      }
+    }
+
+    return {
+      ...state,
+      currentScreen: 'voiceSearch',
+      selectedMenuIndex: 0,
+      codePageIndex: 0,
+      voiceSearchStatus: 'idle',
+      voiceError: undefined,
+    }
+  }
+
+  if (state.currentScreen === 'voiceResults') {
+    const selectedProblem = context.voiceResultProblems[clampIndex(
+      state.selectedMenuIndex,
+      context.voiceResultProblems.length,
+    )]
+
+    if (!selectedProblem) {
+      return state
+    }
+
+    return {
+      ...state,
+      currentScreen: 'problem',
+      selectedProblemId: selectedProblem.id,
+      problemEntrySource: 'voiceResults',
       selectedProblemTab: 'hint',
       selectedMenuIndex: 0,
       codePageIndex: 0,
@@ -314,6 +448,57 @@ function goBack(state: NavigationState, context: NavigationContext): NavigationS
     }
   }
 
+  if (state.currentScreen === 'find') {
+    return {
+      ...state,
+      currentScreen: 'home',
+      selectedMenuIndex: getHomeMenuIndex('find'),
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'voiceSearch') {
+    return {
+      ...state,
+      currentScreen: 'find',
+      selectedMenuIndex: getFindMenuIndex('voiceSearch'),
+      codePageIndex: 0,
+      voiceSearchStatus: 'idle',
+      voiceError: undefined,
+    }
+  }
+
+  if (state.currentScreen === 'voiceMatch') {
+    return {
+      ...state,
+      currentScreen: state.voiceResultMode === 'none' ? 'find' : 'voiceSearch',
+      selectedMenuIndex: state.voiceResultMode === 'none' ? getFindMenuIndex('voiceSearch') : 0,
+      codePageIndex: 0,
+      voiceSearchStatus: 'idle',
+      voiceError: undefined,
+    }
+  }
+
+  if (state.currentScreen === 'voiceResults') {
+    return {
+      ...state,
+      currentScreen: 'voiceSearch',
+      selectedMenuIndex: 0,
+      codePageIndex: 0,
+      voiceSearchStatus: 'idle',
+      voiceError: undefined,
+    }
+  }
+
+  if (state.currentScreen === 'difficultyList') {
+    return {
+      ...state,
+      currentScreen: 'find',
+      selectedMenuIndex: getFindMenuIndex('difficultyList'),
+      codePageIndex: 0,
+    }
+  }
+
   if (state.currentScreen === 'settings') {
     return {
       ...state,
@@ -342,6 +527,24 @@ function goBack(state: NavigationState, context: NavigationContext): NavigationS
   }
 
   if (state.currentScreen === 'problem') {
+    if (state.problemEntrySource === 'voiceMatch') {
+      return {
+        ...state,
+        currentScreen: 'voiceMatch',
+        selectedMenuIndex: 0,
+        codePageIndex: 0,
+      }
+    }
+
+    if (state.problemEntrySource === 'voiceResults') {
+      return {
+        ...state,
+        currentScreen: 'voiceResults',
+        selectedMenuIndex: getProblemIndex(context.voiceResultProblems, state.selectedProblemId),
+        codePageIndex: 0,
+      }
+    }
+
     return {
       ...state,
       currentScreen: 'problemList',
@@ -390,6 +593,10 @@ export function transitionNavigation(
     return moveSelectedMenu(state, delta, context.categories.length)
   }
 
+  if (state.currentScreen === 'find') {
+    return moveSelectedMenu(state, delta, FIND_MENU_ITEMS.length)
+  }
+
   if (state.currentScreen === 'patterns') {
     return moveSelectedMenu(state, delta, context.patterns.length)
   }
@@ -406,8 +613,20 @@ export function transitionNavigation(
     return moveSelectedMenu(state, delta, SELECTABLE_PROGRAMMING_LANGUAGES.length)
   }
 
+  if (state.currentScreen === 'difficultyList') {
+    return moveSelectedMenu(state, delta, DIFFICULTIES.length)
+  }
+
   if (state.currentScreen === 'problemList') {
     return moveSelectedMenu(state, delta, context.problemListProblems.length)
+  }
+
+  if (state.currentScreen === 'voiceMatch') {
+    return moveSelectedMenu(state, delta, state.voiceResultMode === 'exact' ? 2 : 1)
+  }
+
+  if (state.currentScreen === 'voiceResults') {
+    return moveSelectedMenu(state, delta, context.voiceResultProblems.length)
   }
 
   if (state.currentScreen === 'problem') {
@@ -430,4 +649,85 @@ export function transitionNavigation(
   }
 
   return state
+}
+
+export function beginVoiceListening(state: NavigationState): NavigationState {
+  return {
+    ...state,
+    currentScreen: 'voiceSearch',
+    selectedMenuIndex: 0,
+    codePageIndex: 0,
+    voiceSearchStatus: 'listening',
+    voiceTranscript: '',
+    voiceError: undefined,
+    voiceResultMode: undefined,
+    voiceResultProblemIds: [],
+  }
+}
+
+export function setVoiceProcessing(state: NavigationState): NavigationState {
+  return {
+    ...state,
+    currentScreen: 'voiceSearch',
+    selectedMenuIndex: 0,
+    codePageIndex: 0,
+    voiceSearchStatus: 'processing',
+  }
+}
+
+export function setVoiceTranscript(state: NavigationState, transcript: string): NavigationState {
+  return {
+    ...state,
+    currentScreen: 'voiceSearch',
+    selectedMenuIndex: 0,
+    voiceTranscript: transcript,
+  }
+}
+
+export function setVoiceError(state: NavigationState, message: string): NavigationState {
+  return {
+    ...state,
+    currentScreen: 'voiceSearch',
+    selectedMenuIndex: 0,
+    codePageIndex: 0,
+    voiceSearchStatus: 'error',
+    voiceError: message,
+  }
+}
+
+export function applyVoiceSearchDecision(
+  state: NavigationState,
+  decision: SearchDecision,
+): NavigationState {
+  if (decision.kind === 'empty') {
+    return setVoiceError(state, 'No speech heard.')
+  }
+
+  if (decision.kind === 'none') {
+    return {
+      ...state,
+      currentScreen: 'voiceMatch',
+      selectedMenuIndex: 0,
+      codePageIndex: 0,
+      voiceSearchStatus: 'idle',
+      voiceTranscript: decision.query,
+      voiceError: undefined,
+      voiceResultMode: 'none',
+      voiceResultProblemIds: [],
+    }
+  }
+
+  const voiceResultProblemIds = decision.matches.map((match) => match.problem.id)
+
+  return {
+    ...state,
+    currentScreen: decision.kind === 'exact' ? 'voiceMatch' : 'voiceResults',
+    selectedMenuIndex: 0,
+    codePageIndex: 0,
+    voiceSearchStatus: 'idle',
+    voiceTranscript: decision.query,
+    voiceError: undefined,
+    voiceResultMode: decision.kind,
+    voiceResultProblemIds,
+  }
 }
