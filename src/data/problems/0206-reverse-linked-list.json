@@ -1,0 +1,175 @@
+{
+  "id": 206,
+  "slug": "reverse-linked-list",
+  "title": "Reverse Linked List",
+  "difficulty": "Easy",
+  "categories": ["Linked Lists"],
+  "patterns": ["Iterative Pointer Manipulation"],
+  "summary": "Reverse a singly linked list in place and return the new head node.",
+  "hint": "Keep the previous node, redirect the current node's next pointer, then advance.",
+  "approach": [
+    "Start with prev as null and current as the head.",
+    "Save current.next before changing pointers.",
+    "Point current.next back to prev.",
+    "Move prev and current one node forward.",
+    "When current is null, prev is the new head."
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "The list is empty.",
+    "The list has one node.",
+    "The list has two nodes.",
+    "The original head must become the tail and point to null.",
+    "All nodes must remain reachable after reversal."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function reverseList(head) {",
+        "  let prev = null;",
+        "  let current = head;",
+        "",
+        "  while (current !== null) {",
+        "    const next = current.next;",
+        "    current.next = prev;",
+        "    prev = current;",
+        "    current = next;",
+        "  }",
+        "",
+        "  return prev;",
+        "}"
+      ],
+      "g2": [
+        "function reverseList(head) {",
+        "  let prev = null;",
+        "  let current = head;",
+        "",
+        "  while (current !== null) {",
+        "    const next = current.next;",
+        "    current.next = prev;",
+        "    prev = current;",
+        "    current = next;",
+        "  }",
+        "",
+        "  return prev;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:",
+        "        prev = None",
+        "        current = head",
+        "",
+        "        while current:",
+        "            next_node = current.next",
+        "            current.next = prev",
+        "            prev = current",
+        "            current = next_node",
+        "",
+        "        return prev"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def reverseList(",
+        "        self, head",
+        "    ):",
+        "        prev = None",
+        "        current = head",
+        "",
+        "        while current:",
+        "            next_node =",
+        "                current.next",
+        "            current.next = prev",
+        "            prev = current",
+        "            current = next_node",
+        "",
+        "        return prev"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public ListNode reverseList(ListNode head) {",
+        "        ListNode prev = null;",
+        "        ListNode current = head;",
+        "",
+        "        while (current != null) {",
+        "            ListNode next = current.next;",
+        "            current.next = prev;",
+        "            prev = current;",
+        "            current = next;",
+        "        }",
+        "",
+        "        return prev;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "    public ListNode reverseList(",
+        "        ListNode head",
+        "    ) {",
+        "        ListNode prev = null;",
+        "        ListNode current = head;",
+        "",
+        "        while (current != null) {",
+        "            ListNode next =",
+        "                current.next;",
+        "            current.next = prev;",
+        "            prev = current;",
+        "            current = next;",
+        "        }",
+        "",
+        "        return prev;",
+        "    }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    ListNode* reverseList(ListNode* head) {",
+        "        ListNode* prev = nullptr;",
+        "        ListNode* current = head;",
+        "",
+        "        while (current != nullptr) {",
+        "            ListNode* next = current->next;",
+        "            current->next = prev;",
+        "            prev = current;",
+        "            current = next;",
+        "        }",
+        "",
+        "        return prev;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "    ListNode* reverseList(",
+        "        ListNode* head",
+        "    ) {",
+        "        ListNode* prev = nullptr;",
+        "        ListNode* current = head;",
+        "",
+        "        while (current != nullptr) {",
+        "            ListNode* next =",
+        "                current->next;",
+        "            current->next = prev;",
+        "            prev = current;",
+        "            current = next;",
+        "        }",
+        "",
+        "        return prev;",
+        "    }",
+        "};"
+      ]
+    }
+  }
+}

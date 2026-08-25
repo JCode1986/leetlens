@@ -1,0 +1,10 @@
+{
+  "Arrays": [1],
+  "Strings": [3, 20],
+  "Hash Maps": [1, 3],
+  "Sliding Window": [3],
+  "Stack": [20],
+  "Linked Lists": [206],
+  "Trees": [104],
+  "DFS": [104]
+}
