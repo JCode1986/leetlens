@@ -36,6 +36,7 @@ body {
 }
 
 .g2-preview {
+  position: relative;
   width: 576px;
   height: 288px;
   overflow: hidden;
@@ -43,6 +44,24 @@ body {
   border: 1px solid var(--frame);
   transform: scale(var(--scale));
   transform-origin: center;
+}
+
+.g2-text {
+  position: absolute;
+  overflow: hidden;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: 0;
+  white-space: pre-wrap;
+}
+
+.g2-text.primary {
+  color: var(--text);
+}
+
+.g2-text.muted {
+  color: var(--muted);
 }
 
 .home-screen {

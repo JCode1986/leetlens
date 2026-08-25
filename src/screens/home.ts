@@ -8,20 +8,14 @@ import { clampHomeMenuIndex } from '../navigation/navigationState'
 import { HOME_MENU_ITEMS } from '../types/navigation'
 import type { NavigationState } from '../types/navigation'
 
-export const G2_DISPLAY = {
-  width: 576,
-  height: 288,
-} as const
-
 const TITLE_CONTAINER_ID = 100
 const SUBTITLE_CONTAINER_ID = 101
 const MENU_CONTAINER_ID_START = 200
 
-export function createHomeStartUpPage(
-  navigationState: NavigationState,
-): CreateStartUpPageContainer {
+export function createHomeTextObjects(navigationState: NavigationState): TextContainerProperty[] {
   const selectedMenuIndex = clampHomeMenuIndex(navigationState.selectedMenuIndex)
-  const textObject = [
+
+  return [
     new TextContainerProperty({
       xPosition: 36,
       yPosition: 22,
@@ -32,7 +26,7 @@ export function createHomeStartUpPage(
       zOrderIndex: 1,
       content: 'LEETLENS',
       textColor: 4,
-      isEventCapture: 0,
+      isEventCapture: 1,
     }),
     new TextContainerProperty({
       xPosition: 36,
@@ -58,14 +52,18 @@ export function createHomeStartUpPage(
           zOrderIndex: 3 + index,
           content: `${index === selectedMenuIndex ? '>' : ' '} ${item.label}`,
           textColor: index === selectedMenuIndex ? 4 : 3,
-          isEventCapture: index === selectedMenuIndex ? 1 : 0,
+          isEventCapture: 0,
         }),
     ),
   ]
+}
 
+export function createHomeStartUpPage(
+  navigationState: NavigationState,
+): CreateStartUpPageContainer {
   return new CreateStartUpPageContainer({
-    containerTotalNum: textObject.length,
-    textObject,
+    containerTotalNum: createHomeTextObjects(navigationState).length,
+    textObject: createHomeTextObjects(navigationState),
   })
 }
 
