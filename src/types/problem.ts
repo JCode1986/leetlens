@@ -35,6 +35,8 @@ export interface Problem {
   difficulty: Difficulty
   categories: string[]
   patterns: string[]
+  aliases?: string[]
+  keywords?: string[]
   summary: string
   hint: string
   approach: string[]

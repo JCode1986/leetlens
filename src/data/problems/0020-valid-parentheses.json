@@ -5,6 +5,20 @@
   "difficulty": "Easy",
   "categories": ["Strings", "Stack"],
   "patterns": ["Stack"],
+  "aliases": [
+    "balanced parentheses",
+    "matching brackets",
+    "valid brackets",
+    "parentheses stack"
+  ],
+  "keywords": [
+    "stack",
+    "string",
+    "parentheses",
+    "brackets",
+    "matching",
+    "balanced"
+  ],
   "summary": "Decide whether every opening bracket is closed by the same type of bracket in the correct order.",
   "hint": "The most recent unmatched opening bracket must match the next closing bracket.",
   "approach": [

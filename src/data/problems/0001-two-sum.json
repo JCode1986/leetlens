@@ -5,6 +5,19 @@
   "difficulty": "Easy",
   "categories": ["Arrays", "Hash Maps"],
   "patterns": ["Hash Map"],
+  "aliases": [
+    "two numbers sum",
+    "find pair with target sum",
+    "indices that add to target"
+  ],
+  "keywords": [
+    "array",
+    "hash map",
+    "target",
+    "complement",
+    "pair",
+    "indices"
+  ],
   "summary": "Find two distinct numbers whose values add to the target and return their indices.",
   "hint": "Store values you have already seen, then ask whether the current value's complement exists.",
   "approach": [

@@ -6,11 +6,37 @@ import {
 import type { EvenAppBridge, EvenHubEvent } from '@evenrealities/even_hub_sdk'
 import './style.css'
 import {
+  applyVoiceSearchDecision,
+  beginVoiceListening,
   createInitialNavigationState,
+  setVoiceError,
+  setVoiceProcessing,
+  setVoiceTranscript,
   transitionNavigation,
 } from './navigation/navigationState'
 import type { NavigationContext, NavigationInput } from './navigation/navigationState'
-import { getCategories, getProblemsByCategory } from './services/problemService'
+import {
+  addRecentProblem,
+  getFavoriteIds,
+  getRecentProblemIds,
+  loadDefaultLanguagePreference,
+  saveDefaultLanguagePreference,
+  toggleFavorite,
+} from './services/preferencesService'
+import {
+  getAllProblems,
+  getCategories,
+  getCollection,
+  getCollections,
+  getProblemById,
+  getPatterns,
+  getProblemsByCategory,
+  getProblemsByDifficulty,
+  getProblemsByPattern,
+} from './services/problemService'
+import { decideSearchResult } from './services/searchService'
+import type { TranscriptUpdate } from './services/transcriptionService'
+import { VoiceService } from './services/voiceService'
 import {
   createRebuildPage,
   createStartUpPage,
@@ -18,7 +44,9 @@ import {
   renderTextObjectsDomPreview,
 } from './screens/g2Layout'
 import { createScreenTextObjects, getCurrentScreenPageCount } from './screens/renderScreen'
+import { PROBLEM_FAVORITE_MENU_INDEX } from './types/navigation'
 import type { NavigationState } from './types/navigation'
+import type { Problem, ProblemId } from './types/problem'
 
 type EvenHostWindow = Window & {
   flutter_inappwebview?: {
@@ -230,7 +258,11 @@ function logEvenHubEventDebug(
   }
 }
 
-function logEvenHubInput(input: NormalizedEvenHubInput, navigationInput?: NavigationInput): void {
+function logEvenHubInput(
+  input: NormalizedEvenHubInput,
+  state: NavigationState,
+  navigationInput?: NavigationInput,
+): void {
   if (!ENABLE_INPUT_DEBUG_LOGS || !INPUT_EVENT_TYPES.has(input.eventType)) {
     return
   }
@@ -243,19 +275,69 @@ function logEvenHubInput(input: NormalizedEvenHubInput, navigationInput?: Naviga
     containerID: input.containerID,
     containerName: input.containerName,
     selectedIndex: input.selectedIndex,
+    currentScreen: state.currentScreen,
+    selectedIndexBefore: state.selectedMenuIndex,
   })
 }
 
 async function startLeetLens(): Promise<void> {
-  let navigationState = createInitialNavigationState()
+  let navigationState = createInitialNavigationState(loadDefaultLanguagePreference())
   let nativeRenderQueue = Promise.resolve()
+  let voiceService = new VoiceService()
+  let voiceRunId = 0
+  let lastVoiceTranscriptRenderMs = 0
+
+  function getProblemListProblems(state: NavigationState): Problem[] {
+    if (state.problemListSource === 'pattern' && state.selectedPattern) {
+      return getProblemsByPattern(state.selectedPattern)
+    }
+
+    if (state.problemListSource === 'collection' && state.selectedCollection) {
+      return getCollection(state.selectedCollection)
+    }
+
+    if (state.problemListSource === 'all') {
+      return getAllProblems()
+    }
+
+    if (state.problemListSource === 'difficulty' && state.selectedDifficulty) {
+      return getProblemsByDifficulty(state.selectedDifficulty)
+    }
+
+    if (state.problemListSource === 'favorites') {
+      return resolveProblemIds(getFavoriteIds()).sort((a, b) => a.id - b.id)
+    }
+
+    if (state.problemListSource === 'recent') {
+      return resolveProblemIds(getRecentProblemIds())
+    }
+
+    if (state.selectedCategory) {
+      return getProblemsByCategory(state.selectedCategory)
+    }
+
+    return []
+  }
+
+  function getVoiceResultProblems(state: NavigationState): Problem[] {
+    return state.voiceResultProblemIds
+      .map((problemId) => getProblemById(problemId))
+      .filter((problem): problem is Problem => problem !== undefined)
+  }
+
+  function resolveProblemIds(problemIds: ProblemId[]): Problem[] {
+    return problemIds
+      .map((problemId) => getProblemById(problemId))
+      .filter((problem): problem is Problem => problem !== undefined)
+  }
 
   function getNavigationContext(state: NavigationState): NavigationContext {
     return {
       categories: getCategories(),
-      categoryProblems: state.selectedCategory
-        ? getProblemsByCategory(state.selectedCategory)
-        : [],
+      patterns: getPatterns(),
+      collections: getCollections(),
+      problemListProblems: getProblemListProblems(state),
+      voiceResultProblems: getVoiceResultProblems(state),
       pageCount: getCurrentScreenPageCount(state),
     }
   }
@@ -280,12 +362,27 @@ async function startLeetLens(): Promise<void> {
     }
   }
 
-  function applyInput(input: NavigationInput, bridge?: EvenAppBridge): void {
-    navigationState = transitionNavigation(
-      navigationState,
-      input,
-      getNavigationContext(navigationState),
-    )
+  function applyNavigationState(nextState: NavigationState, bridge?: EvenAppBridge): void {
+    const previousLanguage = navigationState.selectedLanguage
+    const previousScreen = navigationState.currentScreen
+    const previousProblemId = navigationState.selectedProblemId
+
+    navigationState = nextState
+
+    if (
+      navigationState.currentScreen === 'problem' &&
+      navigationState.selectedProblemId !== undefined &&
+      (
+        previousScreen !== 'problem' ||
+        previousProblemId !== navigationState.selectedProblemId
+      )
+    ) {
+      addRecentProblem(navigationState.selectedProblemId)
+    }
+
+    if (navigationState.selectedLanguage !== previousLanguage) {
+      saveDefaultLanguagePreference(navigationState.selectedLanguage)
+    }
 
     renderBrowserPreview()
 
@@ -295,7 +392,137 @@ async function startLeetLens(): Promise<void> {
     }
   }
 
+  function applyVoiceTranscriptUpdate(update: TranscriptUpdate, bridge?: EvenAppBridge): void {
+    const now = Date.now()
+
+    if (
+      !update.isFinal &&
+      now - lastVoiceTranscriptRenderMs < 250
+    ) {
+      return
+    }
+
+    lastVoiceTranscriptRenderMs = now
+    applyNavigationState(setVoiceTranscript(navigationState, update.transcript), bridge)
+  }
+
+  async function startVoiceSearch(bridge?: EvenAppBridge): Promise<void> {
+    const runId = voiceRunId + 1
+    voiceRunId = runId
+    lastVoiceTranscriptRenderMs = 0
+
+    applyNavigationState(beginVoiceListening(navigationState), bridge)
+
+    const startResult = await voiceService.startListening({
+      onTranscript: (update) => {
+        if (runId !== voiceRunId) {
+          return
+        }
+
+        applyVoiceTranscriptUpdate(update, bridge)
+      },
+      onError: (message) => {
+        if (runId !== voiceRunId) {
+          return
+        }
+
+        voiceRunId += 1
+        void voiceService.cancel()
+        applyNavigationState(setVoiceError(navigationState, message), bridge)
+      },
+    })
+
+    if (runId !== voiceRunId) {
+      return
+    }
+
+    if (startResult.status !== 'success') {
+      applyNavigationState(setVoiceError(navigationState, startResult.message), bridge)
+    }
+  }
+
+  async function finishVoiceSearch(bridge?: EvenAppBridge): Promise<void> {
+    const runId = voiceRunId
+
+    applyNavigationState(setVoiceProcessing(navigationState), bridge)
+
+    const transcription = await voiceService.stopListeningAndTranscribe()
+
+    if (runId !== voiceRunId) {
+      return
+    }
+
+    if (transcription.status !== 'success') {
+      applyNavigationState(setVoiceError(navigationState, transcription.message), bridge)
+      return
+    }
+
+    applyNavigationState(
+      applyVoiceSearchDecision(navigationState, decideSearchResult(transcription.transcript)),
+      bridge,
+    )
+  }
+
+  function applyInput(input: NavigationInput, bridge?: EvenAppBridge): void {
+    if (
+      input === 'back' &&
+      navigationState.currentScreen === 'voiceSearch' &&
+      (
+        navigationState.voiceSearchStatus === 'listening' ||
+        navigationState.voiceSearchStatus === 'processing'
+      )
+    ) {
+      voiceRunId += 1
+      void voiceService.cancel()
+    }
+
+    if (
+      input === 'select' &&
+      navigationState.currentScreen === 'voiceSearch' &&
+      navigationState.voiceSearchStatus !== 'processing'
+    ) {
+      if (navigationState.voiceSearchStatus === 'listening') {
+        void finishVoiceSearch(bridge)
+      } else {
+        void startVoiceSearch(bridge)
+      }
+
+      return
+    }
+
+    if (
+      input === 'select' &&
+      navigationState.currentScreen === 'problem' &&
+      navigationState.selectedMenuIndex === PROBLEM_FAVORITE_MENU_INDEX &&
+      navigationState.selectedProblemId !== undefined
+    ) {
+      toggleFavorite(navigationState.selectedProblemId)
+      applyNavigationState({ ...navigationState }, bridge)
+      return
+    }
+
+    const previousState = navigationState
+    const nextState = transitionNavigation(
+      navigationState,
+      input,
+      getNavigationContext(navigationState),
+    )
+
+    if (ENABLE_INPUT_DEBUG_LOGS && (input === 'up' || input === 'down')) {
+      console.info('[LeetLens navigation]', {
+        input,
+        currentScreen: previousState.currentScreen,
+        selectedIndexBefore: previousState.selectedMenuIndex,
+        selectedIndexAfter: nextState.selectedMenuIndex,
+      })
+    }
+
+    applyNavigationState(nextState, bridge)
+  }
+
   function handleEvenHubInput(event: EvenHubEvent, bridge: EvenAppBridge): void {
+    voiceService.handleEvenHubEvent(event)
+
     const debugInfo = getEvenHubInputDebugInfo(event)
     const doubleClickDetected = isEvenHubDoubleClickEvent(event)
     const clickDetected = isEvenHubClickEvent(event)
@@ -322,7 +549,7 @@ async function startLeetLens(): Promise<void> {
 
     const navigationInput = input.canNavigate ? mapInputEvent(input.eventType) : undefined
 
-    logEvenHubInput(input, navigationInput)
+    logEvenHubInput(input, navigationState, navigationInput)
 
     if (navigationInput) {
       applyInput(navigationInput, bridge)
@@ -354,6 +581,7 @@ async function startLeetLens(): Promise<void> {
   }
 
   const bridge = await waitForEvenAppBridge()
+  voiceService = new VoiceService(bridge)
   const startupTextObject = createScreenTextObjects(navigationState)
   const startupCaptureCount = countEventCaptureContainers(startupTextObject)
 

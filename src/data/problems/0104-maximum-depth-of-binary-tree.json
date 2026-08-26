@@ -5,6 +5,20 @@
   "difficulty": "Easy",
   "categories": ["Trees", "DFS"],
   "patterns": ["DFS", "Recursion"],
+  "aliases": [
+    "max depth binary tree",
+    "tree depth",
+    "height of binary tree",
+    "maximum tree depth"
+  ],
+  "keywords": [
+    "tree",
+    "binary tree",
+    "depth",
+    "height",
+    "dfs",
+    "recursion"
+  ],
   "summary": "Compute the number of nodes on the longest path from the root down to any leaf.",
   "hint": "A node's depth is one plus the larger depth of its left and right subtrees.",
   "approach": [
