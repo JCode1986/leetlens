@@ -1,10 +1,12 @@
 import {
   getAllProblems,
   getCollection,
+  getProblemById,
   getProblemsByCategory,
   getProblemsByDifficulty,
   getProblemsByPattern,
 } from '../services/problemService'
+import { getFavoriteIds, getRecentProblemIds } from '../services/preferencesService'
 import type { NavigationState } from '../types/navigation'
 import type { Problem } from '../types/problem'
 import { createSelectableListTextObjects } from './selectableList'
@@ -26,7 +28,21 @@ function getProblemListTitle(state: NavigationState): string {
     return state.selectedDifficulty ?? 'Difficulty'
   }
 
+  if (state.problemListSource === 'favorites') {
+    return 'Favorites'
+  }
+
+  if (state.problemListSource === 'recent') {
+    return 'Recent'
+  }
+
   return state.selectedCategory ?? 'Category'
+}
+
+function resolveProblemIds(problemIds: number[]): Problem[] {
+  return problemIds
+    .map((problemId) => getProblemById(problemId))
+    .filter((problem): problem is Problem => problem !== undefined)
 }
 
 function getProblemListProblems(state: NavigationState): Problem[] {
@@ -46,6 +62,14 @@ function getProblemListProblems(state: NavigationState): Problem[] {
     return getProblemsByDifficulty(state.selectedDifficulty)
   }
 
+  if (state.problemListSource === 'favorites') {
+    return resolveProblemIds(getFavoriteIds()).sort((a, b) => a.id - b.id)
+  }
+
+  if (state.problemListSource === 'recent') {
+    return resolveProblemIds(getRecentProblemIds())
+  }
+
   if (state.selectedCategory) {
     return getProblemsByCategory(state.selectedCategory)
   }
@@ -54,6 +78,12 @@ function getProblemListProblems(state: NavigationState): Problem[] {
 }
 
 export function createProblemListTextObjects(state: NavigationState) {
+  const emptyLines = state.problemListSource === 'favorites'
+    ? ['No favorites yet.', 'Open a problem and', 'add it to Favorites.']
+    : state.problemListSource === 'recent'
+      ? ['No recently viewed', 'problems yet.', 'Browse or use Find', 'to open a problem.']
+      : undefined
+
   return createSelectableListTextObjects({
     title: getProblemListTitle(state),
     items: getProblemListProblems(state),
@@ -61,5 +91,6 @@ export function createProblemListTextObjects(state: NavigationState) {
     itemNamePrefix: 'problem',
     formatItem: (problem) => `#${problem.id} ${problem.title}`,
     emptyMessage: 'NO PROBLEMS FOUND',
+    emptyLines,
   })
 }

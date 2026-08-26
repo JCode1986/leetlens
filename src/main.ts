@@ -16,8 +16,12 @@ import {
 } from './navigation/navigationState'
 import type { NavigationContext, NavigationInput } from './navigation/navigationState'
 import {
+  addRecentProblem,
+  getFavoriteIds,
+  getRecentProblemIds,
   loadDefaultLanguagePreference,
   saveDefaultLanguagePreference,
+  toggleFavorite,
 } from './services/preferencesService'
 import {
   getAllProblems,
@@ -40,8 +44,9 @@ import {
   renderTextObjectsDomPreview,
 } from './screens/g2Layout'
 import { createScreenTextObjects, getCurrentScreenPageCount } from './screens/renderScreen'
+import { PROBLEM_FAVORITE_MENU_INDEX } from './types/navigation'
 import type { NavigationState } from './types/navigation'
-import type { Problem } from './types/problem'
+import type { Problem, ProblemId } from './types/problem'
 
 type EvenHostWindow = Window & {
   flutter_inappwebview?: {
@@ -253,7 +258,11 @@ function logEvenHubEventDebug(
   }
 }
 
-function logEvenHubInput(input: NormalizedEvenHubInput, navigationInput?: NavigationInput): void {
+function logEvenHubInput(
+  input: NormalizedEvenHubInput,
+  state: NavigationState,
+  navigationInput?: NavigationInput,
+): void {
   if (!ENABLE_INPUT_DEBUG_LOGS || !INPUT_EVENT_TYPES.has(input.eventType)) {
     return
   }
@@ -266,6 +275,8 @@ function logEvenHubInput(input: NormalizedEvenHubInput, navigationInput?: Naviga
     containerID: input.containerID,
     containerName: input.containerName,
     selectedIndex: input.selectedIndex,
+    currentScreen: state.currentScreen,
+    selectedIndexBefore: state.selectedMenuIndex,
   })
 }
 
@@ -293,6 +304,14 @@ async function startLeetLens(): Promise<void> {
       return getProblemsByDifficulty(state.selectedDifficulty)
     }
 
+    if (state.problemListSource === 'favorites') {
+      return resolveProblemIds(getFavoriteIds()).sort((a, b) => a.id - b.id)
+    }
+
+    if (state.problemListSource === 'recent') {
+      return resolveProblemIds(getRecentProblemIds())
+    }
+
     if (state.selectedCategory) {
       return getProblemsByCategory(state.selectedCategory)
     }
@@ -302,6 +321,12 @@ async function startLeetLens(): Promise<void> {
 
   function getVoiceResultProblems(state: NavigationState): Problem[] {
     return state.voiceResultProblemIds
+      .map((problemId) => getProblemById(problemId))
+      .filter((problem): problem is Problem => problem !== undefined)
+  }
+
+  function resolveProblemIds(problemIds: ProblemId[]): Problem[] {
+    return problemIds
       .map((problemId) => getProblemById(problemId))
       .filter((problem): problem is Problem => problem !== undefined)
   }
@@ -339,8 +364,21 @@ async function startLeetLens(): Promise<void> {
 
   function applyNavigationState(nextState: NavigationState, bridge?: EvenAppBridge): void {
     const previousLanguage = navigationState.selectedLanguage
+    const previousScreen = navigationState.currentScreen
+    const previousProblemId = navigationState.selectedProblemId
 
     navigationState = nextState
+
+    if (
+      navigationState.currentScreen === 'problem' &&
+      navigationState.selectedProblemId !== undefined &&
+      (
+        previousScreen !== 'problem' ||
+        previousProblemId !== navigationState.selectedProblemId
+      )
+    ) {
+      addRecentProblem(navigationState.selectedProblemId)
+    }
 
     if (navigationState.selectedLanguage !== previousLanguage) {
       saveDefaultLanguagePreference(navigationState.selectedLanguage)
@@ -452,10 +490,34 @@ async function startLeetLens(): Promise<void> {
       return
     }
 
-    applyNavigationState(
-      transitionNavigation(navigationState, input, getNavigationContext(navigationState)),
-      bridge,
+    if (
+      input === 'select' &&
+      navigationState.currentScreen === 'problem' &&
+      navigationState.selectedMenuIndex === PROBLEM_FAVORITE_MENU_INDEX &&
+      navigationState.selectedProblemId !== undefined
+    ) {
+      toggleFavorite(navigationState.selectedProblemId)
+      applyNavigationState({ ...navigationState }, bridge)
+      return
+    }
+
+    const previousState = navigationState
+    const nextState = transitionNavigation(
+      navigationState,
+      input,
+      getNavigationContext(navigationState),
     )
+
+    if (ENABLE_INPUT_DEBUG_LOGS && (input === 'up' || input === 'down')) {
+      console.info('[LeetLens navigation]', {
+        input,
+        currentScreen: previousState.currentScreen,
+        selectedIndexBefore: previousState.selectedMenuIndex,
+        selectedIndexAfter: nextState.selectedMenuIndex,
+      })
+    }
+
+    applyNavigationState(nextState, bridge)
   }
 
   function handleEvenHubInput(event: EvenHubEvent, bridge: EvenAppBridge): void {
@@ -487,7 +549,7 @@ async function startLeetLens(): Promise<void> {
 
     const navigationInput = input.canNavigate ? mapInputEvent(input.eventType) : undefined
 
-    logEvenHubInput(input, navigationInput)
+    logEvenHubInput(input, navigationState, navigationInput)
 
     if (navigationInput) {
       applyInput(navigationInput, bridge)

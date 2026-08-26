@@ -1,61 +1,24 @@
 import {
   CreateStartUpPageContainer,
   StartUpPageCreateResult,
-  TextContainerProperty,
 } from '@evenrealities/even_hub_sdk'
 import type { EvenAppBridge } from '@evenrealities/even_hub_sdk'
 import { clampHomeMenuIndex } from '../navigation/navigationState'
 import { HOME_MENU_ITEMS } from '../types/navigation'
 import type { NavigationState } from '../types/navigation'
+import { createSelectableListTextObjects } from './selectableList'
 
-const TITLE_CONTAINER_ID = 100
-const SUBTITLE_CONTAINER_ID = 101
-const MENU_CONTAINER_ID_START = 200
-
-export function createHomeTextObjects(navigationState: NavigationState): TextContainerProperty[] {
+export function createHomeTextObjects(navigationState: NavigationState) {
   const selectedMenuIndex = clampHomeMenuIndex(navigationState.selectedMenuIndex)
 
-  return [
-    new TextContainerProperty({
-      xPosition: 36,
-      yPosition: 22,
-      width: 504,
-      height: 38,
-      containerID: TITLE_CONTAINER_ID,
-      containerName: 'home-title',
-      zOrderIndex: 1,
-      content: 'LEETLENS',
-      textColor: 4,
-      isEventCapture: 1,
-    }),
-    new TextContainerProperty({
-      xPosition: 36,
-      yPosition: 70,
-      width: 504,
-      height: 52,
-      containerID: SUBTITLE_CONTAINER_ID,
-      containerName: 'home-subtitle',
-      zOrderIndex: 2,
-      content: 'Coding Interview\nStudy Companion',
-      textColor: 3,
-      isEventCapture: 0,
-    }),
-    ...HOME_MENU_ITEMS.map(
-      (item, index) =>
-        new TextContainerProperty({
-          xPosition: 50,
-          yPosition: 136 + index * 24,
-          width: 320,
-          height: 23,
-          containerID: MENU_CONTAINER_ID_START + index,
-          containerName: `home-menu-${item.screen}`,
-          zOrderIndex: 3 + index,
-          content: `${index === selectedMenuIndex ? '>' : ' '} ${item.label}`,
-          textColor: index === selectedMenuIndex ? 4 : 3,
-          isEventCapture: 0,
-        }),
-    ),
-  ]
+  return createSelectableListTextObjects({
+    title: 'LeetLens',
+    items: [...HOME_MENU_ITEMS],
+    selectedIndex: selectedMenuIndex,
+    itemNamePrefix: 'home',
+    formatItem: (item) => item.label,
+    maxVisibleItems: HOME_MENU_ITEMS.length,
+  })
 }
 
 export function createHomeStartUpPage(

@@ -1,4 +1,11 @@
-import { FIND_MENU_ITEMS, HOME_MENU_ITEMS, PROBLEM_TABS, SETTINGS_MENU_ITEMS } from '../types/navigation'
+import {
+  FIND_MENU_ITEMS,
+  HOME_MENU_ITEMS,
+  PROBLEM_FAVORITE_MENU_INDEX,
+  PROBLEM_MENU_ITEM_COUNT,
+  PROBLEM_TABS,
+  SETTINGS_MENU_ITEMS,
+} from '../types/navigation'
 import type { NavigationState, ProblemListSource, ProblemTab } from '../types/navigation'
 import { DIFFICULTIES } from '../types/problem'
 import type { Problem, ProblemId } from '../types/problem'
@@ -117,6 +124,10 @@ function getProblemIndex(
 }
 
 function getSourceScreen(source: ProblemListSource | undefined): NavigationState['currentScreen'] {
+  if (source === 'favorites' || source === 'recent') {
+    return 'home'
+  }
+
   if (source === 'all') {
     return 'find'
   }
@@ -139,6 +150,14 @@ function getSourceScreen(source: ProblemListSource | undefined): NavigationState
 function getSourceIndex(state: NavigationState, context: NavigationContext): number {
   if (state.problemListSource === 'all') {
     return getFindMenuIndex('problemList')
+  }
+
+  if (state.problemListSource === 'favorites') {
+    return getHomeMenuIndex('favorites')
+  }
+
+  if (state.problemListSource === 'recent') {
+    return getHomeMenuIndex('recent')
   }
 
   if (state.problemListSource === 'pattern') {
@@ -168,9 +187,21 @@ function selectCurrentItem(
       selectedItem.screen !== 'patterns' &&
       selectedItem.screen !== 'collections' &&
       selectedItem.screen !== 'find' &&
+      selectedItem.screen !== 'favorites' &&
+      selectedItem.screen !== 'recent' &&
       selectedItem.screen !== 'settings'
     ) {
       return state
+    }
+
+    if (selectedItem.screen === 'favorites' || selectedItem.screen === 'recent') {
+      return {
+        ...state,
+        currentScreen: 'problemList',
+        problemListSource: selectedItem.screen,
+        selectedMenuIndex: 0,
+        codePageIndex: 0,
+      }
     }
 
     return {
@@ -406,6 +437,10 @@ function selectCurrentItem(
   }
 
   if (state.currentScreen === 'problem') {
+    if (state.selectedMenuIndex === PROBLEM_FAVORITE_MENU_INDEX) {
+      return state
+    }
+
     const selectedProblemTab = problemTabFromIndex(state.selectedMenuIndex)
 
     return {
@@ -630,12 +665,14 @@ export function transitionNavigation(
   }
 
   if (state.currentScreen === 'problem') {
-    const nextIndex = clampIndex(state.selectedMenuIndex + delta, PROBLEM_TABS.length)
+    const nextIndex = clampIndex(state.selectedMenuIndex + delta, PROBLEM_MENU_ITEM_COUNT)
 
     return {
       ...state,
       selectedMenuIndex: nextIndex,
-      selectedProblemTab: problemTabFromIndex(nextIndex),
+      selectedProblemTab: nextIndex === PROBLEM_FAVORITE_MENU_INDEX
+        ? state.selectedProblemTab
+        : problemTabFromIndex(nextIndex),
     }
   }
 

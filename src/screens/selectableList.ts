@@ -11,6 +11,7 @@ interface SelectableListOptions<T> {
   itemNamePrefix: string
   formatItem: (item: T) => string
   emptyMessage?: string
+  emptyLines?: string[]
   maxVisibleItems?: number
   maxTitleLength?: number
   maxItemLength?: number
@@ -23,12 +24,14 @@ export function createSelectableListTextObjects<T>({
   itemNamePrefix,
   formatItem,
   emptyMessage = 'NO ITEMS FOUND',
+  emptyLines,
   maxVisibleItems = DEFAULT_MAX_VISIBLE_ITEMS,
   maxTitleLength = 28,
   maxItemLength = 32,
 }: SelectableListOptions<T>) {
   const clampedIndex = Math.max(0, Math.min(items.length - 1, selectedIndex))
   const visibleWindow = getVisibleWindow(items, clampedIndex, maxVisibleItems)
+  const emptyContent = emptyLines ?? [emptyMessage]
 
   return createTextObjects([
     {
@@ -40,15 +43,13 @@ export function createSelectableListTextObjects<T>({
       isEventCapture: items.length === 0,
     },
     ...(items.length === 0
-      ? [
-          {
-            y: 82,
-            height: 24,
-            name: `${itemNamePrefix}-empty`,
-            content: emptyMessage,
-            textColor: 3,
-          },
-        ]
+      ? emptyContent.map((line, index) => ({
+          y: 82 + index * 28,
+          height: 24,
+          name: `${itemNamePrefix}-empty-${index}`,
+          content: line,
+          textColor: 3,
+        }))
       : visibleWindow.items.map((item, index) => {
           const itemIndex = visibleWindow.startIndex + index
           const selected = itemIndex === clampedIndex

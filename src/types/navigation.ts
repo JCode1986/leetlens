@@ -9,6 +9,7 @@ export const NAVIGATION_SCREENS = [
   'find',
   'search',
   'favorites',
+  'recent',
   'settings',
   'language',
   'voiceSearch',
@@ -32,6 +33,9 @@ export const PROBLEM_TABS = [
   { label: 'Edge Cases', screen: 'edgeCases' },
 ] as const
 
+export const PROBLEM_FAVORITE_MENU_INDEX = PROBLEM_TABS.length
+export const PROBLEM_MENU_ITEM_COUNT = PROBLEM_TABS.length + 1
+
 export type ProblemTab = (typeof PROBLEM_TABS)[number]['screen']
 
 export const HOME_MENU_ITEMS = [
@@ -40,6 +44,7 @@ export const HOME_MENU_ITEMS = [
   { label: 'Collections', screen: 'collections' },
   { label: 'Find', screen: 'find' },
   { label: 'Favorites', screen: 'favorites' },
+  { label: 'Recent', screen: 'recent' },
   { label: 'Settings', screen: 'settings' },
 ] as const
 
@@ -59,7 +64,14 @@ export const FIND_MENU_ITEMS = [
 
 export type FindMenuItem = (typeof FIND_MENU_ITEMS)[number]
 
-export type ProblemListSource = 'category' | 'pattern' | 'collection' | 'all' | 'difficulty'
+export type ProblemListSource =
+  | 'category'
+  | 'pattern'
+  | 'collection'
+  | 'all'
+  | 'difficulty'
+  | 'favorites'
+  | 'recent'
 export type ProblemEntrySource = 'problemList' | 'voiceMatch' | 'voiceResults'
 export type VoiceSearchStatus = 'idle' | 'listening' | 'processing' | 'error'
 export type VoiceResultMode = 'exact' | 'possible' | 'related' | 'none'

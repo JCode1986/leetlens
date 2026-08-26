@@ -1,5 +1,6 @@
 import { getProblemById } from '../services/problemService'
-import { PROBLEM_TABS } from '../types/navigation'
+import { isFavorite } from '../services/preferencesService'
+import { PROBLEM_FAVORITE_MENU_INDEX, PROBLEM_MENU_ITEM_COUNT, PROBLEM_TABS } from '../types/navigation'
 import type { NavigationState } from '../types/navigation'
 import { truncateLine } from '../utils/text'
 import { createTextObjects } from './g2Layout'
@@ -27,8 +28,9 @@ export function createProblemTextObjects(state: NavigationState) {
     ])
   }
 
-  const selectedIndex = Math.max(0, Math.min(PROBLEM_TABS.length - 1, state.selectedMenuIndex))
-  const patterns = truncateLine(problem.patterns.join(', '), 34)
+  const selectedIndex = Math.max(0, Math.min(PROBLEM_MENU_ITEM_COUNT - 1, state.selectedMenuIndex))
+  const patterns = truncateLine(problem.patterns.join(', '), 22)
+  const favoriteLabel = isFavorite(problem.id) ? 'Remove Favorite' : 'Add Favorite'
 
   return createTextObjects([
     {
@@ -40,32 +42,31 @@ export function createProblemTextObjects(state: NavigationState) {
     },
     {
       y: 48,
-      name: 'problem-difficulty',
-      content: problem.difficulty,
+      name: 'problem-meta',
+      content: `${problem.difficulty}  ${patterns}`,
       textColor: 3,
     },
     {
       y: 78,
-      name: 'problem-patterns',
-      content: `Patterns: ${patterns}`,
-      textColor: 3,
-    },
-    {
-      y: 108,
       name: 'problem-complexity',
       content: `Time: ${problem.complexity.time}  Space: ${problem.complexity.space}`,
       textColor: 3,
     },
-    ...PROBLEM_TABS.map((tab, index) => {
+    ...[
+      ...PROBLEM_TABS.map((tab) => tab.label),
+      favoriteLabel,
+    ].map((label, index) => {
       const selected = index === selectedIndex
 
       return {
         x: 50,
-        y: 150 + index * 28,
+        y: 122 + index * 28,
         width: 340,
         height: 24,
-        name: `problem-tab-${tab.screen}`,
-        content: `${selected ? '>' : ' '} ${tab.label}`,
+        name: index === PROBLEM_FAVORITE_MENU_INDEX
+          ? 'problem-favorite-toggle'
+          : `problem-tab-${PROBLEM_TABS[index]?.screen ?? index}`,
+        content: `${selected ? '>' : ' '} ${label}`,
         textColor: selected ? 4 : 3,
         isEventCapture: selected,
       }
