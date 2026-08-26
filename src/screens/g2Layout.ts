@@ -4,13 +4,23 @@ import {
   TextContainerProperty,
 } from '@evenrealities/even_hub_sdk'
 
-export const G2_DISPLAY = {
-  width: 576,
-  height: 288,
-} as const
-
-const MAX_TEXT_CONTAINERS = 8
+export const MAX_TEXT_CONTAINERS = 8
 const DEFAULT_TEXT_WIDTH = 504
+
+export const G2_TEXT_LAYOUT = {
+  defaultCharsPerLine: 31,
+  listItemCharsPerLine: 31,
+  listTitleCharsPerLine: 31,
+  listTitleY: 22,
+  listTitleLineHeight: 26,
+  listTitleGap: 12,
+  listItemX: 50,
+  listItemWidth: 470,
+  listItemLineHeight: 24,
+  listItemSpacing: 8,
+  listViewportBottom: 278,
+  continuationIndent: '  ',
+} as const
 
 export interface TextSpec {
   x?: number

@@ -1,0 +1,176 @@
+{
+  "id": 253,
+  "slug": "meeting-rooms-ii",
+  "title": "Meeting Rooms II",
+  "difficulty": "Medium",
+  "categories": [
+    "Intervals",
+    "Heap",
+    "Priority Queue"
+  ],
+  "patterns": [
+    "Heap / Priority Queue",
+    "Intervals"
+  ],
+  "aliases": [
+    "meeting rooms two",
+    "minimum meeting rooms",
+    "meeting room count"
+  ],
+  "keywords": [
+    "interval",
+    "meeting",
+    "overlap",
+    "rooms",
+    "heap",
+    "priority queue"
+  ],
+  "summary": "Solve Meeting Rooms II using the standard optimized interview approach.",
+  "hint": "Look for the Heap / Priority Queue structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Min Heap Intervals",
+    "idea": [
+      "Sort meetings by start time.",
+      "Track current ending times in a min heap.",
+      "Reuse rooms whose earliest meeting has ended."
+    ],
+    "complexity": {
+      "time": "O(n log n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Meeting Rooms II.",
+    "Use Heap / Priority Queue and Intervals to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "sort meetings by start",
+    "heap = empty min heap of end times",
+    "",
+    "for each meeting:",
+    "    if earliest end <= meeting start:",
+    "        pop earliest end",
+    "    push meeting end",
+    "",
+    "return heap size"
+  ],
+  "complexity": {
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function minMeetingRooms(intervals) { const starts = intervals.map(x => x[0]).sort((a,b)=>a-b); const ends = intervals.map(x => x[1]).sort((a,b)=>a-b); let used = 0, e = 0; for (const start of starts) { if (start >= ends[e]) e += 1; else used += 1; } return used; }"
+      ],
+      "g2": [
+        "function minMeetingRooms(intervals) {",
+        "  const starts = intervals.map(x => x[0]).sort((a,b)=>a-b);",
+        "  const ends = intervals.map(x => x[1]).sort((a,b)=>a-b);",
+        "  let used = 0, e = 0;",
+        "  for (const start of starts) {",
+        "    if (start >= ends[e]) {",
+        "      e += 1;",
+        "    }",
+        "    else {",
+        "      used += 1;",
+        "    }",
+        "  }",
+        "  return used;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def minMeetingRooms(self, intervals):",
+        "        starts = sorted(i[0] for i in intervals); ends = sorted(i[1] for i in intervals)",
+        "        used = end = 0",
+        "        for start in starts:",
+        "  if start >= ends[end]: end += 1",
+        "  else: used += 1",
+        "        return used"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def minMeetingRooms(self, intervals):",
+        "        starts = sorted(i[0] for i in intervals)",
+        "        ends = sorted(i[1] for i in intervals)",
+        "        used = end = 0",
+        "        for start in starts:",
+        "            if start >= ends[end]:",
+        "                end += 1",
+        "            else:",
+        "                used += 1",
+        "        return used"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int minMeetingRooms(int[][] intervals) { int n = intervals.length; int[] starts = new int[n], ends = new int[n]; for (int i = 0; i < n; i++) { starts[i] = intervals[i][0]; ends[i] = intervals[i][1]; } Arrays.sort(starts); Arrays.sort(ends); int used = 0, e = 0; for (int s : starts) { if (s >= ends[e]) e++; else used++; } return used; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int minMeetingRooms(int[][] intervals) {",
+        "    int n = intervals.length;",
+        "    int[] starts = new int[n],",
+        "      ends = new int[n];",
+        "    for (int i = 0; i < n; i++) {",
+        "      starts[i] = intervals[i][0];",
+        "      ends[i] = intervals[i][1];",
+        "    }",
+        "    Arrays.sort(starts);",
+        "    Arrays.sort(ends);",
+        "    int used = 0, e = 0;",
+        "    for (int s : starts) {",
+        "      if (s >= ends[e]) {",
+        "        e++;",
+        "      }",
+        "      else {",
+        "        used++;",
+        "      }",
+        "    }",
+        "    return used;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int minMeetingRooms(vector<vector<int>>& intervals) { vector<int> starts, ends; for (auto& in : intervals) { starts.push_back(in[0]); ends.push_back(in[1]); } sort(starts.begin(), starts.end()); sort(ends.begin(), ends.end()); int used = 0, e = 0; for (int s : starts) { if (s >= ends[e]) e++; else used++; } return used; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int minMeetingRooms(vector<vector<int>>& intervals) {",
+        "    vector<int> starts, ends;",
+        "    for (auto& in : intervals) {",
+        "      starts.push_back(in[0]);",
+        "      ends.push_back(in[1]);",
+        "    }",
+        "    sort(starts.begin(), starts.end());",
+        "    sort(ends.begin(), ends.end());",
+        "    int used = 0, e = 0;",
+        "    for (int s : starts) {",
+        "      if (s >= ends[e]) {",
+        "        e++;",
+        "      }",
+        "      else {",
+        "        used++;",
+        "      }",
+        "    }",
+        "    return used;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

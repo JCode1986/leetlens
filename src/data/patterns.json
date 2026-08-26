@@ -1,8 +1,159 @@
 {
-  "Hash Map": [1, 3],
-  "Sliding Window": [3],
-  "Stack": [20],
-  "DFS": [104],
-  "Recursion": [104],
-  "Iterative Pointer Manipulation": [206]
+  "Hash Map": [
+    1,
+    3,
+    49,
+    242,
+    347
+  ],
+  "Linked List Manipulation": [
+    2,
+    143
+  ],
+  "Sliding Window": [
+    3,
+    76,
+    424
+  ],
+  "Two Pointers": [
+    5,
+    11,
+    15,
+    19,
+    125
+  ],
+  "Sorting": [
+    15
+  ],
+  "Stack": [
+    20
+  ],
+  "Iterative Pointer Manipulation": [
+    21,
+    206
+  ],
+  "Heap / Priority Queue": [
+    23,
+    253,
+    295,
+    347
+  ],
+  "Binary Search": [
+    33,
+    153,
+    300,
+    704
+  ],
+  "Backtracking": [
+    39,
+    79,
+    212
+  ],
+  "Dynamic Programming": [
+    53,
+    70,
+    152,
+    198,
+    300,
+    322,
+    338
+  ],
+  "Greedy": [
+    55,
+    435
+  ],
+  "Intervals": [
+    56,
+    57,
+    252,
+    253,
+    435
+  ],
+  "2D Dynamic Programming": [
+    62,
+    1143
+  ],
+  "1D Dynamic Programming": [
+    91,
+    139,
+    213,
+    377,
+    416
+  ],
+  "DFS": [
+    98,
+    104,
+    200,
+    211,
+    226,
+    297,
+    417
+  ],
+  "Tree Recursion": [
+    98,
+    100,
+    105,
+    124,
+    226,
+    297,
+    572
+  ],
+  "BST": [
+    98,
+    230,
+    235
+  ],
+  "BFS": [
+    102,
+    200,
+    417
+  ],
+  "Recursion": [
+    104,
+    226
+  ],
+  "One Pass": [
+    121
+  ],
+  "Hash Set": [
+    128,
+    217
+  ],
+  "Graph Traversal": [
+    133,
+    200,
+    323,
+    417
+  ],
+  "Bit Manipulation": [
+    136,
+    190,
+    191,
+    268,
+    338,
+    371
+  ],
+  "Fast / Slow Pointers": [
+    141,
+    143
+  ],
+  "Topological Sort": [
+    207,
+    269
+  ],
+  "Trie": [
+    208,
+    211,
+    212
+  ],
+  "Prefix / Suffix": [
+    238
+  ],
+  "Union Find": [
+    261,
+    323
+  ],
+  "String Encoding": [
+    271
+  ]
 }

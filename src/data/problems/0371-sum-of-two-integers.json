@@ -1,0 +1,131 @@
+{
+  "id": 371,
+  "slug": "sum-of-two-integers",
+  "title": "Sum of Two Integers",
+  "difficulty": "Medium",
+  "categories": [
+    "Bit Manipulation"
+  ],
+  "patterns": [
+    "Bit Manipulation"
+  ],
+  "aliases": [
+    "sum of two integers",
+    "add without plus",
+    "bitwise addition"
+  ],
+  "keywords": [
+    "bits",
+    "xor",
+    "carry",
+    "addition"
+  ],
+  "summary": "Solve Sum of Two Integers using the standard optimized interview approach.",
+  "hint": "Look for the Bit Manipulation structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Bit Manipulation",
+    "idea": [
+      "XOR adds bits without carry.",
+      "AND finds carry bits.",
+      "Repeat until no carry remains."
+    ],
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Sum of Two Integers.",
+    "Use Bit Manipulation to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "while b is not zero:",
+    "    carry = a and b",
+    "    a = a xor b",
+    "    b = carry shifted left",
+    "",
+    "return a"
+  ],
+  "complexity": {
+    "time": "O(1)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function getSum(a, b) { while (b !== 0) { const carry = (a & b) << 1; a = a ^ b; b = carry; } return a; }"
+      ],
+      "g2": [
+        "function getSum(a, b) {",
+        "  while (b !== 0) {",
+        "    const carry = (a & b) << 1;",
+        "    a = a ^ b;",
+        "    b = carry;",
+        "  }",
+        "  return a;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def getSum(self, a, b):",
+        "        mask = 0xffffffff",
+        "        while b & mask:",
+        "  a, b = (a ^ b) & mask, ((a & b) << 1) & mask",
+        "        return a if a <= 0x7fffffff else ~(a ^ mask)"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def getSum(self, a, b):",
+        "        mask = 0xffffffff",
+        "        while b & mask:",
+        "            a, b = (a ^ b) & mask, ((a & b) << 1) & mask",
+        "        return a if a <= 0x7fffffff else ~(a ^ mask)"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int getSum(int a, int b) { while (b != 0) { int carry = (a & b) << 1; a ^= b; b = carry; } return a; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int getSum(int a, int b) {",
+        "    while (b != 0) {",
+        "      int carry = (a & b) << 1;",
+        "      a ^= b;",
+        "      b = carry;",
+        "    }",
+        "    return a;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int getSum(int a, int b) { while (b != 0) { unsigned carry = ((unsigned)(a & b)) << 1; a ^= b; b = carry; } return a; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int getSum(int a, int b) {",
+        "    while (b != 0) {",
+        "      unsigned carry = ((unsigned)(a & b)) << 1;",
+        "      a ^= b;",
+        "      b = carry;",
+        "    }",
+        "    return a;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

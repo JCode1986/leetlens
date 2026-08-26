@@ -1,0 +1,183 @@
+{
+  "id": 295,
+  "slug": "find-median-from-data-stream",
+  "title": "Find Median from Data Stream",
+  "difficulty": "Hard",
+  "categories": [
+    "Heap",
+    "Priority Queue"
+  ],
+  "patterns": [
+    "Heap / Priority Queue"
+  ],
+  "aliases": [
+    "median data stream",
+    "find median from stream",
+    "running median"
+  ],
+  "keywords": [
+    "heap",
+    "priority queue",
+    "median",
+    "stream"
+  ],
+  "summary": "Solve Find Median from Data Stream using the standard optimized interview approach.",
+  "hint": "Look for the Heap / Priority Queue structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Two Heaps",
+    "idea": [
+      "Max heap stores the lower half.",
+      "Min heap stores the upper half.",
+      "Balance sizes so median is on top."
+    ],
+    "complexity": {
+      "time": "O(log n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Find Median from Data Stream.",
+    "Use Heap / Priority Queue to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "lower = max heap",
+    "upper = min heap",
+    "",
+    "add number:",
+    "    push into lower or upper",
+    "    rebalance heap sizes",
+    "",
+    "find median:",
+    "    if sizes are equal:",
+    "        average both tops",
+    "    else:",
+    "        return top of larger heap"
+  ],
+  "complexity": {
+    "time": "O(log n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "class MedianFinder { constructor(){ this.values = []; } addNum(num){ let l=0,r=this.values.length; while(l<r){ const m=(l+r)>>1; if(this.values[m]<num) l=m+1; else r=m; } this.values.splice(l,0,num); } findMedian(){ const n=this.values.length, m=n>>1; return n%2 ? this.values[m] : (this.values[m-1]+this.values[m])/2; } }"
+      ],
+      "g2": [
+        "class MedianFinder {",
+        "  constructor() {",
+        "    this.values = [];",
+        "  }",
+        "  addNum(num) {",
+        "    let l=0,r=this.values.length;",
+        "    while(l<r) {",
+        "      const m=(l+r)>>1;",
+        "      if(this.values[m]<num) {",
+        "        l=m+1;",
+        "      }",
+        "      else {",
+        "        r=m;",
+        "      }",
+        "    }",
+        "    this.values.splice(l,0,num);",
+        "  }",
+        "  findMedian() {",
+        "    const n=this.values.length, m=n>>1;",
+        "    return n%2 ?",
+        "      this.values[m] :",
+        "      (this.values[m-1]+this.values[m])/2;",
+        "  }",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class MedianFinder:",
+        "    def __init__(self):",
+        "        self.small = []",
+        "        self.large = []",
+        "    def addNum(self, num):",
+        "        heappush(self.small, -num)",
+        "        heappush(self.large, -heappop(self.small))",
+        "        if len(self.large) > len(self.small): heappush(self.small, -heappop(self.large))",
+        "    def findMedian(self):",
+        "        if len(self.small) > len(self.large): return -self.small[0]",
+        "        return (-self.small[0] + self.large[0]) / 2"
+      ],
+      "g2": [
+        "class MedianFinder:",
+        "    def __init__(self):",
+        "        self.small = []",
+        "        self.large = []",
+        "    def addNum(self, num):",
+        "        heappush(self.small, -num)",
+        "        heappush(self.large, -heappop(self.small))",
+        "        if len(self.large) > len(self.small):",
+        "            heappush(self.small, -heappop(self.large))",
+        "    def findMedian(self):",
+        "        if len(self.small) > len(self.large):",
+        "            return -self.small[0]",
+        "        return (-self.small[0] + self.large[0]) / 2"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class MedianFinder { PriorityQueue<Integer> small = new PriorityQueue<>(Collections.reverseOrder()); PriorityQueue<Integer> large = new PriorityQueue<>(); public void addNum(int num) { small.add(num); large.add(small.remove()); if (large.size() > small.size()) small.add(large.remove()); } public double findMedian() { if (small.size() > large.size()) return small.peek(); return (small.peek() + large.peek()) / 2.0; } }"
+      ],
+      "g2": [
+        "class MedianFinder {",
+        "  PriorityQueue<Integer> small = new PriorityQueue<>(Collections.reverseOrder());",
+        "  PriorityQueue<Integer> large = new PriorityQueue<>();",
+        "  public void addNum(int num) {",
+        "    small.add(num);",
+        "    large.add(small.remove());",
+        "    if (large.size() > small.size()) {",
+        "      small.add(large.remove());",
+        "    }",
+        "  }",
+        "  public double findMedian() {",
+        "    if (small.size() > large.size()) {",
+        "      return small.peek();",
+        "    }",
+        "    return (small.peek() + large.peek()) / 2.0;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class MedianFinder { priority_queue<int> small; priority_queue<int, vector<int>, greater<int>> large; public: void addNum(int num) { small.push(num); large.push(small.top()); small.pop(); if (large.size() > small.size()) { small.push(large.top()); large.pop(); } } double findMedian() { if (small.size() > large.size()) return small.top(); return (small.top() + large.top()) / 2.0; } };"
+      ],
+      "g2": [
+        "class MedianFinder {",
+        "  priority_queue<int> small;",
+        "  priority_queue<int, vector<int>,",
+        "    greater<int>> large;",
+        "public:",
+        "  void addNum(int num) {",
+        "    small.push(num);",
+        "    large.push(small.top());",
+        "    small.pop();",
+        "    if (large.size() > small.size()) {",
+        "      small.push(large.top());",
+        "      large.pop();",
+        "    }",
+        "  }",
+        "  double findMedian() {",
+        "    if (small.size() > large.size()) {",
+        "      return small.top();",
+        "    }",
+        "    return (small.top() + large.top()) / 2.0;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

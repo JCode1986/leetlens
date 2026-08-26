@@ -1,0 +1,196 @@
+{
+  "id": 261,
+  "slug": "graph-valid-tree",
+  "title": "Graph Valid Tree",
+  "difficulty": "Medium",
+  "categories": [
+    "Graphs"
+  ],
+  "patterns": [
+    "Union Find"
+  ],
+  "aliases": [
+    "graph valid tree",
+    "valid tree",
+    "is graph a tree"
+  ],
+  "keywords": [
+    "graph",
+    "union find",
+    "cycle",
+    "connected",
+    "tree"
+  ],
+  "summary": "Solve Graph Valid Tree using the standard optimized interview approach.",
+  "hint": "Look for the Union Find structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Union Find",
+    "idea": [
+      "A valid tree has exactly n - 1 edges.",
+      "Union endpoints and reject cycles.",
+      "If no cycle appears, the graph is connected."
+    ],
+    "complexity": {
+      "time": "O(v + e)",
+      "space": "O(v)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Graph Valid Tree.",
+    "Use Union Find to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "if edge count is not n - 1:",
+    "    return false",
+    "",
+    "parent = each node itself",
+    "",
+    "for each edge:",
+    "    if endpoints already connected:",
+    "        return false",
+    "    union endpoints",
+    "",
+    "return true"
+  ],
+  "complexity": {
+    "time": "O(v + e)",
+    "space": "O(v)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function validTree(n, edges) { if (edges.length !== n - 1) return false; const parent = Array.from({ length: n }, (_, i) => i); const find = x => parent[x] === x ? x : parent[x] = find(parent[x]); for (const [a, b] of edges) { const ra = find(a), rb = find(b); if (ra === rb) return false; parent[ra] = rb; } return true; }"
+      ],
+      "g2": [
+        "function validTree(n, edges) {",
+        "  if (edges.length !== n - 1) {",
+        "    return false;",
+        "  }",
+        "  const parent = Array.from( {",
+        "    length: n",
+        "  }",
+        "  , (_, i) => i);",
+        "  const find = x => parent[x] === x ?",
+        "    x : parent[x] = find(parent[x]);",
+        "  for (const [a, b] of edges) {",
+        "    const ra = find(a), rb = find(b);",
+        "    if (ra === rb) {",
+        "      return false;",
+        "    }",
+        "    parent[ra] = rb;",
+        "  }",
+        "  return true;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def validTree(self, n, edges):",
+        "        if len(edges) != n - 1: return False",
+        "        parent = list(range(n))",
+        "        def find(x):",
+        "  while parent[x] != x:",
+        "      parent[x] = parent[parent[x]]; x = parent[x]",
+        "  return x",
+        "        for a, b in edges:",
+        "  ra, rb = find(a), find(b)",
+        "  if ra == rb: return False",
+        "  parent[ra] = rb",
+        "        return True"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def validTree(self, n, edges):",
+        "        if len(edges) != n - 1:",
+        "            return False",
+        "        parent = list(range(n))",
+        "        def find(x):",
+        "            while parent[x] != x:",
+        "                parent[x] = parent[parent[x]]",
+        "                x = parent[x]",
+        "                return x",
+        "        for a, b in edges:",
+        "            ra, rb = find(a), find(b)",
+        "            if ra == rb:",
+        "                return False",
+        "            parent[ra] = rb",
+        "        return True"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public boolean validTree(int n, int[][] edges) { if (edges.length != n - 1) return false; int[] parent = new int[n]; for (int i = 0; i < n; i++) parent[i] = i; for (int[] e : edges) { int a = find(parent, e[0]), b = find(parent, e[1]); if (a == b) return false; parent[a] = b; } return true; } private int find(int[] p, int x) { while (p[x] != x) { p[x] = p[p[x]]; x = p[x]; } return x; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean validTree(int n, int[][] edges) {",
+        "    if (edges.length != n - 1) {",
+        "      return false;",
+        "    }",
+        "    int[] parent = new int[n];",
+        "    for (int i = 0; i < n; i++) {",
+        "      parent[i] = i;",
+        "    }",
+        "    for (int[] e : edges) {",
+        "      int a = find(parent, e[0]),",
+        "        b = find(parent, e[1]);",
+        "      if (a == b) {",
+        "        return false;",
+        "      }",
+        "      parent[a] = b;",
+        "    }",
+        "    return true;",
+        "  }",
+        "  private int find(int[] p, int x) {",
+        "    while (p[x] != x) {",
+        "      p[x] = p[p[x]];",
+        "      x = p[x];",
+        "    }",
+        "    return x;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { int find(vector<int>& p, int x) { while (p[x] != x) { p[x] = p[p[x]]; x = p[x]; } return x; } public: bool validTree(int n, vector<vector<int>>& edges) { if (edges.size() != n - 1) return false; vector<int> p(n); iota(p.begin(), p.end(), 0); for (auto& e : edges) { int a = find(p,e[0]), b = find(p,e[1]); if (a == b) return false; p[a] = b; } return true; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "  int find(vector<int>& p, int x) {",
+        "    while (p[x] != x) {",
+        "      p[x] = p[p[x]];",
+        "      x = p[x];",
+        "    }",
+        "    return x;",
+        "  }",
+        "public:",
+        "  bool validTree(int n, vector<vector<int>>& edges) {",
+        "    if (edges.size() != n - 1) {",
+        "      return false;",
+        "    }",
+        "    vector<int> p(n);",
+        "    iota(p.begin(), p.end(), 0);",
+        "    for (auto& e : edges) {",
+        "      int a = find(p,e[0]), b = find(p,e[1]);",
+        "      if (a == b) {",
+        "        return false;",
+        "      }",
+        "      p[a] = b;",
+        "    }",
+        "    return true;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

@@ -71,6 +71,9 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
     ])
   }
 
+  const heardLine = truncateLine(`HEARD ${transcriptLines[0] ?? ''}`, 31)
+  const menuY = 186
+
   return createTextObjects([
     {
       y: 12,
@@ -83,20 +86,20 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
       y: 44,
       height: 22,
       name: 'voice-match-heard',
-      content: `HEARD ${truncateLine(transcriptLines[0] ?? '', 23)}`,
+      content: heardLine,
       textColor: 3,
     },
     {
-      y: 80,
-      height: 28,
+      y: 78,
+      height: 26,
       name: 'voice-match-problem',
-      content: truncateLine(`#${problem.id} ${problem.title.toUpperCase()}`, 30),
+      content: truncateLine(`#${problem.id} ${problem.title.toUpperCase()}`, 31),
       textColor: 4,
     },
     {
-      y: 114,
+      y: 112,
       name: 'voice-match-meta',
-      content: `${problem.difficulty}  ${truncateLine(problem.patterns[0] ?? '', 20)}`,
+      content: truncateLine(`${problem.difficulty}  ${problem.patterns[0] ?? ''}`, 31),
       textColor: 3,
     },
     ...EXACT_MENU_ITEMS.map((item, index) => {
@@ -104,7 +107,7 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
 
       return {
         x: 50,
-        y: 166 + index * 30,
+        y: menuY + index * 30,
         name: `voice-match-${index}`,
         content: `${selected ? '>' : ' '} ${item}`,
         textColor: selected ? 4 : 3,

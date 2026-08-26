@@ -1,0 +1,213 @@
+{
+  "id": 79,
+  "slug": "word-search",
+  "title": "Word Search",
+  "difficulty": "Medium",
+  "categories": [
+    "Matrix",
+    "Backtracking"
+  ],
+  "patterns": [
+    "Backtracking"
+  ],
+  "aliases": [
+    "word search",
+    "find word in board",
+    "grid word search"
+  ],
+  "keywords": [
+    "backtracking",
+    "matrix",
+    "grid",
+    "dfs",
+    "word"
+  ],
+  "summary": "Solve Word Search using the standard optimized interview approach.",
+  "hint": "Look for the Backtracking structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Backtracking",
+    "idea": [
+      "Start DFS from each matching cell.",
+      "Mark a cell while it is on the path.",
+      "Backtrack if the next character cannot be matched."
+    ],
+    "complexity": {
+      "time": "O(m * n * 4^l)",
+      "space": "O(l)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Word Search.",
+    "Use Backtracking to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "for each cell:",
+    "    if dfs(cell, first index):",
+    "        return true",
+    "",
+    "dfs(row, col, index):",
+    "    if index equals word length:",
+    "        return true",
+    "    if cell is invalid or mismatch:",
+    "        return false",
+    "",
+    "    mark cell used",
+    "    search four neighbors",
+    "    unmark cell",
+    "    return any neighbor works",
+    "",
+    "return false"
+  ],
+  "complexity": {
+    "time": "O(m * n * 4^l)",
+    "space": "O(l)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function exist(board, word) {",
+        "  const rows = board.length, cols = board[0].length;",
+        "  function dfs(r, c, i) { if (i === word.length) return true; if (r < 0 || c < 0 || r === rows || c === cols || board[r][c] !== word[i]) return false; const ch = board[r][c]; board[r][c] = '#'; const ok = dfs(r + 1, c, i + 1) || dfs(r - 1, c, i + 1) || dfs(r, c + 1, i + 1) || dfs(r, c - 1, i + 1); board[r][c] = ch; return ok; }",
+        "  for (let r = 0; r < rows; r += 1) for (let c = 0; c < cols; c += 1) if (dfs(r, c, 0)) return true;",
+        "  return false;",
+        "}"
+      ],
+      "g2": [
+        "function exist(board, word) {",
+        "  const rows = board.length,",
+        "    cols = board[0].length;",
+        "  function dfs(r, c, i) {",
+        "    if (i === word.length) {",
+        "      return true;",
+        "    }",
+        "    if (r < 0 || c < 0 || r === rows || c === cols || board[r][c] !== word[i]) {",
+        "      return false;",
+        "    }",
+        "    const ch = board[r][c];",
+        "    board[r][c] = '#';",
+        "    const ok = dfs(r + 1, c,",
+        "      i + 1) || dfs(r - 1, c, i + 1) || dfs(r,",
+        "      c + 1, i + 1) || dfs(r, c - 1, i + 1);",
+        "    board[r][c] = ch;",
+        "    return ok;",
+        "  }",
+        "  for (let r = 0; r < rows; r += 1) {",
+        "    for (let c = 0; c < cols; c += 1) {",
+        "      if (dfs(r, c, 0)) {",
+        "        return true;",
+        "      }",
+        "    }",
+        "  }",
+        "  return false;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def exist(self, board, word):",
+        "        rows, cols = len(board), len(board[0])",
+        "        def dfs(r, c, i):",
+        "            if i == len(word): return True",
+        "            if r < 0 or c < 0 or r == rows or c == cols or board[r][c] != word[i]: return False",
+        "            ch = board[r][c]; board[r][c] = '#'",
+        "            ok = dfs(r + 1, c, i + 1) or dfs(r - 1, c, i + 1) or dfs(r, c + 1, i + 1) or dfs(r, c - 1, i + 1)",
+        "            board[r][c] = ch",
+        "            return ok",
+        "        return any(dfs(r, c, 0) for r in range(rows) for c in range(cols))"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def exist(self, board, word):",
+        "        rows, cols = len(board), len(board[0])",
+        "        def dfs(r, c, i):",
+        "            if i == len(word):",
+        "                return True",
+        "            if r < 0 or c < 0 or r == rows or c == cols or board[r][c] != word[i]:",
+        "                return False",
+        "            ch = board[r][c]",
+        "            board[r][c] = '#'",
+        "            ok = dfs(r + 1, c, i + 1) or dfs(r - 1, c, i + 1) or dfs(r, c + 1, i + 1) or dfs(r, c - 1, i + 1)",
+        "            board[r][c] = ch",
+        "            return ok",
+        "        return any(dfs(r, c, 0) for r in range(rows) for c in range(cols))"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public boolean exist(char[][] board, String word) { for (int r = 0; r < board.length; r++) for (int c = 0; c < board[0].length; c++) if (dfs(board, word, r, c, 0)) return true; return false; } private boolean dfs(char[][] b, String w, int r, int c, int i) { if (i == w.length()) return true; if (r < 0 || c < 0 || r == b.length || c == b[0].length || b[r][c] != w.charAt(i)) return false; char ch = b[r][c]; b[r][c] = '#'; boolean ok = dfs(b, w, r + 1, c, i + 1) || dfs(b, w, r - 1, c, i + 1) || dfs(b, w, r, c + 1, i + 1) || dfs(b, w, r, c - 1, i + 1); b[r][c] = ch; return ok; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean exist(char[][] board, String word) {",
+        "    for (int r = 0; r < board.length; r++) {",
+        "      for (int c = 0; c < board[0].length; c++) {",
+        "        if (dfs(board, word, r, c, 0)) {",
+        "          return true;",
+        "        }",
+        "      }",
+        "    }",
+        "    return false;",
+        "  }",
+        "  private boolean dfs(char[][] b, String w, int r, int c, int i) {",
+        "    if (i == w.length()) {",
+        "      return true;",
+        "    }",
+        "    if (r < 0 || c < 0 || r == b.length || c == b[0].length || b[r][c] != w.charAt(i)) {",
+        "      return false;",
+        "    }",
+        "    char ch = b[r][c];",
+        "    b[r][c] = '#';",
+        "    boolean ok = dfs(b, w, r + 1, c,",
+        "      i + 1) || dfs(b, w, r - 1, c,",
+        "      i + 1) || dfs(b, w, r, c + 1,",
+        "      i + 1) || dfs(b, w, r, c - 1, i + 1);",
+        "    b[r][c] = ch;",
+        "    return ok;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { bool dfs(vector<vector<char>>& b, string& w, int r, int c, int i) { if (i == w.size()) return true; if (r < 0 || c < 0 || r == b.size() || c == b[0].size() || b[r][c] != w[i]) return false; char ch = b[r][c]; b[r][c] = '#'; bool ok = dfs(b,w,r+1,c,i+1)||dfs(b,w,r-1,c,i+1)||dfs(b,w,r,c+1,i+1)||dfs(b,w,r,c-1,i+1); b[r][c] = ch; return ok; } public: bool exist(vector<vector<char>>& board, string word) { for (int r=0;r<board.size();r++) for (int c=0;c<board[0].size();c++) if (dfs(board,word,r,c,0)) return true; return false; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "  bool dfs(vector<vector<char>>& b, string& w, int r, int c, int i) {",
+        "    if (i == w.size()) {",
+        "      return true;",
+        "    }",
+        "    if (r < 0 || c < 0 || r == b.size() || c == b[0].size() || b[r][c] != w[i]) {",
+        "      return false;",
+        "    }",
+        "    char ch = b[r][c];",
+        "    b[r][c] = '#';",
+        "    bool ok = dfs(b,w,r+1,c,i+1)||dfs(b,w,r-1,c,i+1)||dfs(b,w,r,c+1,i+1)||dfs(b,w,r,c-1,i+1);",
+        "    b[r][c] = ch;",
+        "    return ok;",
+        "  }",
+        "public:",
+        "  bool exist(vector<vector<char>>& board, string word) {",
+        "    for (int r=0;r<board.size();r++) {",
+        "      for (int c=0;c<board[0].size();c++) {",
+        "        if (dfs(board,word,r,c,0)) {",
+        "          return true;",
+        "        }",
+        "      }",
+        "    }",
+        "    return false;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

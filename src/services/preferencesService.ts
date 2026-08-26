@@ -6,7 +6,7 @@ const DEFAULT_LANGUAGE: SelectableProgrammingLanguage = 'javascript'
 const DEFAULT_LANGUAGE_STORAGE_KEY = 'leetlens.defaultLanguage'
 const FAVORITES_STORAGE_KEY = 'leetlens.favorites'
 const RECENT_PROBLEMS_STORAGE_KEY = 'leetlens.recentProblems'
-export const RECENT_PROBLEMS_LIMIT = 20
+const RECENT_PROBLEMS_LIMIT = 20
 
 let memoryFavoriteIds: ProblemId[] = []
 let memoryRecentProblemIds: ProblemId[] = []
@@ -121,7 +121,7 @@ export function isFavorite(problemId: ProblemId): boolean {
   return getFavoriteIds().includes(problemId)
 }
 
-export function addFavorite(problemId: ProblemId): ProblemId[] {
+function addFavorite(problemId: ProblemId): ProblemId[] {
   const favoriteIds = getFavoriteIds()
 
   if (!favoriteIds.includes(problemId)) {
@@ -137,7 +137,7 @@ export function addFavorite(problemId: ProblemId): ProblemId[] {
   return getFavoriteIds()
 }
 
-export function removeFavorite(problemId: ProblemId): ProblemId[] {
+function removeFavorite(problemId: ProblemId): ProblemId[] {
   const favoriteIds = getFavoriteIds().filter((id) => id !== problemId)
 
   writeProblemIds(FAVORITES_STORAGE_KEY, favoriteIds, (ids) => {

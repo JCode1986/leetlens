@@ -25,5 +25,9 @@ export function createHintTextObjects(state: NavigationState) {
 }
 
 export function getHintPageCount(state: NavigationState): number {
-  return getDetailPageCount(getHintLines(state))
+  const problem = state.selectedProblemId === undefined
+    ? undefined
+    : getProblemById(state.selectedProblemId)
+
+  return getDetailPageCount(problem?.title ?? 'Problem', getHintLines(state))
 }

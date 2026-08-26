@@ -1,0 +1,166 @@
+{
+  "id": 152,
+  "slug": "maximum-product-subarray",
+  "title": "Maximum Product Subarray",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Dynamic Programming"
+  ],
+  "patterns": [
+    "Dynamic Programming"
+  ],
+  "aliases": [
+    "maximum product subarray",
+    "max product subarray",
+    "largest product subarray"
+  ],
+  "keywords": [
+    "array",
+    "product",
+    "dynamic programming",
+    "negative"
+  ],
+  "summary": "Solve Maximum Product Subarray using the standard optimized interview approach.",
+  "hint": "Look for the Dynamic Programming structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Dynamic Programming",
+    "idea": [
+      "Negative numbers can swap min and max products.",
+      "Track both best and worst product ending here.",
+      "Update the global maximum each step."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Maximum Product Subarray.",
+    "Use Dynamic Programming to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "maxHere = first value",
+    "minHere = first value",
+    "best = first value",
+    "",
+    "for each next value:",
+    "    if value is negative:",
+    "        swap maxHere and minHere",
+    "",
+    "    maxHere = max(value, maxHere * value)",
+    "    minHere = min(value, minHere * value)",
+    "    best = max(best, maxHere)",
+    "",
+    "return best"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function maxProduct(nums) { let best = nums[0], hi = nums[0], lo = nums[0]; for (let i = 1; i < nums.length; i += 1) { const n = nums[i]; if (n < 0) [hi, lo] = [lo, hi]; hi = Math.max(n, hi * n); lo = Math.min(n, lo * n); best = Math.max(best, hi); } return best; }"
+      ],
+      "g2": [
+        "function maxProduct(nums) {",
+        "  let best = nums[0], hi = nums[0],",
+        "    lo = nums[0];",
+        "  for (let i = 1; i < nums.length; i += 1) {",
+        "    const n = nums[i];",
+        "    if (n < 0) {",
+        "      [hi, lo] = [lo, hi];",
+        "    }",
+        "    hi = Math.max(n, hi * n);",
+        "    lo = Math.min(n, lo * n);",
+        "    best = Math.max(best, hi);",
+        "  }",
+        "  return best;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def maxProduct(self, nums):",
+        "        best = hi = lo = nums[0]",
+        "        for n in nums[1:]:",
+        "            if n < 0: hi, lo = lo, hi",
+        "            hi = max(n, hi * n)",
+        "            lo = min(n, lo * n)",
+        "            best = max(best, hi)",
+        "        return best"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def maxProduct(self, nums):",
+        "        best = hi = lo = nums[0]",
+        "        for n in nums[1:]:",
+        "            if n < 0:",
+        "                hi, lo = lo, hi",
+        "            hi = max(n, hi * n)",
+        "            lo = min(n, lo * n)",
+        "            best = max(best, hi)",
+        "        return best"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int maxProduct(int[] nums) { int best = nums[0], hi = nums[0], lo = nums[0]; for (int i = 1; i < nums.length; i++) { int n = nums[i]; if (n < 0) { int tmp = hi; hi = lo; lo = tmp; } hi = Math.max(n, hi * n); lo = Math.min(n, lo * n); best = Math.max(best, hi); } return best; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int maxProduct(int[] nums) {",
+        "    int best = nums[0], hi = nums[0],",
+        "      lo = nums[0];",
+        "    for (int i = 1; i < nums.length; i++) {",
+        "      int n = nums[i];",
+        "      if (n < 0) {",
+        "        int tmp = hi;",
+        "        hi = lo;",
+        "        lo = tmp;",
+        "      }",
+        "      hi = Math.max(n, hi * n);",
+        "      lo = Math.min(n, lo * n);",
+        "      best = Math.max(best, hi);",
+        "    }",
+        "    return best;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int maxProduct(vector<int>& nums) { int best = nums[0], hi = nums[0], lo = nums[0]; for (int i = 1; i < nums.size(); i++) { int n = nums[i]; if (n < 0) swap(hi, lo); hi = max(n, hi * n); lo = min(n, lo * n); best = max(best, hi); } return best; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int maxProduct(vector<int>& nums) {",
+        "    int best = nums[0], hi = nums[0],",
+        "      lo = nums[0];",
+        "    for (int i = 1; i < nums.size(); i++) {",
+        "      int n = nums[i];",
+        "      if (n < 0) {",
+        "        swap(hi, lo);",
+        "      }",
+        "      hi = max(n, hi * n);",
+        "      lo = min(n, lo * n);",
+        "      best = max(best, hi);",
+        "    }",
+        "    return best;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

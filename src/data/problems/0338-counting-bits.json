@@ -1,0 +1,130 @@
+{
+  "id": 338,
+  "slug": "counting-bits",
+  "title": "Counting Bits",
+  "difficulty": "Easy",
+  "categories": [
+    "Dynamic Programming",
+    "Bit Manipulation"
+  ],
+  "patterns": [
+    "Bit Manipulation",
+    "Dynamic Programming"
+  ],
+  "aliases": [
+    "counting bits",
+    "count bits",
+    "bits count array"
+  ],
+  "keywords": [
+    "bits",
+    "dynamic programming",
+    "popcount",
+    "binary"
+  ],
+  "summary": "Solve Counting Bits using the standard optimized interview approach.",
+  "hint": "Look for the Bit Manipulation structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Bit DP",
+    "idea": [
+      "The count for i reuses i without its lowest bit.",
+      "dp[i] = dp[i >> 1] plus the lowest bit.",
+      "Build answers from 0 to n."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Counting Bits.",
+    "Use Bit Manipulation and Dynamic Programming to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "bits[0] = 0",
+    "",
+    "for i from 1 to n:",
+    "    bits[i] = bits[i shifted right]",
+    "        plus lowest bit of i",
+    "",
+    "return bits"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function countBits(n) { const dp = new Array(n + 1).fill(0); for (let i = 1; i <= n; i += 1) dp[i] = dp[i >> 1] + (i & 1); return dp; }"
+      ],
+      "g2": [
+        "function countBits(n) {",
+        "  const dp = new Array(n + 1).fill(0);",
+        "  for (let i = 1; i <= n; i += 1) {",
+        "    dp[i] = dp[i >> 1] + (i & 1);",
+        "  }",
+        "  return dp;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def countBits(self, n):",
+        "        dp = [0] * (n + 1)",
+        "        for i in range(1, n + 1): dp[i] = dp[i >> 1] + (i & 1)",
+        "        return dp"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def countBits(self, n):",
+        "        dp = [0] * (n + 1)",
+        "        for i in range(1, n + 1):",
+        "            dp[i] = dp[i >> 1] + (i & 1)",
+        "        return dp"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int[] countBits(int n) { int[] dp = new int[n + 1]; for (int i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1); return dp; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int[] countBits(int n) {",
+        "    int[] dp = new int[n + 1];",
+        "    for (int i = 1; i <= n; i++) {",
+        "      dp[i] = dp[i >> 1] + (i & 1);",
+        "    }",
+        "    return dp;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: vector<int> countBits(int n) { vector<int> dp(n + 1); for (int i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1); return dp; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  vector<int> countBits(int n) {",
+        "    vector<int> dp(n + 1);",
+        "    for (int i = 1; i <= n; i++) {",
+        "      dp[i] = dp[i >> 1] + (i & 1);",
+        "    }",
+        "    return dp;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

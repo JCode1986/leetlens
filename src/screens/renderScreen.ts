@@ -13,8 +13,14 @@ import { createCollectionsTextObjects } from './collections'
 import { createPatternsTextObjects } from './patterns'
 import { createProblemTextObjects } from './problem'
 import { createProblemListTextObjects } from './problemList'
+import { createPseudocodeTextObjects, getPseudocodePageCount } from './pseudocode'
+import { createQuickAnswerTextObjects, getQuickAnswerPageCount } from './quickAnswer'
 import { createSettingsTextObjects } from './settings'
 import { createSolutionTextObjects, getSolutionPageCount } from './solution'
+import { createStudyTextObjects } from './study'
+import { createStudyFeedbackTextObjects } from './studyFeedback'
+import { createStudyPatternTextObjects } from './studyPattern'
+import { createStudyQuestionTextObjects } from './studyQuestion'
 import { createVoiceMatchTextObjects } from './voiceMatch'
 import { createVoiceResultsTextObjects } from './voiceResults'
 import { createVoiceSearchTextObjects } from './voiceSearch'
@@ -38,6 +44,22 @@ export function createScreenTextObjects(state: NavigationState): TextContainerPr
 
   if (state.currentScreen === 'find') {
     return createFindTextObjects(state)
+  }
+
+  if (state.currentScreen === 'study') {
+    return createStudyTextObjects(state)
+  }
+
+  if (state.currentScreen === 'studyPattern') {
+    return createStudyPatternTextObjects(state)
+  }
+
+  if (state.currentScreen === 'studyQuestion') {
+    return createStudyQuestionTextObjects(state)
+  }
+
+  if (state.currentScreen === 'studyFeedback') {
+    return createStudyFeedbackTextObjects(state)
   }
 
   if (state.currentScreen === 'voiceSearch') {
@@ -72,12 +94,20 @@ export function createScreenTextObjects(state: NavigationState): TextContainerPr
     return createProblemTextObjects(state)
   }
 
+  if (state.currentScreen === 'quickAnswer') {
+    return createQuickAnswerTextObjects(state)
+  }
+
   if (state.currentScreen === 'hint') {
     return createHintTextObjects(state)
   }
 
   if (state.currentScreen === 'approach') {
     return createApproachTextObjects(state)
+  }
+
+  if (state.currentScreen === 'pseudocode') {
+    return createPseudocodeTextObjects(state)
   }
 
   if (state.currentScreen === 'solution') {
@@ -106,12 +136,20 @@ export function createScreenTextObjects(state: NavigationState): TextContainerPr
 }
 
 export function getCurrentScreenPageCount(state: NavigationState): number {
+  if (state.currentScreen === 'quickAnswer') {
+    return getQuickAnswerPageCount(state)
+  }
+
   if (state.currentScreen === 'hint') {
     return getHintPageCount(state)
   }
 
   if (state.currentScreen === 'approach') {
     return getApproachPageCount(state)
+  }
+
+  if (state.currentScreen === 'pseudocode') {
+    return getPseudocodePageCount(state)
   }
 
   if (state.currentScreen === 'solution') {

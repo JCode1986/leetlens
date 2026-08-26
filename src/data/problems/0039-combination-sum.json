@@ -1,0 +1,224 @@
+{
+  "id": 39,
+  "slug": "combination-sum",
+  "title": "Combination Sum",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Backtracking"
+  ],
+  "patterns": [
+    "Backtracking"
+  ],
+  "aliases": [
+    "combination sum",
+    "sum combinations",
+    "target combinations"
+  ],
+  "keywords": [
+    "backtracking",
+    "combination",
+    "target",
+    "dfs"
+  ],
+  "summary": "Solve Combination Sum using the standard optimized interview approach.",
+  "hint": "Look for the Backtracking structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Backtracking",
+    "idea": [
+      "Build combinations from a start index.",
+      "Reuse the same candidate by not advancing after choosing it.",
+      "Stop paths that exceed the target."
+    ],
+    "complexity": {
+      "time": "O(2^n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Combination Sum.",
+    "Use Backtracking to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "sort candidates",
+    "answers = empty list",
+    "",
+    "backtrack(start, remaining, path):",
+    "    if remaining is zero:",
+    "        record path",
+    "        return",
+    "",
+    "    for each candidate from start:",
+    "        if candidate exceeds remaining:",
+    "            stop loop",
+    "        choose candidate",
+    "        backtrack(same index, remaining minus candidate)",
+    "        undo choice",
+    "",
+    "backtrack(0, target, empty path)",
+    "return answers"
+  ],
+  "complexity": {
+    "time": "O(2^n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function combinationSum(candidates, target) {",
+        "  const result = [];",
+        "  candidates.sort((a, b) => a - b);",
+        "  function dfs(start, remain, path) {",
+        "    if (remain === 0) { result.push([...path]); return; }",
+        "    for (let i = start; i < candidates.length && candidates[i] <= remain; i += 1) {",
+        "      path.push(candidates[i]); dfs(i, remain - candidates[i], path); path.pop();",
+        "    }",
+        "  }",
+        "  dfs(0, target, []);",
+        "  return result;",
+        "}"
+      ],
+      "g2": [
+        "function combinationSum(candidates, target) {",
+        "  const result = [];",
+        "  candidates.sort((a, b) => a - b);",
+        "  function dfs(start, remain, path) {",
+        "    if (remain === 0) {",
+        "      result.push([...path]);",
+        "      return;",
+        "    }",
+        "    for (let i = start; i < candidates.length && candidates[i] <= remain; i += 1) {",
+        "      path.push(candidates[i]);",
+        "      dfs(i, remain - candidates[i], path);",
+        "      path.pop();",
+        "    }",
+        "  }",
+        "  dfs(0, target, []);",
+        "  return result;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def combinationSum(self, candidates, target):",
+        "        candidates.sort()",
+        "        result = []",
+        "        def dfs(start, remain, path):",
+        "            if remain == 0:",
+        "                result.append(path[:]); return",
+        "            for i in range(start, len(candidates)):",
+        "                if candidates[i] > remain: break",
+        "                path.append(candidates[i])",
+        "                dfs(i, remain - candidates[i], path)",
+        "                path.pop()",
+        "        dfs(0, target, [])",
+        "        return result"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def combinationSum(self, candidates, target):",
+        "        candidates.sort()",
+        "        result = []",
+        "        def dfs(start, remain, path):",
+        "            if remain == 0:",
+        "                result.append(path[:])",
+        "                return",
+        "            for i in range(start, len(candidates)):",
+        "                if candidates[i] > remain:",
+        "                    break",
+        "                path.append(candidates[i])",
+        "                dfs(i, remain - candidates[i], path)",
+        "                path.pop()",
+        "        dfs(0, target, [])",
+        "        return result"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public List<List<Integer>> combinationSum(int[] candidates, int target) {",
+        "        Arrays.sort(candidates);",
+        "        List<List<Integer>> result = new ArrayList<>();",
+        "        dfs(candidates, target, 0, new ArrayList<>(), result);",
+        "        return result;",
+        "    }",
+        "    private void dfs(int[] c, int remain, int start, List<Integer> path, List<List<Integer>> result) {",
+        "        if (remain == 0) { result.add(new ArrayList<>(path)); return; }",
+        "        for (int i = start; i < c.length && c[i] <= remain; i++) { path.add(c[i]); dfs(c, remain - c[i], i, path, result); path.remove(path.size() - 1); }",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public List<List<Integer>> combinationSum(int[] candidates, int target) {",
+        "    Arrays.sort(candidates);",
+        "    List<List<Integer>> result = new ArrayList<>();",
+        "    dfs(candidates, target, 0,",
+        "      new ArrayList<>(), result);",
+        "    return result;",
+        "  }",
+        "  private void dfs(int[] c, int remain, int start, List<Integer> path, List<List<Integer>> result) {",
+        "    if (remain == 0) {",
+        "      result.add(new ArrayList<>(path));",
+        "      return;",
+        "    }",
+        "    for (int i = start; i < c.length && c[i] <= remain; i++) {",
+        "      path.add(c[i]);",
+        "      dfs(c, remain - c[i], i, path, result);",
+        "      path.remove(path.size() - 1);",
+        "    }",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "    void dfs(vector<int>& c, int remain, int start, vector<int>& path, vector<vector<int>>& result) {",
+        "        if (remain == 0) { result.push_back(path); return; }",
+        "        for (int i = start; i < c.size() && c[i] <= remain; i++) { path.push_back(c[i]); dfs(c, remain - c[i], i, path, result); path.pop_back(); }",
+        "    }",
+        "public:",
+        "    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {",
+        "        sort(candidates.begin(), candidates.end());",
+        "        vector<vector<int>> result; vector<int> path;",
+        "        dfs(candidates, target, 0, path, result);",
+        "        return result;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "  void dfs(vector<int>& c, int remain, int start, vector<int>& path, vector<vector<int>>& result) {",
+        "    if (remain == 0) {",
+        "      result.push_back(path);",
+        "      return;",
+        "    }",
+        "    for (int i = start; i < c.size() && c[i] <= remain; i++) {",
+        "      path.push_back(c[i]);",
+        "      dfs(c, remain - c[i], i, path, result);",
+        "      path.pop_back();",
+        "    }",
+        "  }",
+        "public:",
+        "  vector<vector<int>> combinationSum(vector<int>& candidates, int target) {",
+        "    sort(candidates.begin(), candidates.end());",
+        "    vector<vector<int>> result;",
+        "    vector<int> path;",
+        "    dfs(candidates, target, 0, path, result);",
+        "    return result;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "id": 347,
+  "slug": "top-k-frequent-elements",
+  "title": "Top K Frequent Elements",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Hash Maps",
+    "Heap",
+    "Priority Queue"
+  ],
+  "patterns": [
+    "Heap / Priority Queue",
+    "Hash Map"
+  ],
+  "aliases": [
+    "top k frequent",
+    "most frequent elements",
+    "top frequent numbers"
+  ],
+  "keywords": [
+    "array",
+    "frequency",
+    "heap",
+    "bucket",
+    "hash map"
+  ],
+  "summary": "Solve Top K Frequent Elements using the standard optimized interview approach.",
+  "hint": "Look for the Heap / Priority Queue structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Bucket Frequency",
+    "idea": [
+      "Count how often each value appears.",
+      "Bucket values by frequency.",
+      "Read buckets from high frequency down."
+    ],
+    "complexity": {
+      "time": "O(n log k)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Top K Frequent Elements.",
+    "Use Heap / Priority Queue and Hash Map to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "counts = frequency map",
+    "buckets = array of empty lists",
+    "",
+    "for each value and count:",
+    "    add value to bucket[count]",
+    "",
+    "answer = empty list",
+    "for frequency from high to low:",
+    "    add bucket values to answer",
+    "    if answer has k values:",
+    "        return first k values"
+  ],
+  "complexity": {
+    "time": "O(n log k)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function topKFrequent(nums, k) { const counts = new Map(); for (const n of nums) counts.set(n, (counts.get(n) || 0) + 1); return [...counts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,k).map(x=>x[0]); }"
+      ],
+      "g2": [
+        "function topKFrequent(nums, k) {",
+        "  const counts = new Map();",
+        "  for (const n of nums) {",
+        "    counts.set(n, (counts.get(n) || 0) + 1);",
+        "  }",
+        "  return [...counts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,k).map(x=>x[0]);",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def topKFrequent(self, nums, k):",
+        "        return [num for num, _ in Counter(nums).most_common(k)]"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def topKFrequent(self, nums, k):",
+        "        return [num for num, _ in Counter(nums).most_common(k)]"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int[] topKFrequent(int[] nums, int k) { Map<Integer,Integer> count = new HashMap<>(); for (int n : nums) count.put(n, count.getOrDefault(n,0)+1); PriorityQueue<Integer> pq = new PriorityQueue<>((a,b) -> count.get(a) - count.get(b)); for (int n : count.keySet()) { pq.add(n); if (pq.size() > k) pq.remove(); } int[] ans = new int[k]; for (int i = k - 1; i >= 0; i--) ans[i] = pq.remove(); return ans; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int[] topKFrequent(int[] nums, int k) {",
+        "    Map<Integer,Integer> count = new HashMap<>();",
+        "    for (int n : nums) {",
+        "      count.put(n, count.getOrDefault(n,0)+1);",
+        "    }",
+        "    PriorityQueue<Integer> pq = new PriorityQueue<>((a,b) -> count.get(a) - count.get(b));",
+        "    for (int n : count.keySet()) {",
+        "      pq.add(n);",
+        "      if (pq.size() > k) {",
+        "        pq.remove();",
+        "      }",
+        "    }",
+        "    int[] ans = new int[k];",
+        "    for (int i = k - 1; i >= 0; i--) {",
+        "      ans[i] = pq.remove();",
+        "    }",
+        "    return ans;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: vector<int> topKFrequent(vector<int>& nums, int k) { unordered_map<int,int> count; for (int n : nums) count[n]++; priority_queue<pair<int,int>> pq; for (auto& [n,c] : count) pq.push({c,n}); vector<int> ans; while (k--) { ans.push_back(pq.top().second); pq.pop(); } return ans; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  vector<int> topKFrequent(vector<int>& nums, int k) {",
+        "    unordered_map<int,int> count;",
+        "    for (int n : nums) {",
+        "      count[n]++;",
+        "    }",
+        "    priority_queue<pair<int,int>> pq;",
+        "    for (auto& [n,c] : count) {",
+        "      pq.push( {",
+        "      }",
+        "      c,n",
+        "    }",
+        "    );",
+        "    vector<int> ans;",
+        "    while (k--) {",
+        "      ans.push_back(pq.top().second);",
+        "      pq.pop();",
+        "    }",
+        "    return ans;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "id": 70,
+  "slug": "climbing-stairs",
+  "title": "Climbing Stairs",
+  "difficulty": "Easy",
+  "categories": [
+    "Dynamic Programming"
+  ],
+  "patterns": [
+    "Dynamic Programming"
+  ],
+  "aliases": [
+    "climbing stairs",
+    "climb stairs",
+    "staircase ways",
+    "ways to climb stairs"
+  ],
+  "keywords": [
+    "dynamic programming",
+    "fibonacci",
+    "stairs",
+    "ways",
+    "one step",
+    "two steps"
+  ],
+  "summary": "Count how many distinct ways there are to reach the top when each move climbs one or two steps.",
+  "hint": "The number of ways to reach a step is the sum of the ways to reach the previous two steps.",
+  "quickAnswer": {
+    "pattern": "1D Dynamic Programming",
+    "idea": [
+      "Ways to reach a step equals previous two counts.",
+      "Keep only the last two values.",
+      "Iterate until the nth step."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Recognize the recurrence ways(n) = ways(n - 1) + ways(n - 2).",
+    "Keep only the previous two counts.",
+    "Iterate from step three through n.",
+    "Update the rolling counts each step.",
+    "Return the count for n."
+  ],
+  "pseudocode": [
+    "if n <= 2:",
+    "    return n",
+    "",
+    "oneStep = 1",
+    "twoSteps = 2",
+    "",
+    "for step from 3 to n:",
+    "    current = oneStep + twoSteps",
+    "    oneStep = twoSteps",
+    "    twoSteps = current",
+    "",
+    "return twoSteps"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "n is 1.",
+    "n is 2.",
+    "Small values should not enter the loop.",
+    "Large n still uses constant memory."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function climbStairs(n) {",
+        "  if (n <= 2) return n;",
+        "",
+        "  let prev2 = 1;",
+        "  let prev1 = 2;",
+        "",
+        "  for (let step = 3; step <= n; step += 1) {",
+        "    const current = prev1 + prev2;",
+        "    prev2 = prev1;",
+        "    prev1 = current;",
+        "  }",
+        "",
+        "  return prev1;",
+        "}"
+      ],
+      "g2": [
+        "function climbStairs(n) {",
+        "  if (n <= 2) {",
+        "    return n;",
+        "  }",
+        "",
+        "  let prev2 = 1;",
+        "  let prev1 = 2;",
+        "",
+        "  for (let step = 3; step <= n; step += 1) {",
+        "    const current = prev1 + prev2;",
+        "    prev2 = prev1;",
+        "    prev1 = current;",
+        "  }",
+        "",
+        "  return prev1;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def climbStairs(self, n: int) -> int:",
+        "        if n <= 2:",
+        "            return n",
+        "",
+        "        prev2, prev1 = 1, 2",
+        "        for _ in range(3, n + 1):",
+        "            current = prev1 + prev2",
+        "            prev2, prev1 = prev1, current",
+        "",
+        "        return prev1"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def climbStairs(self, n: int) -> int:",
+        "        if n <= 2:",
+        "            return n",
+        "",
+        "        prev2, prev1 = 1, 2",
+        "        for _ in range(3, n + 1):",
+        "            current = prev1 + prev2",
+        "            prev2, prev1 = prev1, current",
+        "",
+        "        return prev1"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int climbStairs(int n) {",
+        "        if (n <= 2) return n;",
+        "",
+        "        int prev2 = 1;",
+        "        int prev1 = 2;",
+        "        for (int step = 3; step <= n; step++) {",
+        "            int current = prev1 + prev2;",
+        "            prev2 = prev1;",
+        "            prev1 = current;",
+        "        }",
+        "",
+        "        return prev1;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int climbStairs(int n) {",
+        "    if (n <= 2) {",
+        "      return n;",
+        "    }",
+        "",
+        "    int prev2 = 1;",
+        "    int prev1 = 2;",
+        "    for (int step = 3; step <= n; step++) {",
+        "      int current = prev1 + prev2;",
+        "      prev2 = prev1;",
+        "      prev1 = current;",
+        "    }",
+        "",
+        "    return prev1;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    int climbStairs(int n) {",
+        "        if (n <= 2) return n;",
+        "",
+        "        int prev2 = 1;",
+        "        int prev1 = 2;",
+        "        for (int step = 3; step <= n; step++) {",
+        "            int current = prev1 + prev2;",
+        "            prev2 = prev1;",
+        "            prev1 = current;",
+        "        }",
+        "",
+        "        return prev1;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int climbStairs(int n) {",
+        "    if (n <= 2) {",
+        "      return n;",
+        "    }",
+        "",
+        "    int prev2 = 1;",
+        "    int prev1 = 2;",
+        "    for (int step = 3; step <= n; step++) {",
+        "      int current = prev1 + prev2;",
+        "      prev2 = prev1;",
+        "      prev1 = current;",
+        "    }",
+        "",
+        "    return prev1;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

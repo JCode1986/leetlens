@@ -1,0 +1,262 @@
+{
+  "id": 212,
+  "slug": "word-search-ii",
+  "title": "Word Search II",
+  "difficulty": "Hard",
+  "categories": [
+    "Matrix",
+    "Backtracking",
+    "Strings"
+  ],
+  "patterns": [
+    "Trie",
+    "Backtracking"
+  ],
+  "aliases": [
+    "word search two",
+    "word search 2",
+    "find words in board"
+  ],
+  "keywords": [
+    "trie",
+    "backtracking",
+    "matrix",
+    "dfs",
+    "words"
+  ],
+  "summary": "Solve Word Search II using the standard optimized interview approach.",
+  "hint": "Look for the Trie structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Trie + Backtracking",
+    "idea": [
+      "Store all words in a trie.",
+      "DFS board paths only while a trie prefix exists.",
+      "Record words when reaching terminal trie nodes."
+    ],
+    "complexity": {
+      "time": "O(m * n * 4^l)",
+      "space": "O(total characters)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Word Search II.",
+    "Use Trie and Backtracking to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "build trie from words",
+    "answers = empty set",
+    "",
+    "for each board cell:",
+    "    dfs(cell, root)",
+    "",
+    "dfs(row, col, node):",
+    "    if cell invalid or used:",
+    "        return",
+    "    if character has no trie child:",
+    "        return",
+    "",
+    "    move to child",
+    "    record word if child ends word",
+    "    mark cell used",
+    "    dfs four neighbors",
+    "    unmark cell",
+    "",
+    "return answers"
+  ],
+  "complexity": {
+    "time": "O(m * n * 4^l)",
+    "space": "O(total characters)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function findWords(board, words) { const root = {}; for (const word of words) { let n = root; for (const ch of word) n = n[ch] ||= {}; n.word = word; } const ans = []; const rows = board.length, cols = board[0].length; function dfs(r,c,node){ const ch = board[r][c]; const next = node[ch]; if(!next) return; if(next.word){ ans.push(next.word); next.word = null; } board[r][c] = '#'; for(const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]){ const nr=r+dr,nc=c+dc; if(nr>=0&&nc>=0&&nr<rows&&nc<cols&&board[nr][nc] !== '#') dfs(nr,nc,next); } board[r][c] = ch; } for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) dfs(r,c,root); return ans; }"
+      ],
+      "g2": [
+        "function findWords(board, words) {",
+        "  const root = {",
+        "  };",
+        "  for (const word of words) {",
+        "    let n = root;",
+        "    for (const ch of word) {",
+        "      n = n[ch] ||= {",
+        "      }",
+        "    };",
+        "    n.word = word;",
+        "  }",
+        "  const ans = [];",
+        "  const rows = board.length,",
+        "    cols = board[0].length;",
+        "  function dfs(r,c,node) {",
+        "    const ch = board[r][c];",
+        "    const next = node[ch];",
+        "    if(!next) {",
+        "      return;",
+        "    }",
+        "    if(next.word) {",
+        "      ans.push(next.word);",
+        "      next.word = null;",
+        "    }",
+        "    board[r][c] = '#';",
+        "    for(const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]) {",
+        "      const nr=r+dr,nc=c+dc;",
+        "      if(nr>=0&&nc>=0&&nr<rows&&nc<cols&&board[nr][nc] !== '#') {",
+        "        dfs(nr,nc,next);",
+        "      }",
+        "    }",
+        "    board[r][c] = ch;",
+        "  }",
+        "  for(let r=0;r<rows;r++) {",
+        "    for(let c=0;c<cols;c++) {",
+        "      dfs(r,c,root);",
+        "    }",
+        "  }",
+        "  return ans;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def findWords(self, board, words):",
+        "        root = {}",
+        "        for word in words:",
+        "  node = root",
+        "  for ch in word: node = node.setdefault(ch, {})",
+        "  node['word'] = word",
+        "        rows, cols, ans = len(board), len(board[0]), []",
+        "        def dfs(r, c, node):",
+        "  ch = board[r][c]; nxt = node.get(ch)",
+        "  if not nxt: return",
+        "  if 'word' in nxt: ans.append(nxt.pop('word'))",
+        "  board[r][c] = '#'",
+        "  for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)):",
+        "      nr, nc = r + dr, c + dc",
+        "      if 0 <= nr < rows and 0 <= nc < cols and board[nr][nc] != '#': dfs(nr, nc, nxt)",
+        "  board[r][c] = ch",
+        "        for r in range(rows):",
+        "  for c in range(cols): dfs(r, c, root)",
+        "        return ans"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def findWords(self, board, words):",
+        "        root = {}",
+        "        for word in words:",
+        "            node = root",
+        "            for ch in word:",
+        "                node = node.setdefault(ch, {})",
+        "            node['word'] = word",
+        "        rows, cols, ans = len(board), len(board[0]), []",
+        "        def dfs(r, c, node):",
+        "            ch = board[r][c]",
+        "            nxt = node.get(ch)",
+        "            if not nxt:",
+        "                return",
+        "            if 'word' in nxt:",
+        "                ans.append(nxt.pop('word'))",
+        "            board[r][c] = '#'",
+        "            for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)):",
+        "                nr, nc = r + dr, c + dc",
+        "                if 0 <= nr < rows and 0 <= nc < cols and board[nr][nc] != '#':",
+        "                    dfs(nr, nc, nxt)",
+        "                board[r][c] = ch",
+        "        for r in range(rows):",
+        "            for c in range(cols):",
+        "                dfs(r, c, root)",
+        "        return ans"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public List<String> findWords(char[][] board, String[] words) { Set<String> found = new HashSet<>(); for (String word : words) if (exist(board, word)) found.add(word); return new ArrayList<>(found); } private boolean exist(char[][] b, String w) { for (int r=0;r<b.length;r++) for (int c=0;c<b[0].length;c++) if (dfs(b,w,r,c,0)) return true; return false; } private boolean dfs(char[][] b,String w,int r,int c,int i){ if(i==w.length()) return true; if(r<0||c<0||r==b.length||c==b[0].length||b[r][c]!=w.charAt(i)) return false; char ch=b[r][c]; b[r][c]='#'; boolean ok=dfs(b,w,r+1,c,i+1)||dfs(b,w,r-1,c,i+1)||dfs(b,w,r,c+1,i+1)||dfs(b,w,r,c-1,i+1); b[r][c]=ch; return ok; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public List<String> findWords(char[][] board, String[] words) {",
+        "    Set<String> found = new HashSet<>();",
+        "    for (String word : words) {",
+        "      if (exist(board, word)) {",
+        "        found.add(word);",
+        "      }",
+        "    }",
+        "    return new ArrayList<>(found);",
+        "  }",
+        "  private boolean exist(char[][] b, String w) {",
+        "    for (int r=0;r<b.length;r++) {",
+        "      for (int c=0;c<b[0].length;c++) {",
+        "        if (dfs(b,w,r,c,0)) {",
+        "          return true;",
+        "        }",
+        "      }",
+        "    }",
+        "    return false;",
+        "  }",
+        "  private boolean dfs(char[][] b,String w,int r,int c,int i) {",
+        "    if(i==w.length()) {",
+        "      return true;",
+        "    }",
+        "    if(r<0||c<0||r==b.length||c==b[0].length||b[r][c]!=w.charAt(i)) {",
+        "      return false;",
+        "    }",
+        "    char ch=b[r][c];",
+        "    b[r][c]='#';",
+        "    boolean ok=dfs(b,w,r+1,c,i+1)||dfs(b,w,r-1,c,i+1)||dfs(b,w,r,c+1,i+1)||dfs(b,w,r,c-1,i+1);",
+        "    b[r][c]=ch;",
+        "    return ok;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { bool exist(vector<vector<char>>& b,string& w,int r,int c,int i){ if(i==w.size()) return true; if(r<0||c<0||r==b.size()||c==b[0].size()||b[r][c]!=w[i]) return false; char ch=b[r][c]; b[r][c]='#'; bool ok=exist(b,w,r+1,c,i+1)||exist(b,w,r-1,c,i+1)||exist(b,w,r,c+1,i+1)||exist(b,w,r,c-1,i+1); b[r][c]=ch; return ok; } public: vector<string> findWords(vector<vector<char>>& board, vector<string>& words) { vector<string> ans; unordered_set<string> used; for(auto& w:words) if(!used.count(w)){ for(int r=0;r<board.size();r++) for(int c=0;c<board[0].size();c++) if(exist(board,w,r,c,0)){ ans.push_back(w); used.insert(w); r=board.size(); break; } } return ans; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "  bool exist(vector<vector<char>>& b,string& w,int r,int c,int i) {",
+        "    if(i==w.size()) {",
+        "      return true;",
+        "    }",
+        "    if(r<0||c<0||r==b.size()||c==b[0].size()||b[r][c]!=w[i]) {",
+        "      return false;",
+        "    }",
+        "    char ch=b[r][c];",
+        "    b[r][c]='#';",
+        "    bool ok=exist(b,w,r+1,c,i+1)||exist(b,w,r-1,c,i+1)||exist(b,w,r,c+1,i+1)||exist(b,w,r,c-1,i+1);",
+        "    b[r][c]=ch;",
+        "    return ok;",
+        "  }",
+        "public:",
+        "  vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {",
+        "    vector<string> ans;",
+        "    unordered_set<string> used;",
+        "    for(auto& w:words) {",
+        "      if(!used.count(w)) {",
+        "      }",
+        "      for(int r=0;r<board.size();r++) {",
+        "        for(int c=0;c<board[0].size();c++) {",
+        "          if(exist(board,w,r,c,0)) {",
+        "          }",
+        "        }",
+        "        ans.push_back(w);",
+        "        used.insert(w);",
+        "        r=board.size();",
+        "        break;",
+        "      }",
+        "    }",
+        "    return ans;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

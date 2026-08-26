@@ -1,0 +1,172 @@
+{
+  "id": 300,
+  "slug": "longest-increasing-subsequence",
+  "title": "Longest Increasing Subsequence",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Dynamic Programming",
+    "Binary Search"
+  ],
+  "patterns": [
+    "Dynamic Programming",
+    "Binary Search"
+  ],
+  "aliases": [
+    "longest increasing subsequence",
+    "lis",
+    "increasing subsequence"
+  ],
+  "keywords": [
+    "array",
+    "subsequence",
+    "binary search",
+    "dynamic programming"
+  ],
+  "summary": "Solve Longest Increasing Subsequence using the standard optimized interview approach.",
+  "hint": "Look for the Dynamic Programming structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Binary Search DP",
+    "idea": [
+      "tails[i] is the smallest tail for length i + 1.",
+      "Binary search where each value belongs.",
+      "The number of tails is the LIS length."
+    ],
+    "complexity": {
+      "time": "O(n log n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Longest Increasing Subsequence.",
+    "Use Dynamic Programming and Binary Search to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "tails = empty list",
+    "",
+    "for each value:",
+    "    index = first tail >= value",
+    "    if index is at end:",
+    "        append value",
+    "    else:",
+    "        replace tails[index] with value",
+    "",
+    "return length of tails"
+  ],
+  "complexity": {
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function lengthOfLIS(nums) { const tails = []; for (const num of nums) { let l = 0, r = tails.length; while (l < r) { const m = Math.floor((l + r) / 2); if (tails[m] < num) l = m + 1; else r = m; } tails[l] = num; } return tails.length; }"
+      ],
+      "g2": [
+        "function lengthOfLIS(nums) {",
+        "  const tails = [];",
+        "  for (const num of nums) {",
+        "    let l = 0, r = tails.length;",
+        "    while (l < r) {",
+        "      const m = Math.floor((l + r) / 2);",
+        "      if (tails[m] < num) {",
+        "        l = m + 1;",
+        "      }",
+        "      else {",
+        "        r = m;",
+        "      }",
+        "    }",
+        "    tails[l] = num;",
+        "  }",
+        "  return tails.length;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def lengthOfLIS(self, nums):",
+        "        tails = []",
+        "        for num in nums:",
+        "  i = bisect_left(tails, num)",
+        "  if i == len(tails): tails.append(num)",
+        "  else: tails[i] = num",
+        "        return len(tails)"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def lengthOfLIS(self, nums):",
+        "        tails = []",
+        "        for num in nums:",
+        "            i = bisect_left(tails, num)",
+        "            if i == len(tails):",
+        "                tails.append(num)",
+        "            else:",
+        "                tails[i] = num",
+        "        return len(tails)"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int lengthOfLIS(int[] nums) { int[] tails = new int[nums.length]; int size = 0; for (int num : nums) { int l = 0, r = size; while (l < r) { int m = (l + r) / 2; if (tails[m] < num) l = m + 1; else r = m; } tails[l] = num; if (l == size) size++; } return size; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int lengthOfLIS(int[] nums) {",
+        "    int[] tails = new int[nums.length];",
+        "    int size = 0;",
+        "    for (int num : nums) {",
+        "      int l = 0, r = size;",
+        "      while (l < r) {",
+        "        int m = (l + r) / 2;",
+        "        if (tails[m] < num) {",
+        "          l = m + 1;",
+        "        }",
+        "        else {",
+        "          r = m;",
+        "        }",
+        "      }",
+        "      tails[l] = num;",
+        "      if (l == size) {",
+        "        size++;",
+        "      }",
+        "    }",
+        "    return size;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int lengthOfLIS(vector<int>& nums) { vector<int> tails; for (int num : nums) { auto it = lower_bound(tails.begin(), tails.end(), num); if (it == tails.end()) tails.push_back(num); else *it = num; } return tails.size(); } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int lengthOfLIS(vector<int>& nums) {",
+        "    vector<int> tails;",
+        "    for (int num : nums) {",
+        "      auto it = lower_bound(tails.begin(),",
+        "        tails.end(), num);",
+        "      if (it == tails.end()) {",
+        "        tails.push_back(num);",
+        "      }",
+        "      else {",
+        "        *it = num;",
+        "      }",
+        "    }",
+        "    return tails.size();",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

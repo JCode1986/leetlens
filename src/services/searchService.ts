@@ -1,7 +1,7 @@
 import { getAllProblems } from './problemService'
 import type { Problem } from '../types/problem'
 
-export const MATCH_THRESHOLDS = {
+const MATCH_THRESHOLDS = {
   highConfidence: 700,
   likely: 420,
   related: 120,
@@ -9,9 +9,9 @@ export const MATCH_THRESHOLDS = {
   closeResultGap: 140,
 } as const
 
-export type ProblemMatchType = 'exact' | 'strong' | 'related'
+type ProblemMatchType = 'exact' | 'strong' | 'related'
 
-export interface RankedProblemMatch {
+interface RankedProblemMatch {
   problem: Problem
   score: number
   matchType: ProblemMatchType
@@ -222,11 +222,7 @@ function isBroadMetadataQuery(query: string): boolean {
   })
 }
 
-export function normalizeSearchQuery(query: string): string {
-  return normalizeText(query)
-}
-
-export function searchProblems(query: string): RankedProblemMatch[] {
+function searchProblems(query: string): RankedProblemMatch[] {
   const normalized = normalizeText(query)
 
   if (normalized.length === 0) {

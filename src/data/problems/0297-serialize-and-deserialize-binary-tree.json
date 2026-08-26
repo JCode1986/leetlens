@@ -1,0 +1,230 @@
+{
+  "id": 297,
+  "slug": "serialize-and-deserialize-binary-tree",
+  "title": "Serialize and Deserialize Binary Tree",
+  "difficulty": "Hard",
+  "categories": [
+    "Trees",
+    "Strings"
+  ],
+  "patterns": [
+    "DFS",
+    "Tree Recursion"
+  ],
+  "aliases": [
+    "serialize binary tree",
+    "deserialize binary tree",
+    "binary tree codec"
+  ],
+  "keywords": [
+    "tree",
+    "serialize",
+    "deserialize",
+    "dfs",
+    "null marker"
+  ],
+  "summary": "Solve Serialize and Deserialize Binary Tree using the standard optimized interview approach.",
+  "hint": "Look for the DFS structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Tree Serialization",
+    "idea": [
+      "Use preorder traversal with null markers.",
+      "Deserialize by consuming tokens in the same order.",
+      "Each token rebuilds one subtree."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Serialize and Deserialize Binary Tree.",
+    "Use DFS and Tree Recursion to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "serialize(node):",
+    "    if node is null:",
+    "        append null marker",
+    "        return",
+    "    append node value",
+    "    serialize left child",
+    "    serialize right child",
+    "",
+    "deserialize(tokens):",
+    "    token = next token",
+    "    if token is null marker:",
+    "        return null",
+    "    node = new node token",
+    "    node.left = deserialize(tokens)",
+    "    node.right = deserialize(tokens)",
+    "    return node"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "class Codec { serialize(root) { const out = []; function dfs(node){ if(!node){ out.push('#'); return; } out.push(String(node.val)); dfs(node.left); dfs(node.right); } dfs(root); return out.join(','); } deserialize(data) { const vals = data.split(','); let i = 0; function dfs(){ const val = vals[i++]; if(val === '#') return null; const node = new TreeNode(Number(val)); node.left = dfs(); node.right = dfs(); return node; } return dfs(); } }"
+      ],
+      "g2": [
+        "class Codec {",
+        "  serialize(root) {",
+        "    const out = [];",
+        "    function dfs(node) {",
+        "      if(!node) {",
+        "        out.push('#');",
+        "        return;",
+        "      }",
+        "      out.push(String(node.val));",
+        "      dfs(node.left);",
+        "      dfs(node.right);",
+        "    }",
+        "    dfs(root);",
+        "    return out.join(',');",
+        "  }",
+        "  deserialize(data) {",
+        "    const vals = data.split(',');",
+        "    let i = 0;",
+        "    function dfs() {",
+        "      const val = vals[i++];",
+        "      if(val === '#') {",
+        "        return null;",
+        "      }",
+        "      const node = new TreeNode(Number(val));",
+        "      node.left = dfs();",
+        "      node.right = dfs();",
+        "      return node;",
+        "    }",
+        "    return dfs();",
+        "  }",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Codec:",
+        "    def serialize(self, root):",
+        "        out = []",
+        "        def dfs(node):",
+        "  if not node: out.append('#'); return",
+        "  out.append(str(node.val)); dfs(node.left); dfs(node.right)",
+        "        dfs(root); return ','.join(out)",
+        "    def deserialize(self, data):",
+        "        vals = iter(data.split(','))",
+        "        def dfs():",
+        "  val = next(vals)",
+        "  if val == '#': return None",
+        "  node = TreeNode(int(val)); node.left = dfs(); node.right = dfs(); return node",
+        "        return dfs()"
+      ],
+      "g2": [
+        "class Codec:",
+        "    def serialize(self, root):",
+        "        out = []",
+        "        def dfs(node):",
+        "            if not node:",
+        "                out.append('#')",
+        "            return",
+        "            out.append(str(node.val))",
+        "            dfs(node.left)",
+        "            dfs(node.right)",
+        "        dfs(root)",
+        "        return ','.join(out)",
+        "    def deserialize(self, data):",
+        "        vals = iter(data.split(','))",
+        "        def dfs():",
+        "            val = next(vals)",
+        "            if val == '#':",
+        "                return None",
+        "            node = TreeNode(int(val))",
+        "            node.left = dfs()",
+        "            node.right = dfs()",
+        "            return node",
+        "        return dfs()"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "public class Codec { public String serialize(TreeNode root) { StringBuilder out = new StringBuilder(); ser(root, out); return out.toString(); } private void ser(TreeNode node, StringBuilder out) { if (node == null) { out.append(\"#, \"); return; } out.append(node.val).append(','); ser(node.left, out); ser(node.right, out); } public TreeNode deserialize(String data) { String[] vals = data.split(\",\"); int[] i = {0}; return de(vals, i); } private TreeNode de(String[] vals, int[] i) { if (vals[i[0]].equals(\"#\")) { i[0]++; return null; } TreeNode node = new TreeNode(Integer.parseInt(vals[i[0]++])); node.left = de(vals, i); node.right = de(vals, i); return node; } }"
+      ],
+      "g2": [
+        "public class Codec {",
+        "  public String serialize(TreeNode root) {",
+        "    StringBuilder out = new StringBuilder();",
+        "    ser(root, out);",
+        "    return out.toString();",
+        "  }",
+        "  private void ser(TreeNode node, StringBuilder out) {",
+        "    if (node == null) {",
+        "      out.append(\"#, \");",
+        "      return;",
+        "    }",
+        "    out.append(node.val).append(',');",
+        "    ser(node.left, out);",
+        "    ser(node.right, out);",
+        "  }",
+        "  public TreeNode deserialize(String data) {",
+        "    String[] vals = data.split(\",\");",
+        "    int[] i = {",
+        "      0",
+        "    };",
+        "    return de(vals, i);",
+        "  }",
+        "  private TreeNode de(String[] vals, int[] i) {",
+        "    if (vals[i[0]].equals(\"#\")) {",
+        "      i[0]++;",
+        "      return null;",
+        "    }",
+        "    TreeNode node = new TreeNode(Integer.parseInt(vals[i[0]++]));",
+        "    node.left = de(vals, i);",
+        "    node.right = de(vals, i);",
+        "    return node;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Codec { public: string serialize(TreeNode* root) { if (!root) return \"#,\"; return to_string(root->val) + \",\" + serialize(root->left) + serialize(root->right); } TreeNode* deserialize(string data) { stringstream ss(data); return de(ss); } TreeNode* de(stringstream& ss) { string val; getline(ss, val, ','); if (val == \"#\") return nullptr; auto node = new TreeNode(stoi(val)); node->left = de(ss); node->right = de(ss); return node; } };"
+      ],
+      "g2": [
+        "class Codec {",
+        "public:",
+        "  string serialize(TreeNode* root) {",
+        "    if (!root) {",
+        "      return \"#,\";",
+        "    }",
+        "    return to_string(root->val) + \",\" +",
+        "      serialize(root->left) +",
+        "      serialize(root->right);",
+        "  }",
+        "  TreeNode* deserialize(string data) {",
+        "    stringstream ss(data);",
+        "    return de(ss);",
+        "  }",
+        "  TreeNode* de(stringstream& ss) {",
+        "    string val;",
+        "    getline(ss, val, ',');",
+        "    if (val == \"#\") {",
+        "      return nullptr;",
+        "    }",
+        "    auto node = new TreeNode(stoi(val));",
+        "    node->left = de(ss);",
+        "    node->right = de(ss);",
+        "    return node;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

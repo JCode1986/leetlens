@@ -1,0 +1,184 @@
+{
+  "id": 56,
+  "slug": "merge-intervals",
+  "title": "Merge Intervals",
+  "difficulty": "Medium",
+  "categories": [
+    "Intervals",
+    "Arrays"
+  ],
+  "patterns": [
+    "Intervals"
+  ],
+  "aliases": [
+    "merge intervals",
+    "combine overlapping intervals",
+    "overlapping intervals"
+  ],
+  "keywords": [
+    "interval",
+    "sort",
+    "overlap",
+    "merge"
+  ],
+  "summary": "Solve Merge Intervals using the standard optimized interview approach.",
+  "hint": "Look for the Intervals structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Intervals",
+    "idea": [
+      "Sort intervals by start.",
+      "Merge when the next start overlaps the current end.",
+      "Otherwise start a new merged interval."
+    ],
+    "complexity": {
+      "time": "O(n log n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Merge Intervals.",
+    "Use Intervals to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "sort intervals by start",
+    "merged = empty list",
+    "",
+    "for each interval:",
+    "    if merged is empty or no overlap:",
+    "        append interval",
+    "    else:",
+    "        extend last merged end",
+    "",
+    "return merged"
+  ],
+  "complexity": {
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function merge(intervals) {",
+        "  intervals.sort((a, b) => a[0] - b[0]);",
+        "  const result = [];",
+        "  for (const cur of intervals) {",
+        "    if (!result.length || result[result.length - 1][1] < cur[0]) result.push([...cur]);",
+        "    else result[result.length - 1][1] = Math.max(result[result.length - 1][1], cur[1]);",
+        "  }",
+        "  return result;",
+        "}"
+      ],
+      "g2": [
+        "function merge(intervals) {",
+        "  intervals.sort((a, b) => a[0] - b[0]);",
+        "  const result = [];",
+        "  for (const cur of intervals) {",
+        "    if (!result.length || result[result.length - 1][1] < cur[0]) {",
+        "      result.push([...cur]);",
+        "    }",
+        "    else {",
+        "      result[result.length - 1][1] = Math.max(result[result.length - 1][1], cur[1]);",
+        "    }",
+        "  }",
+        "  return result;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def merge(self, intervals):",
+        "        intervals.sort(key=lambda x: x[0])",
+        "        result = []",
+        "        for start, end in intervals:",
+        "            if not result or result[-1][1] < start:",
+        "                result.append([start, end])",
+        "            else:",
+        "                result[-1][1] = max(result[-1][1], end)",
+        "        return result"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def merge(self, intervals):",
+        "        intervals.sort(key=lambda x: x[0])",
+        "        result = []",
+        "        for start, end in intervals:",
+        "            if not result or result[-1][1] < start:",
+        "                result.append([start, end])",
+        "            else:",
+        "                result[-1][1] = max(result[-1][1], end)",
+        "        return result"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int[][] merge(int[][] intervals) {",
+        "        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);",
+        "        List<int[]> result = new ArrayList<>();",
+        "        for (int[] cur : intervals) { if (result.isEmpty() || result.get(result.size() - 1)[1] < cur[0]) result.add(cur); else result.get(result.size() - 1)[1] = Math.max(result.get(result.size() - 1)[1], cur[1]); }",
+        "        return result.toArray(new int[result.size()][]);",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int[][] merge(int[][] intervals) {",
+        "    Arrays.sort(intervals, (a,",
+        "      b) -> a[0] - b[0]);",
+        "    List<int[]> result = new ArrayList<>();",
+        "    for (int[] cur : intervals) {",
+        "      if (result.isEmpty() || result.get(result.size() - 1)[1] < cur[0]) {",
+        "        result.add(cur);",
+        "      }",
+        "      else {",
+        "        result.get(result.size() - 1)[1] = Math.max(result.get(result.size() - 1)[1], cur[1]);",
+        "      }",
+        "    }",
+        "    return result.toArray(new int[result.size()][]);",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    vector<vector<int>> merge(vector<vector<int>>& intervals) {",
+        "        sort(intervals.begin(), intervals.end());",
+        "        vector<vector<int>> result;",
+        "        for (auto& cur : intervals) { if (result.empty() || result.back()[1] < cur[0]) result.push_back(cur); else result.back()[1] = max(result.back()[1], cur[1]); }",
+        "        return result;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  vector<vector<int>> merge(vector<vector<int>>& intervals) {",
+        "    sort(intervals.begin(), intervals.end());",
+        "    vector<vector<int>> result;",
+        "    for (auto& cur : intervals) {",
+        "      if (result.empty() || result.back()[1] < cur[0]) {",
+        "        result.push_back(cur);",
+        "      }",
+        "      else {",
+        "        result.back()[1] = max(result.back()[1],",
+        "          cur[1]);",
+        "      }",
+        "    }",
+        "    return result;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

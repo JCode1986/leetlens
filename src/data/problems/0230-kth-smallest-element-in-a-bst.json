@@ -1,0 +1,176 @@
+{
+  "id": 230,
+  "slug": "kth-smallest-element-in-a-bst",
+  "title": "Kth Smallest Element in a BST",
+  "difficulty": "Medium",
+  "categories": [
+    "Trees",
+    "Binary Search Trees"
+  ],
+  "patterns": [
+    "BST"
+  ],
+  "aliases": [
+    "kth smallest bst",
+    "kth smallest in binary search tree",
+    "bst kth smallest"
+  ],
+  "keywords": [
+    "bst",
+    "tree",
+    "inorder",
+    "kth"
+  ],
+  "summary": "Solve Kth Smallest Element in a BST using the standard optimized interview approach.",
+  "hint": "Look for the BST structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "BST Inorder",
+    "idea": [
+      "Inorder traversal of a BST is sorted.",
+      "Visit nodes left, root, right.",
+      "The kth visited value is the answer."
+    ],
+    "complexity": {
+      "time": "O(h + k)",
+      "space": "O(h)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Kth Smallest Element in a BST.",
+    "Use BST to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "stack = empty",
+    "node = root",
+    "count = 0",
+    "",
+    "while stack or node exists:",
+    "    while node exists:",
+    "        push node",
+    "        node = node.left",
+    "",
+    "    node = pop stack",
+    "    count += 1",
+    "    if count equals k:",
+    "        return node value",
+    "    node = node.right"
+  ],
+  "complexity": {
+    "time": "O(h + k)",
+    "space": "O(h)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function kthSmallest(root, k) { const stack = []; let node = root; while (node || stack.length) { while (node) { stack.push(node); node = node.left; } node = stack.pop(); if (--k === 0) return node.val; node = node.right; } return -1; }"
+      ],
+      "g2": [
+        "function kthSmallest(root, k) {",
+        "  const stack = [];",
+        "  let node = root;",
+        "  while (node || stack.length) {",
+        "    while (node) {",
+        "      stack.push(node);",
+        "      node = node.left;",
+        "    }",
+        "    node = stack.pop();",
+        "    if (--k === 0) {",
+        "      return node.val;",
+        "    }",
+        "    node = node.right;",
+        "  }",
+        "  return -1;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def kthSmallest(self, root, k):",
+        "        stack = []",
+        "        node = root",
+        "        while node or stack:",
+        "  while node:",
+        "      stack.append(node); node = node.left",
+        "  node = stack.pop(); k -= 1",
+        "  if k == 0: return node.val",
+        "  node = node.right"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def kthSmallest(self, root, k):",
+        "        stack = []",
+        "        node = root",
+        "        while node or stack:",
+        "            while node:",
+        "                stack.append(node)",
+        "                node = node.left",
+        "                node = stack.pop()",
+        "                k -= 1",
+        "                if k == 0:",
+        "                    return node.val",
+        "                node = node.right"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int kthSmallest(TreeNode root, int k) { Deque<TreeNode> stack = new ArrayDeque<>(); TreeNode node = root; while (node != null || !stack.isEmpty()) { while (node != null) { stack.push(node); node = node.left; } node = stack.pop(); if (--k == 0) return node.val; node = node.right; } return -1; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int kthSmallest(TreeNode root, int k) {",
+        "    Deque<TreeNode> stack = new ArrayDeque<>();",
+        "    TreeNode node = root;",
+        "    while (node != null || !stack.isEmpty()) {",
+        "      while (node != null) {",
+        "        stack.push(node);",
+        "        node = node.left;",
+        "      }",
+        "      node = stack.pop();",
+        "      if (--k == 0) {",
+        "        return node.val;",
+        "      }",
+        "      node = node.right;",
+        "    }",
+        "    return -1;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int kthSmallest(TreeNode* root, int k) { stack<TreeNode*> st; TreeNode* node = root; while (node || !st.empty()) { while (node) { st.push(node); node = node->left; } node = st.top(); st.pop(); if (--k == 0) return node->val; node = node->right; } return -1; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int kthSmallest(TreeNode* root, int k) {",
+        "    stack<TreeNode*> st;",
+        "    TreeNode* node = root;",
+        "    while (node || !st.empty()) {",
+        "      while (node) {",
+        "        st.push(node);",
+        "        node = node->left;",
+        "      }",
+        "      node = st.top();",
+        "      st.pop();",
+        "      if (--k == 0) {",
+        "        return node->val;",
+        "      }",
+        "      node = node->right;",
+        "    }",
+        "    return -1;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

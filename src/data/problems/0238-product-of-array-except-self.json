@@ -1,0 +1,243 @@
+{
+  "id": 238,
+  "slug": "product-of-array-except-self",
+  "title": "Product of Array Except Self",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays"
+  ],
+  "patterns": [
+    "Prefix / Suffix"
+  ],
+  "aliases": [
+    "product except self",
+    "product of array except self",
+    "array product without self",
+    "prefix suffix product"
+  ],
+  "keywords": [
+    "array",
+    "product",
+    "prefix",
+    "suffix",
+    "without division",
+    "left product",
+    "right product"
+  ],
+  "summary": "For each index, compute the product of every other number without using division.",
+  "hint": "Store prefix products in the output, then multiply by a running suffix product from the right.",
+  "quickAnswer": {
+    "pattern": "Prefix / Suffix",
+    "idea": [
+      "Output first stores products to the left.",
+      "A backward pass multiplies products to the right.",
+      "No division is needed."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Fill the result with products of all values to the left of each index.",
+    "Scan from right to left with a running suffix product.",
+    "Multiply each result entry by the current suffix.",
+    "Update the suffix with the current number.",
+    "The result array is the required output."
+  ],
+  "pseudocode": [
+    "answer = ones array",
+    "prefix = 1",
+    "",
+    "for each index left to right:",
+    "    answer[index] = prefix",
+    "    prefix *= nums[index]",
+    "",
+    "suffix = 1",
+    "for each index right to left:",
+    "    answer[index] *= suffix",
+    "    suffix *= nums[index]",
+    "",
+    "return answer"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "The input contains zero.",
+    "The input contains multiple zeros.",
+    "Negative values change product signs.",
+    "The array has two elements."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function productExceptSelf(nums) {",
+        "  const result = new Array(nums.length).fill(1);",
+        "  let prefix = 1;",
+        "",
+        "  for (let i = 0; i < nums.length; i += 1) {",
+        "    result[i] = prefix;",
+        "    prefix *= nums[i];",
+        "  }",
+        "",
+        "  let suffix = 1;",
+        "  for (let i = nums.length - 1; i >= 0; i -= 1) {",
+        "    result[i] *= suffix;",
+        "    suffix *= nums[i];",
+        "  }",
+        "",
+        "  return result;",
+        "}"
+      ],
+      "g2": [
+        "function productExceptSelf(nums) {",
+        "  const result = new Array(nums.length).fill(1);",
+        "  let prefix = 1;",
+        "",
+        "  for (let i = 0; i < nums.length; i += 1) {",
+        "    result[i] = prefix;",
+        "    prefix *= nums[i];",
+        "  }",
+        "",
+        "  let suffix = 1;",
+        "  for (let i = nums.length - 1; i >= 0; i -= 1) {",
+        "    result[i] *= suffix;",
+        "    suffix *= nums[i];",
+        "  }",
+        "",
+        "  return result;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def productExceptSelf(self, nums: List[int]) -> List[int]:",
+        "        result = [1] * len(nums)",
+        "        prefix = 1",
+        "",
+        "        for i, num in enumerate(nums):",
+        "            result[i] = prefix",
+        "            prefix *= num",
+        "",
+        "        suffix = 1",
+        "        for i in range(len(nums) - 1, -1, -1):",
+        "            result[i] *= suffix",
+        "            suffix *= nums[i]",
+        "",
+        "        return result"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def productExceptSelf(self, nums: List[int]) -> List[int]:",
+        "        result = [1] * len(nums)",
+        "        prefix = 1",
+        "",
+        "        for i, num in enumerate(nums):",
+        "            result[i] = prefix",
+        "            prefix *= num",
+        "",
+        "        suffix = 1",
+        "        for i in range(len(nums) - 1, -1, -1):",
+        "            result[i] *= suffix",
+        "            suffix *= nums[i]",
+        "",
+        "        return result"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int[] productExceptSelf(int[] nums) {",
+        "        int[] result = new int[nums.length];",
+        "        Arrays.fill(result, 1);",
+        "        int prefix = 1;",
+        "",
+        "        for (int i = 0; i < nums.length; i++) {",
+        "            result[i] = prefix;",
+        "            prefix *= nums[i];",
+        "        }",
+        "",
+        "        int suffix = 1;",
+        "        for (int i = nums.length - 1; i >= 0; i--) {",
+        "            result[i] *= suffix;",
+        "            suffix *= nums[i];",
+        "        }",
+        "",
+        "        return result;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int[] productExceptSelf(int[] nums) {",
+        "    int[] result = new int[nums.length];",
+        "    Arrays.fill(result, 1);",
+        "    int prefix = 1;",
+        "",
+        "    for (int i = 0; i < nums.length; i++) {",
+        "      result[i] = prefix;",
+        "      prefix *= nums[i];",
+        "    }",
+        "",
+        "    int suffix = 1;",
+        "    for (int i = nums.length - 1; i >= 0; i--) {",
+        "      result[i] *= suffix;",
+        "      suffix *= nums[i];",
+        "    }",
+        "",
+        "    return result;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    vector<int> productExceptSelf(vector<int>& nums) {",
+        "        vector<int> result(nums.size(), 1);",
+        "        int prefix = 1;",
+        "",
+        "        for (int i = 0; i < nums.size(); i++) {",
+        "            result[i] = prefix;",
+        "            prefix *= nums[i];",
+        "        }",
+        "",
+        "        int suffix = 1;",
+        "        for (int i = nums.size() - 1; i >= 0; i--) {",
+        "            result[i] *= suffix;",
+        "            suffix *= nums[i];",
+        "        }",
+        "",
+        "        return result;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  vector<int> productExceptSelf(vector<int>& nums) {",
+        "    vector<int> result(nums.size(), 1);",
+        "    int prefix = 1;",
+        "",
+        "    for (int i = 0; i < nums.size(); i++) {",
+        "      result[i] = prefix;",
+        "      prefix *= nums[i];",
+        "    }",
+        "",
+        "    int suffix = 1;",
+        "    for (int i = nums.size() - 1; i >= 0; i--) {",
+        "      result[i] *= suffix;",
+        "      suffix *= nums[i];",
+        "    }",
+        "",
+        "    return result;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

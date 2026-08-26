@@ -1,0 +1,190 @@
+{
+  "id": 217,
+  "slug": "contains-duplicate",
+  "title": "Contains Duplicate",
+  "difficulty": "Easy",
+  "categories": [
+    "Arrays",
+    "Hash Sets"
+  ],
+  "patterns": [
+    "Hash Set"
+  ],
+  "aliases": [
+    "contains duplicate",
+    "has duplicate",
+    "duplicate number",
+    "repeated value in array"
+  ],
+  "keywords": [
+    "array",
+    "duplicate",
+    "set",
+    "hash set",
+    "seen",
+    "repeat"
+  ],
+  "summary": "Determine whether any value appears more than once in an array.",
+  "hint": "A set can tell you whether the current value has already been seen.",
+  "quickAnswer": {
+    "pattern": "Hash Set",
+    "idea": [
+      "Track values already seen.",
+      "A repeated value proves a duplicate.",
+      "Otherwise add each value to the set."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Create an empty set.",
+    "Scan each number in the array.",
+    "If the number is already in the set, return true.",
+    "Otherwise add it to the set.",
+    "If the scan finishes, no duplicate exists."
+  ],
+  "pseudocode": [
+    "seen = empty set",
+    "",
+    "for each value:",
+    "    if value is in seen:",
+    "        return true",
+    "    add value to seen",
+    "",
+    "return false"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "The array is empty.",
+    "The duplicate appears at the end.",
+    "All values are unique.",
+    "Negative numbers are present."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function containsDuplicate(nums) {",
+        "  const seen = new Set();",
+        "",
+        "  for (const num of nums) {",
+        "    if (seen.has(num)) return true;",
+        "    seen.add(num);",
+        "  }",
+        "",
+        "  return false;",
+        "}"
+      ],
+      "g2": [
+        "function containsDuplicate(nums) {",
+        "  const seen = new Set();",
+        "",
+        "  for (const num of nums) {",
+        "    if (seen.has(num)) {",
+        "      return true;",
+        "    }",
+        "    seen.add(num);",
+        "  }",
+        "",
+        "  return false;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def containsDuplicate(self, nums: List[int]) -> bool:",
+        "        seen = set()",
+        "",
+        "        for num in nums:",
+        "            if num in seen:",
+        "                return True",
+        "            seen.add(num)",
+        "",
+        "        return False"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def containsDuplicate(self, nums: List[int]) -> bool:",
+        "        seen = set()",
+        "",
+        "        for num in nums:",
+        "            if num in seen:",
+        "                return True",
+        "            seen.add(num)",
+        "",
+        "        return False"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public boolean containsDuplicate(int[] nums) {",
+        "        Set<Integer> seen = new HashSet<>();",
+        "",
+        "        for (int num : nums) {",
+        "            if (seen.contains(num)) return true;",
+        "            seen.add(num);",
+        "        }",
+        "",
+        "        return false;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean containsDuplicate(int[] nums) {",
+        "    Set<Integer> seen = new HashSet<>();",
+        "",
+        "    for (int num : nums) {",
+        "      if (seen.contains(num)) {",
+        "        return true;",
+        "      }",
+        "      seen.add(num);",
+        "    }",
+        "",
+        "    return false;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    bool containsDuplicate(vector<int>& nums) {",
+        "        unordered_set<int> seen;",
+        "",
+        "        for (int num : nums) {",
+        "            if (seen.count(num)) return true;",
+        "            seen.insert(num);",
+        "        }",
+        "",
+        "        return false;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  bool containsDuplicate(vector<int>& nums) {",
+        "    unordered_set<int> seen;",
+        "",
+        "    for (int num : nums) {",
+        "      if (seen.count(num)) {",
+        "        return true;",
+        "      }",
+        "      seen.insert(num);",
+        "    }",
+        "",
+        "    return false;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

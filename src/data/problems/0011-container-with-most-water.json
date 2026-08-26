@@ -1,0 +1,260 @@
+{
+  "id": 11,
+  "slug": "container-with-most-water",
+  "title": "Container With Most Water",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Two Pointers"
+  ],
+  "patterns": [
+    "Two Pointers"
+  ],
+  "aliases": [
+    "container with most water",
+    "max water container",
+    "most water",
+    "water container",
+    "maximum area container"
+  ],
+  "keywords": [
+    "array",
+    "height",
+    "area",
+    "two pointers",
+    "left pointer",
+    "right pointer"
+  ],
+  "summary": "Choose two vertical lines that form the container with the largest possible water area.",
+  "hint": "Start at both ends, compute the area, and move the shorter side because it limits the height.",
+  "quickAnswer": {
+    "pattern": "Two Pointers",
+    "idea": [
+      "Start with widest container.",
+      "Area is limited by shorter wall.",
+      "Move the shorter wall inward."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Place one pointer at each end of the height array.",
+    "Compute the area from the current width and the shorter line.",
+    "Keep the best area seen so far.",
+    "Move the pointer at the shorter line inward.",
+    "Repeat until the pointers meet."
+  ],
+  "pseudocode": [
+    "left = first index",
+    "right = last index",
+    "best = 0",
+    "",
+    "while left < right:",
+    "    area = width times shorter height",
+    "    update best",
+    "",
+    "    if left height is smaller:",
+    "        move left rightward",
+    "    else:",
+    "        move right leftward",
+    "",
+    "return best"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Only two lines are present.",
+    "The tallest line is not part of the answer.",
+    "Heights are increasing or decreasing.",
+    "Many lines have the same height."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function maxArea(height) {",
+        "  let left = 0;",
+        "  let right = height.length - 1;",
+        "  let best = 0;",
+        "",
+        "  while (left < right) {",
+        "    const width = right - left;",
+        "    const area = Math.min(height[left], height[right]) * width;",
+        "    best = Math.max(best, area);",
+        "",
+        "    if (height[left] < height[right]) {",
+        "      left += 1;",
+        "    } else {",
+        "      right -= 1;",
+        "    }",
+        "  }",
+        "",
+        "  return best;",
+        "}"
+      ],
+      "g2": [
+        "function maxArea(height) {",
+        "  let left = 0;",
+        "  let right = height.length - 1;",
+        "  let best = 0;",
+        "",
+        "  while (left < right) {",
+        "    const width = right - left;",
+        "    const area = Math.min(height[left],",
+        "      height[right]) * width;",
+        "    best = Math.max(best, area);",
+        "",
+        "    if (height[left] < height[right]) {",
+        "      left += 1;",
+        "    }",
+        "    else {",
+        "      right -= 1;",
+        "    }",
+        "  }",
+        "",
+        "  return best;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def maxArea(self, height: List[int]) -> int:",
+        "        left, right = 0, len(height) - 1",
+        "        best = 0",
+        "",
+        "        while left < right:",
+        "            width = right - left",
+        "            area = min(height[left], height[right]) * width",
+        "            best = max(best, area)",
+        "",
+        "            if height[left] < height[right]:",
+        "                left += 1",
+        "            else:",
+        "                right -= 1",
+        "",
+        "        return best"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def maxArea(self, height: List[int]) -> int:",
+        "        left, right = 0, len(height) - 1",
+        "        best = 0",
+        "",
+        "        while left < right:",
+        "            width = right - left",
+        "            area = min(height[left], height[right]) * width",
+        "            best = max(best, area)",
+        "",
+        "            if height[left] < height[right]:",
+        "                left += 1",
+        "            else:",
+        "                right -= 1",
+        "",
+        "        return best"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int maxArea(int[] height) {",
+        "        int left = 0;",
+        "        int right = height.length - 1;",
+        "        int best = 0;",
+        "",
+        "        while (left < right) {",
+        "            int width = right - left;",
+        "            int area = Math.min(height[left], height[right]) * width;",
+        "            best = Math.max(best, area);",
+        "",
+        "            if (height[left] < height[right]) {",
+        "                left++;",
+        "            } else {",
+        "                right--;",
+        "            }",
+        "        }",
+        "",
+        "        return best;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int maxArea(int[] height) {",
+        "    int left = 0;",
+        "    int right = height.length - 1;",
+        "    int best = 0;",
+        "",
+        "    while (left < right) {",
+        "      int width = right - left;",
+        "      int area = Math.min(height[left],",
+        "        height[right]) * width;",
+        "      best = Math.max(best, area);",
+        "",
+        "      if (height[left] < height[right]) {",
+        "        left++;",
+        "      }",
+        "      else {",
+        "        right--;",
+        "      }",
+        "    }",
+        "",
+        "    return best;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    int maxArea(vector<int>& height) {",
+        "        int left = 0;",
+        "        int right = height.size() - 1;",
+        "        int best = 0;",
+        "",
+        "        while (left < right) {",
+        "            int width = right - left;",
+        "            int area = min(height[left], height[right]) * width;",
+        "            best = max(best, area);",
+        "",
+        "            if (height[left] < height[right]) left++;",
+        "            else right--;",
+        "        }",
+        "",
+        "        return best;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int maxArea(vector<int>& height) {",
+        "    int left = 0;",
+        "    int right = height.size() - 1;",
+        "    int best = 0;",
+        "",
+        "    while (left < right) {",
+        "      int width = right - left;",
+        "      int area = min(height[left],",
+        "        height[right]) * width;",
+        "      best = max(best, area);",
+        "",
+        "      if (height[left] < height[right]) {",
+        "        left++;",
+        "      }",
+        "      else {",
+        "        right--;",
+        "      }",
+        "    }",
+        "",
+        "    return best;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

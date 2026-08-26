@@ -1,0 +1,135 @@
+{
+  "id": 190,
+  "slug": "reverse-bits",
+  "title": "Reverse Bits",
+  "difficulty": "Easy",
+  "categories": [
+    "Bit Manipulation"
+  ],
+  "patterns": [
+    "Bit Manipulation"
+  ],
+  "aliases": [
+    "reverse bits",
+    "reverse binary bits",
+    "bit reversal"
+  ],
+  "keywords": [
+    "bits",
+    "binary",
+    "shift",
+    "reverse"
+  ],
+  "summary": "Solve Reverse Bits using the standard optimized interview approach.",
+  "hint": "Look for the Bit Manipulation structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Bit Manipulation",
+    "idea": [
+      "Build the answer one bit at a time.",
+      "Shift answer left and append the lowest input bit.",
+      "Shift input right for exactly 32 steps."
+    ],
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Reverse Bits.",
+    "Use Bit Manipulation to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "answer = 0",
+    "",
+    "repeat 32 times:",
+    "    answer = answer shifted left",
+    "    answer = answer plus lowest bit",
+    "    shift input right",
+    "",
+    "return answer"
+  ],
+  "complexity": {
+    "time": "O(1)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function reverseBits(n) { let ans = 0; for (let i = 0; i < 32; i += 1) { ans = (ans << 1) | (n & 1); n >>>= 1; } return ans >>> 0; }"
+      ],
+      "g2": [
+        "function reverseBits(n) {",
+        "  let ans = 0;",
+        "  for (let i = 0; i < 32; i += 1) {",
+        "    ans = (ans << 1) | (n & 1);",
+        "    n >>>= 1;",
+        "  }",
+        "  return ans >>> 0;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def reverseBits(self, n):",
+        "        ans = 0",
+        "        for _ in range(32):",
+        "  ans = (ans << 1) | (n & 1)",
+        "  n >>= 1",
+        "        return ans"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def reverseBits(self, n):",
+        "        ans = 0",
+        "        for _ in range(32):",
+        "            ans = (ans << 1) | (n & 1)",
+        "            n >>= 1",
+        "        return ans"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "public class Solution { public int reverseBits(int n) { int ans = 0; for (int i = 0; i < 32; i++) { ans = (ans << 1) | (n & 1); n >>>= 1; } return ans; } }"
+      ],
+      "g2": [
+        "public class Solution {",
+        "  public int reverseBits(int n) {",
+        "    int ans = 0;",
+        "    for (int i = 0; i < 32; i++) {",
+        "      ans = (ans << 1) | (n & 1);",
+        "      n >>>= 1;",
+        "    }",
+        "    return ans;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: uint32_t reverseBits(uint32_t n) { uint32_t ans = 0; for (int i = 0; i < 32; i++) { ans = (ans << 1) | (n & 1); n >>= 1; } return ans; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  uint32_t reverseBits(uint32_t n) {",
+        "    uint32_t ans = 0;",
+        "    for (int i = 0; i < 32; i++) {",
+        "      ans = (ans << 1) | (n & 1);",
+        "      n >>= 1;",
+        "    }",
+        "    return ans;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

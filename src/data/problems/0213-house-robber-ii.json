@@ -1,0 +1,168 @@
+{
+  "id": 213,
+  "slug": "house-robber-ii",
+  "title": "House Robber II",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Dynamic Programming"
+  ],
+  "patterns": [
+    "1D Dynamic Programming"
+  ],
+  "aliases": [
+    "house robber two",
+    "circular house robber",
+    "rob houses circle"
+  ],
+  "keywords": [
+    "dynamic programming",
+    "circular",
+    "array",
+    "house robber"
+  ],
+  "summary": "Solve House Robber II using the standard optimized interview approach.",
+  "hint": "Look for the 1D Dynamic Programming structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Circular DP",
+    "idea": [
+      "First and last houses cannot both be robbed.",
+      "Solve two linear ranges.",
+      "Take the better result."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for House Robber II.",
+    "Use 1D Dynamic Programming to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "if one house:",
+    "    return its value",
+    "",
+    "answer1 = rob houses 0 through n - 2",
+    "answer2 = rob houses 1 through n - 1",
+    "return max(answer1, answer2)",
+    "",
+    "robLinear(range):",
+    "    keep previous two DP values",
+    "    update rob or skip for each house"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function rob(nums) { if (nums.length === 1) return nums[0]; const run = (l, r) => { let a = 0, b = 0; for (let i = l; i <= r; i += 1) { const c = Math.max(b, a + nums[i]); a = b; b = c; } return b; }; return Math.max(run(0, nums.length - 2), run(1, nums.length - 1)); }"
+      ],
+      "g2": [
+        "function rob(nums) {",
+        "  if (nums.length === 1) {",
+        "    return nums[0];",
+        "  }",
+        "  const run = (l, r) => {",
+        "    let a = 0, b = 0;",
+        "    for (let i = l; i <= r; i += 1) {",
+        "      const c = Math.max(b, a + nums[i]);",
+        "      a = b;",
+        "      b = c;",
+        "    }",
+        "    return b;",
+        "  };",
+        "  return Math.max(run(0, nums.length - 2),",
+        "    run(1, nums.length - 1));",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def rob(self, nums):",
+        "        if len(nums) == 1: return nums[0]",
+        "        def run(arr):",
+        "  a = b = 0",
+        "  for money in arr:",
+        "      a, b = b, max(b, a + money)",
+        "  return b",
+        "        return max(run(nums[:-1]), run(nums[1:]))"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def rob(self, nums):",
+        "        if len(nums) == 1:",
+        "            return nums[0]",
+        "        def run(arr):",
+        "            a = b = 0",
+        "            for money in arr:",
+        "                a, b = b, max(b, a + money)",
+        "                return b",
+        "        return max(run(nums[:-1]), run(nums[1:]))"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int rob(int[] nums) { if (nums.length == 1) return nums[0]; return Math.max(run(nums, 0, nums.length - 2), run(nums, 1, nums.length - 1)); } private int run(int[] nums, int l, int r) { int a = 0, b = 0; for (int i = l; i <= r; i++) { int c = Math.max(b, a + nums[i]); a = b; b = c; } return b; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int rob(int[] nums) {",
+        "    if (nums.length == 1) {",
+        "      return nums[0];",
+        "    }",
+        "    return Math.max(run(nums, 0,",
+        "      nums.length - 2), run(nums, 1,",
+        "      nums.length - 1));",
+        "  }",
+        "  private int run(int[] nums, int l, int r) {",
+        "    int a = 0, b = 0;",
+        "    for (int i = l; i <= r; i++) {",
+        "      int c = Math.max(b, a + nums[i]);",
+        "      a = b;",
+        "      b = c;",
+        "    }",
+        "    return b;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { int run(vector<int>& nums, int l, int r) { int a = 0, b = 0; for (int i = l; i <= r; i++) { int c = max(b, a + nums[i]); a = b; b = c; } return b; } public: int rob(vector<int>& nums) { if (nums.size() == 1) return nums[0]; return max(run(nums,0,nums.size()-2), run(nums,1,nums.size()-1)); } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "  int run(vector<int>& nums, int l, int r) {",
+        "    int a = 0, b = 0;",
+        "    for (int i = l; i <= r; i++) {",
+        "      int c = max(b, a + nums[i]);",
+        "      a = b;",
+        "      b = c;",
+        "    }",
+        "    return b;",
+        "  }",
+        "public:",
+        "  int rob(vector<int>& nums) {",
+        "    if (nums.size() == 1) {",
+        "      return nums[0];",
+        "    }",
+        "    return max(run(nums,0,nums.size()-2),",
+        "      run(nums,1,nums.size()-1));",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "id": 57,
+  "slug": "insert-interval",
+  "title": "Insert Interval",
+  "difficulty": "Medium",
+  "categories": [
+    "Intervals",
+    "Arrays"
+  ],
+  "patterns": [
+    "Intervals"
+  ],
+  "aliases": [
+    "insert interval",
+    "add interval",
+    "insert and merge interval"
+  ],
+  "keywords": [
+    "interval",
+    "merge",
+    "overlap",
+    "insert"
+  ],
+  "summary": "Solve Insert Interval using the standard optimized interview approach.",
+  "hint": "Look for the Intervals structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Intervals",
+    "idea": [
+      "Copy intervals ending before the new one.",
+      "Merge every overlapping interval into the new interval.",
+      "Append the rest unchanged."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Insert Interval.",
+    "Use Intervals to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "result = empty list",
+    "i = 0",
+    "",
+    "while interval ends before new starts:",
+    "    append interval",
+    "    move i",
+    "",
+    "while interval overlaps new:",
+    "    merge interval into new",
+    "    move i",
+    "",
+    "append merged new interval",
+    "",
+    "while intervals remain:",
+    "    append interval",
+    "    move i",
+    "",
+    "return result"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function insert(intervals, newInterval) {",
+        "  const result = [];",
+        "  let i = 0;",
+        "  while (i < intervals.length && intervals[i][1] < newInterval[0]) result.push(intervals[i++]);",
+        "  while (i < intervals.length && intervals[i][0] <= newInterval[1]) { newInterval[0] = Math.min(newInterval[0], intervals[i][0]); newInterval[1] = Math.max(newInterval[1], intervals[i][1]); i += 1; }",
+        "  result.push(newInterval);",
+        "  while (i < intervals.length) result.push(intervals[i++]);",
+        "  return result;",
+        "}"
+      ],
+      "g2": [
+        "function insert(intervals, newInterval) {",
+        "  const result = [];",
+        "  let i = 0;",
+        "  while (i < intervals.length && intervals[i][1] < newInterval[0]) {",
+        "    result.push(intervals[i++]);",
+        "  }",
+        "  while (i < intervals.length && intervals[i][0] <= newInterval[1]) {",
+        "    newInterval[0] = Math.min(newInterval[0],",
+        "      intervals[i][0]);",
+        "    newInterval[1] = Math.max(newInterval[1],",
+        "      intervals[i][1]);",
+        "    i += 1;",
+        "  }",
+        "  result.push(newInterval);",
+        "  while (i < intervals.length) {",
+        "    result.push(intervals[i++]);",
+        "  }",
+        "  return result;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def insert(self, intervals, newInterval):",
+        "        result = []",
+        "        i = 0",
+        "        while i < len(intervals) and intervals[i][1] < newInterval[0]:",
+        "            result.append(intervals[i]); i += 1",
+        "        while i < len(intervals) and intervals[i][0] <= newInterval[1]:",
+        "            newInterval[0] = min(newInterval[0], intervals[i][0])",
+        "            newInterval[1] = max(newInterval[1], intervals[i][1])",
+        "            i += 1",
+        "        result.append(newInterval)",
+        "        return result + intervals[i:]"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def insert(self, intervals, newInterval):",
+        "        result = []",
+        "        i = 0",
+        "        while i < len(intervals) and intervals[i][1] < newInterval[0]:",
+        "            result.append(intervals[i])",
+        "            i += 1",
+        "        while i < len(intervals) and intervals[i][0] <= newInterval[1]:",
+        "            newInterval[0] = min(newInterval[0], intervals[i][0])",
+        "            newInterval[1] = max(newInterval[1], intervals[i][1])",
+        "            i += 1",
+        "        result.append(newInterval)",
+        "        return result + intervals[i:]"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int[][] insert(int[][] intervals, int[] newInterval) {",
+        "        List<int[]> result = new ArrayList<>(); int i = 0;",
+        "        while (i < intervals.length && intervals[i][1] < newInterval[0]) result.add(intervals[i++]);",
+        "        while (i < intervals.length && intervals[i][0] <= newInterval[1]) { newInterval[0] = Math.min(newInterval[0], intervals[i][0]); newInterval[1] = Math.max(newInterval[1], intervals[i][1]); i++; }",
+        "        result.add(newInterval);",
+        "        while (i < intervals.length) result.add(intervals[i++]);",
+        "        return result.toArray(new int[result.size()][]);",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int[][] insert(int[][] intervals, int[] newInterval) {",
+        "    List<int[]> result = new ArrayList<>();",
+        "    int i = 0;",
+        "    while (i < intervals.length && intervals[i][1] < newInterval[0]) {",
+        "      result.add(intervals[i++]);",
+        "    }",
+        "    while (i < intervals.length && intervals[i][0] <= newInterval[1]) {",
+        "      newInterval[0] = Math.min(newInterval[0],",
+        "        intervals[i][0]);",
+        "      newInterval[1] = Math.max(newInterval[1],",
+        "        intervals[i][1]);",
+        "      i++;",
+        "    }",
+        "    result.add(newInterval);",
+        "    while (i < intervals.length) {",
+        "      result.add(intervals[i++]);",
+        "    }",
+        "    return result.toArray(new int[result.size()][]);",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {",
+        "        vector<vector<int>> result; int i = 0;",
+        "        while (i < intervals.size() && intervals[i][1] < newInterval[0]) result.push_back(intervals[i++]);",
+        "        while (i < intervals.size() && intervals[i][0] <= newInterval[1]) { newInterval[0] = min(newInterval[0], intervals[i][0]); newInterval[1] = max(newInterval[1], intervals[i][1]); i++; }",
+        "        result.push_back(newInterval);",
+        "        while (i < intervals.size()) result.push_back(intervals[i++]);",
+        "        return result;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {",
+        "    vector<vector<int>> result;",
+        "    int i = 0;",
+        "    while (i < intervals.size() && intervals[i][1] < newInterval[0]) {",
+        "      result.push_back(intervals[i++]);",
+        "    }",
+        "    while (i < intervals.size() && intervals[i][0] <= newInterval[1]) {",
+        "      newInterval[0] = min(newInterval[0],",
+        "        intervals[i][0]);",
+        "      newInterval[1] = max(newInterval[1],",
+        "        intervals[i][1]);",
+        "      i++;",
+        "    }",
+        "    result.push_back(newInterval);",
+        "    while (i < intervals.size()) {",
+        "      result.push_back(intervals[i++]);",
+        "    }",
+        "    return result;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

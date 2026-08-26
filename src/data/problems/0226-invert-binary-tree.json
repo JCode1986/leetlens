@@ -1,0 +1,182 @@
+{
+  "id": 226,
+  "slug": "invert-binary-tree",
+  "title": "Invert Binary Tree",
+  "difficulty": "Easy",
+  "categories": [
+    "Trees",
+    "DFS"
+  ],
+  "patterns": [
+    "DFS",
+    "Tree Recursion",
+    "Recursion"
+  ],
+  "aliases": [
+    "invert tree",
+    "invert a binary tree",
+    "flip binary tree",
+    "mirror binary tree",
+    "reverse binary tree"
+  ],
+  "keywords": [
+    "tree",
+    "binary tree",
+    "invert",
+    "mirror",
+    "swap",
+    "dfs",
+    "recursion"
+  ],
+  "summary": "Swap every left and right child in a binary tree.",
+  "hint": "Invert each child subtree, then swap the two child pointers.",
+  "quickAnswer": {
+    "pattern": "Tree Recursion",
+    "idea": [
+      "Swap each node left and right children.",
+      "Recursively invert both subtrees.",
+      "Return the root."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(h)"
+    }
+  },
+  "approach": [
+    "If the node is null, return null.",
+    "Recursively invert the left subtree.",
+    "Recursively invert the right subtree.",
+    "Assign the inverted right subtree to left and inverted left subtree to right.",
+    "Return the current node."
+  ],
+  "pseudocode": [
+    "invert(node):",
+    "    if node is null:",
+    "        return null",
+    "",
+    "    swap node.left and node.right",
+    "    invert node.left",
+    "    invert node.right",
+    "    return node",
+    "",
+    "return invert(root)"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "edgeCases": [
+    "The root is null.",
+    "The tree has one node.",
+    "Only one child exists on some nodes.",
+    "The tree is skewed."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function invertTree(root) {",
+        "  if (!root) return null;",
+        "  const left = invertTree(root.left);",
+        "  const right = invertTree(root.right);",
+        "  root.left = right;",
+        "  root.right = left;",
+        "  return root;",
+        "}"
+      ],
+      "g2": [
+        "function invertTree(root) {",
+        "  if (!root) {",
+        "    return null;",
+        "  }",
+        "  const left = invertTree(root.left);",
+        "  const right = invertTree(root.right);",
+        "  root.left = right;",
+        "  root.right = left;",
+        "  return root;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:",
+        "        if not root:",
+        "            return None",
+        "        left = self.invertTree(root.left)",
+        "        right = self.invertTree(root.right)",
+        "        root.left = right",
+        "        root.right = left",
+        "        return root"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:",
+        "        if not root:",
+        "            return None",
+        "        left = self.invertTree(root.left)",
+        "        right = self.invertTree(root.right)",
+        "        root.left = right",
+        "        root.right = left",
+        "        return root"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public TreeNode invertTree(TreeNode root) {",
+        "        if (root == null) return null;",
+        "        TreeNode left = invertTree(root.left);",
+        "        TreeNode right = invertTree(root.right);",
+        "        root.left = right;",
+        "        root.right = left;",
+        "        return root;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public TreeNode invertTree(TreeNode root) {",
+        "    if (root == null) {",
+        "      return null;",
+        "    }",
+        "    TreeNode left = invertTree(root.left);",
+        "    TreeNode right = invertTree(root.right);",
+        "    root.left = right;",
+        "    root.right = left;",
+        "    return root;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    TreeNode* invertTree(TreeNode* root) {",
+        "        if (!root) return nullptr;",
+        "        TreeNode* left = invertTree(root->left);",
+        "        TreeNode* right = invertTree(root->right);",
+        "        root->left = right;",
+        "        root->right = left;",
+        "        return root;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  TreeNode* invertTree(TreeNode* root) {",
+        "    if (!root) {",
+        "      return nullptr;",
+        "    }",
+        "    TreeNode* left = invertTree(root->left);",
+        "    TreeNode* right = invertTree(root->right);",
+        "    root->left = right;",
+        "    root->right = left;",
+        "    return root;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

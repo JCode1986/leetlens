@@ -1,0 +1,240 @@
+{
+  "id": 125,
+  "slug": "valid-palindrome",
+  "title": "Valid Palindrome",
+  "difficulty": "Easy",
+  "categories": [
+    "Strings",
+    "Two Pointers"
+  ],
+  "patterns": [
+    "Two Pointers"
+  ],
+  "aliases": [
+    "valid palindrome",
+    "palindrome string",
+    "check palindrome",
+    "ignore punctuation palindrome"
+  ],
+  "keywords": [
+    "string",
+    "palindrome",
+    "two pointers",
+    "letters",
+    "digits",
+    "alphanumeric"
+  ],
+  "summary": "Check whether a string reads the same forward and backward after ignoring punctuation and case.",
+  "hint": "Move inward from both ends and skip characters that are not letters or digits.",
+  "quickAnswer": {
+    "pattern": "Two Pointers",
+    "idea": [
+      "Compare only alphanumeric characters.",
+      "Move inward from both ends.",
+      "Mismatch means not a palindrome."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Place pointers at the start and end of the string.",
+    "Skip non-alphanumeric characters on both sides.",
+    "Compare lowercase versions of the remaining characters.",
+    "Return false on the first mismatch.",
+    "If the pointers cross, the string is a palindrome."
+  ],
+  "pseudocode": [
+    "left = start",
+    "right = end",
+    "",
+    "while left < right:",
+    "    skip non-alphanumeric on left",
+    "    skip non-alphanumeric on right",
+    "",
+    "    if lowercase chars differ:",
+    "        return false",
+    "    move both pointers inward",
+    "",
+    "return true"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "The string is empty after filtering.",
+    "Case differs between matching letters.",
+    "Punctuation appears between letters.",
+    "Digits are included."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function isPalindrome(s) {",
+        "  let left = 0;",
+        "  let right = s.length - 1;",
+        "",
+        "  while (left < right) {",
+        "    while (left < right && !/[a-z0-9]/i.test(s[left])) left += 1;",
+        "    while (left < right && !/[a-z0-9]/i.test(s[right])) right -= 1;",
+        "    if (s[left].toLowerCase() !== s[right].toLowerCase()) return false;",
+        "    left += 1;",
+        "    right -= 1;",
+        "  }",
+        "",
+        "  return true;",
+        "}"
+      ],
+      "g2": [
+        "function isPalindrome(s) {",
+        "  let left = 0;",
+        "  let right = s.length - 1;",
+        "",
+        "  while (left < right) {",
+        "    while (left < right && !/[a-z0-9]/i.test(s[left])) {",
+        "      left += 1;",
+        "    }",
+        "    while (left < right && !/[a-z0-9]/i.test(s[right])) {",
+        "      right -= 1;",
+        "    }",
+        "    if (s[left].toLowerCase() !== s[right].toLowerCase()) {",
+        "      return false;",
+        "    }",
+        "    left += 1;",
+        "    right -= 1;",
+        "  }",
+        "",
+        "  return true;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def isPalindrome(self, s: str) -> bool:",
+        "        left, right = 0, len(s) - 1",
+        "",
+        "        while left < right:",
+        "            while left < right and not s[left].isalnum():",
+        "                left += 1",
+        "            while left < right and not s[right].isalnum():",
+        "                right -= 1",
+        "            if s[left].lower() != s[right].lower():",
+        "                return False",
+        "            left += 1",
+        "            right -= 1",
+        "",
+        "        return True"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def isPalindrome(self, s: str) -> bool:",
+        "        left, right = 0, len(s) - 1",
+        "",
+        "        while left < right:",
+        "            while left < right and not s[left].isalnum():",
+        "                left += 1",
+        "            while left < right and not s[right].isalnum():",
+        "                right -= 1",
+        "            if s[left].lower() != s[right].lower():",
+        "                return False",
+        "            left += 1",
+        "            right -= 1",
+        "",
+        "        return True"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public boolean isPalindrome(String s) {",
+        "        int left = 0;",
+        "        int right = s.length() - 1;",
+        "",
+        "        while (left < right) {",
+        "            while (left < right && !Character.isLetterOrDigit(s.charAt(left))) left++;",
+        "            while (left < right && !Character.isLetterOrDigit(s.charAt(right))) right--;",
+        "            if (Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right))) return false;",
+        "            left++;",
+        "            right--;",
+        "        }",
+        "",
+        "        return true;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean isPalindrome(String s) {",
+        "    int left = 0;",
+        "    int right = s.length() - 1;",
+        "",
+        "    while (left < right) {",
+        "      while (left < right && !Character.isLetterOrDigit(s.charAt(left))) {",
+        "        left++;",
+        "      }",
+        "      while (left < right && !Character.isLetterOrDigit(s.charAt(right))) {",
+        "        right--;",
+        "      }",
+        "      if (Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right))) {",
+        "        return false;",
+        "      }",
+        "      left++;",
+        "      right--;",
+        "    }",
+        "",
+        "    return true;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    bool isPalindrome(string s) {",
+        "        int left = 0;",
+        "        int right = s.size() - 1;",
+        "",
+        "        while (left < right) {",
+        "            while (left < right && !isalnum(s[left])) left++;",
+        "            while (left < right && !isalnum(s[right])) right--;",
+        "            if (tolower(s[left]) != tolower(s[right])) return false;",
+        "            left++;",
+        "            right--;",
+        "        }",
+        "",
+        "        return true;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  bool isPalindrome(string s) {",
+        "    int left = 0;",
+        "    int right = s.size() - 1;",
+        "",
+        "    while (left < right) {",
+        "      while (left < right && !isalnum(s[left])) {",
+        "        left++;",
+        "      }",
+        "      while (left < right && !isalnum(s[right])) {",
+        "        right--;",
+        "      }",
+        "      if (tolower(s[left]) != tolower(s[right])) {",
+        "        return false;",
+        "      }",
+        "      left++;",
+        "      right--;",
+        "    }",
+        "",
+        "    return true;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

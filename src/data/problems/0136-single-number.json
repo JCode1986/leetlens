@@ -1,0 +1,124 @@
+{
+  "id": 136,
+  "slug": "single-number",
+  "title": "Single Number",
+  "difficulty": "Easy",
+  "categories": [
+    "Arrays",
+    "Bit Manipulation"
+  ],
+  "patterns": [
+    "Bit Manipulation"
+  ],
+  "aliases": [
+    "single number",
+    "unique number",
+    "number that appears once"
+  ],
+  "keywords": [
+    "xor",
+    "bit manipulation",
+    "array",
+    "unique"
+  ],
+  "summary": "Solve Single Number using the standard optimized interview approach.",
+  "hint": "Look for the Bit Manipulation structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Bit Manipulation",
+    "idea": [
+      "XOR cancels equal numbers.",
+      "XOR with zero keeps the value.",
+      "The remaining value is the single number."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Single Number.",
+    "Use Bit Manipulation to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "answer = 0",
+    "",
+    "for each number:",
+    "    answer = answer xor number",
+    "",
+    "return answer"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function singleNumber(nums) { return nums.reduce((x, n) => x ^ n, 0); }"
+      ],
+      "g2": [
+        "function singleNumber(nums) {",
+        "  return nums.reduce((x, n) => x ^ n, 0);",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def singleNumber(self, nums):",
+        "        x = 0",
+        "        for n in nums: x ^= n",
+        "        return x"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def singleNumber(self, nums):",
+        "        x = 0",
+        "        for n in nums:",
+        "            x ^= n",
+        "        return x"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int singleNumber(int[] nums) { int x = 0; for (int n : nums) x ^= n; return x; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int singleNumber(int[] nums) {",
+        "    int x = 0;",
+        "    for (int n : nums) {",
+        "      x ^= n;",
+        "    }",
+        "    return x;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int singleNumber(vector<int>& nums) { int x = 0; for (int n : nums) x ^= n; return x; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int singleNumber(vector<int>& nums) {",
+        "    int x = 0;",
+        "    for (int n : nums) {",
+        "      x ^= n;",
+        "    }",
+        "    return x;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

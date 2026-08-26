@@ -1,0 +1,171 @@
+{
+  "id": 124,
+  "slug": "binary-tree-maximum-path-sum",
+  "title": "Binary Tree Maximum Path Sum",
+  "difficulty": "Hard",
+  "categories": [
+    "Trees",
+    "DFS"
+  ],
+  "patterns": [
+    "Tree Recursion"
+  ],
+  "aliases": [
+    "binary tree maximum path sum",
+    "max path sum",
+    "tree path sum"
+  ],
+  "keywords": [
+    "tree",
+    "dfs",
+    "path",
+    "maximum",
+    "recursion"
+  ],
+  "summary": "Solve Binary Tree Maximum Path Sum using the standard optimized interview approach.",
+  "hint": "Look for the Tree Recursion structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Tree DP",
+    "idea": [
+      "Each node returns its best gain to its parent.",
+      "Ignore negative child gains.",
+      "Update global best with a path through the node."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(h)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Binary Tree Maximum Path Sum.",
+    "Use Tree Recursion to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "best = -infinity",
+    "",
+    "gain(node):",
+    "    if node is null:",
+    "        return 0",
+    "",
+    "    left = max(0, gain(left child))",
+    "    right = max(0, gain(right child))",
+    "    best = max(best, value + left + right)",
+    "",
+    "    return value + max(left, right)",
+    "",
+    "gain(root)",
+    "return best"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function maxPathSum(root) { let best = -Infinity; function gain(node){ if(!node) return 0; const left = Math.max(0,gain(node.left)); const right = Math.max(0,gain(node.right)); best = Math.max(best,node.val+left+right); return node.val + Math.max(left,right); } gain(root); return best; }"
+      ],
+      "g2": [
+        "function maxPathSum(root) {",
+        "  let best = -Infinity;",
+        "  function gain(node) {",
+        "    if(!node) {",
+        "      return 0;",
+        "    }",
+        "    const left = Math.max(0,gain(node.left));",
+        "    const right = Math.max(0,gain(node.right));",
+        "    best = Math.max(best,node.val+left+right);",
+        "    return node.val + Math.max(left,right);",
+        "  }",
+        "  gain(root);",
+        "  return best;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def maxPathSum(self, root):",
+        "        best = -10**18",
+        "        def gain(node):",
+        "  nonlocal best",
+        "  if not node: return 0",
+        "  left = max(0, gain(node.left)); right = max(0, gain(node.right))",
+        "  best = max(best, node.val + left + right)",
+        "  return node.val + max(left, right)",
+        "        gain(root); return best"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def maxPathSum(self, root):",
+        "        best = -10**18",
+        "        def gain(node):",
+        "            nonlocal best",
+        "            if not node:",
+        "                return 0",
+        "            left = max(0, gain(node.left))",
+        "            right = max(0, gain(node.right))",
+        "            best = max(best, node.val + left + right)",
+        "            return node.val + max(left, right)",
+        "        gain(root)",
+        "        return best"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { int best = Integer.MIN_VALUE; public int maxPathSum(TreeNode root) { gain(root); return best; } private int gain(TreeNode node) { if (node == null) return 0; int left = Math.max(0, gain(node.left)); int right = Math.max(0, gain(node.right)); best = Math.max(best, node.val + left + right); return node.val + Math.max(left, right); } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  int best = Integer.MIN_VALUE;",
+        "  public int maxPathSum(TreeNode root) {",
+        "    gain(root);",
+        "    return best;",
+        "  }",
+        "  private int gain(TreeNode node) {",
+        "    if (node == null) {",
+        "      return 0;",
+        "    }",
+        "    int left = Math.max(0, gain(node.left));",
+        "    int right = Math.max(0, gain(node.right));",
+        "    best = Math.max(best,",
+        "      node.val + left + right);",
+        "    return node.val + Math.max(left, right);",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { int best = INT_MIN; int gain(TreeNode* node) { if (!node) return 0; int left = max(0, gain(node->left)); int right = max(0, gain(node->right)); best = max(best, node->val + left + right); return node->val + max(left, right); } public: int maxPathSum(TreeNode* root) { gain(root); return best; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "  int best = INT_MIN;",
+        "  int gain(TreeNode* node) {",
+        "    if (!node) {",
+        "      return 0;",
+        "    }",
+        "    int left = max(0, gain(node->left));",
+        "    int right = max(0, gain(node->right));",
+        "    best = max(best, node->val + left + right);",
+        "    return node->val + max(left, right);",
+        "  }",
+        "public:",
+        "  int maxPathSum(TreeNode* root) {",
+        "    gain(root);",
+        "    return best;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

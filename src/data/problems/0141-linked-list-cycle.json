@@ -1,0 +1,207 @@
+{
+  "id": 141,
+  "slug": "linked-list-cycle",
+  "title": "Linked List Cycle",
+  "difficulty": "Easy",
+  "categories": [
+    "Linked Lists"
+  ],
+  "patterns": [
+    "Fast / Slow Pointers"
+  ],
+  "aliases": [
+    "linked list cycle",
+    "detect linked list cycle",
+    "linked list loop",
+    "cycle in list",
+    "floyd cycle"
+  ],
+  "keywords": [
+    "linked list",
+    "cycle",
+    "loop",
+    "fast pointer",
+    "slow pointer",
+    "floyd"
+  ],
+  "summary": "Determine whether a linked list contains a cycle.",
+  "hint": "Move one pointer twice as fast as the other; a cycle makes them meet.",
+  "quickAnswer": {
+    "pattern": "Fast / Slow Pointers",
+    "idea": [
+      "Move slow by one and fast by two.",
+      "A cycle makes the pointers meet.",
+      "A null fast pointer means no cycle."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Start slow and fast pointers at the head.",
+    "Move slow one step and fast two steps.",
+    "If the pointers meet, a cycle exists.",
+    "If fast reaches the end, there is no cycle.",
+    "This uses constant extra memory."
+  ],
+  "pseudocode": [
+    "slow = head",
+    "fast = head",
+    "",
+    "while fast and fast.next exist:",
+    "    slow = slow.next",
+    "    fast = fast.next.next",
+    "",
+    "    if slow is fast:",
+    "        return true",
+    "",
+    "return false"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "The list is empty.",
+    "The list has one node with no cycle.",
+    "The tail connects to the head.",
+    "The cycle begins in the middle."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function hasCycle(head) {",
+        "  let slow = head;",
+        "  let fast = head;",
+        "",
+        "  while (fast && fast.next) {",
+        "    slow = slow.next;",
+        "    fast = fast.next.next;",
+        "    if (slow === fast) return true;",
+        "  }",
+        "",
+        "  return false;",
+        "}"
+      ],
+      "g2": [
+        "function hasCycle(head) {",
+        "  let slow = head;",
+        "  let fast = head;",
+        "",
+        "  while (fast && fast.next) {",
+        "    slow = slow.next;",
+        "    fast = fast.next.next;",
+        "    if (slow === fast) {",
+        "      return true;",
+        "    }",
+        "  }",
+        "",
+        "  return false;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def hasCycle(self, head: Optional[ListNode]) -> bool:",
+        "        slow = fast = head",
+        "",
+        "        while fast and fast.next:",
+        "            slow = slow.next",
+        "            fast = fast.next.next",
+        "            if slow is fast:",
+        "                return True",
+        "",
+        "        return False"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def hasCycle(self, head: Optional[ListNode]) -> bool:",
+        "        slow = fast = head",
+        "",
+        "        while fast and fast.next:",
+        "            slow = slow.next",
+        "            fast = fast.next.next",
+        "            if slow is fast:",
+        "                return True",
+        "",
+        "        return False"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "public class Solution {",
+        "    public boolean hasCycle(ListNode head) {",
+        "        ListNode slow = head;",
+        "        ListNode fast = head;",
+        "",
+        "        while (fast != null && fast.next != null) {",
+        "            slow = slow.next;",
+        "            fast = fast.next.next;",
+        "            if (slow == fast) return true;",
+        "        }",
+        "",
+        "        return false;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "public class Solution {",
+        "  public boolean hasCycle(ListNode head) {",
+        "    ListNode slow = head;",
+        "    ListNode fast = head;",
+        "",
+        "    while (fast != null && fast.next != null) {",
+        "      slow = slow.next;",
+        "      fast = fast.next.next;",
+        "      if (slow == fast) {",
+        "        return true;",
+        "      }",
+        "    }",
+        "",
+        "    return false;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    bool hasCycle(ListNode *head) {",
+        "        ListNode* slow = head;",
+        "        ListNode* fast = head;",
+        "",
+        "        while (fast && fast->next) {",
+        "            slow = slow->next;",
+        "            fast = fast->next->next;",
+        "            if (slow == fast) return true;",
+        "        }",
+        "",
+        "        return false;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  bool hasCycle(ListNode *head) {",
+        "    ListNode* slow = head;",
+        "    ListNode* fast = head;",
+        "",
+        "    while (fast && fast->next) {",
+        "      slow = slow->next;",
+        "      fast = fast->next->next;",
+        "      if (slow == fast) {",
+        "        return true;",
+        "      }",
+        "    }",
+        "",
+        "    return false;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

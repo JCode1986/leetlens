@@ -1,0 +1,185 @@
+{
+  "id": 323,
+  "slug": "number-of-connected-components-in-an-undirected-graph",
+  "title": "Number of Connected Components in an Undirected Graph",
+  "difficulty": "Medium",
+  "categories": [
+    "Graphs"
+  ],
+  "patterns": [
+    "Union Find",
+    "Graph Traversal"
+  ],
+  "aliases": [
+    "connected components",
+    "number of connected components",
+    "undirected graph components"
+  ],
+  "keywords": [
+    "graph",
+    "union find",
+    "components",
+    "connected"
+  ],
+  "summary": "Solve Number of Connected Components in an Undirected Graph using the standard optimized interview approach.",
+  "hint": "Look for the Union Find structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Union Find",
+    "idea": [
+      "Start with every node as its own component.",
+      "Union endpoints of each edge.",
+      "Each successful union reduces component count."
+    ],
+    "complexity": {
+      "time": "O(v + e)",
+      "space": "O(v)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Number of Connected Components in an Undirected Graph.",
+    "Use Union Find and Graph Traversal to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "parent = each node itself",
+    "components = n",
+    "",
+    "for each edge:",
+    "    if union endpoints succeeds:",
+    "        components -= 1",
+    "",
+    "return components"
+  ],
+  "complexity": {
+    "time": "O(v + e)",
+    "space": "O(v)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function countComponents(n, edges) { const parent = Array.from({ length: n }, (_, i) => i); const find = x => parent[x] === x ? x : parent[x] = find(parent[x]); let count = n; for (const [a, b] of edges) { const ra = find(a), rb = find(b); if (ra !== rb) { parent[ra] = rb; count -= 1; } } return count; }"
+      ],
+      "g2": [
+        "function countComponents(n, edges) {",
+        "  const parent = Array.from( {",
+        "    length: n",
+        "  }",
+        "  , (_, i) => i);",
+        "  const find = x => parent[x] === x ?",
+        "    x : parent[x] = find(parent[x]);",
+        "  let count = n;",
+        "  for (const [a, b] of edges) {",
+        "    const ra = find(a), rb = find(b);",
+        "    if (ra !== rb) {",
+        "      parent[ra] = rb;",
+        "      count -= 1;",
+        "    }",
+        "  }",
+        "  return count;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def countComponents(self, n, edges):",
+        "        parent = list(range(n))",
+        "        def find(x):",
+        "  while parent[x] != x:",
+        "      parent[x] = parent[parent[x]]; x = parent[x]",
+        "  return x",
+        "        count = n",
+        "        for a, b in edges:",
+        "  ra, rb = find(a), find(b)",
+        "  if ra != rb:",
+        "      parent[ra] = rb; count -= 1",
+        "        return count"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def countComponents(self, n, edges):",
+        "        parent = list(range(n))",
+        "        def find(x):",
+        "            while parent[x] != x:",
+        "                parent[x] = parent[parent[x]]",
+        "                x = parent[x]",
+        "                return x",
+        "        count = n",
+        "        for a, b in edges:",
+        "            ra, rb = find(a), find(b)",
+        "            if ra != rb:",
+        "                parent[ra] = rb",
+        "                count -= 1",
+        "        return count"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int countComponents(int n, int[][] edges) { int[] p = new int[n]; for (int i = 0; i < n; i++) p[i] = i; int count = n; for (int[] e : edges) { int a = find(p,e[0]), b = find(p,e[1]); if (a != b) { p[a] = b; count--; } } return count; } private int find(int[] p, int x) { while (p[x] != x) { p[x] = p[p[x]]; x = p[x]; } return x; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int countComponents(int n, int[][] edges) {",
+        "    int[] p = new int[n];",
+        "    for (int i = 0; i < n; i++) {",
+        "      p[i] = i;",
+        "    }",
+        "    int count = n;",
+        "    for (int[] e : edges) {",
+        "      int a = find(p,e[0]), b = find(p,e[1]);",
+        "      if (a != b) {",
+        "        p[a] = b;",
+        "        count--;",
+        "      }",
+        "    }",
+        "    return count;",
+        "  }",
+        "  private int find(int[] p, int x) {",
+        "    while (p[x] != x) {",
+        "      p[x] = p[p[x]];",
+        "      x = p[x];",
+        "    }",
+        "    return x;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { int find(vector<int>& p, int x) { while (p[x] != x) { p[x] = p[p[x]]; x = p[x]; } return x; } public: int countComponents(int n, vector<vector<int>>& edges) { vector<int> p(n); iota(p.begin(), p.end(), 0); int count = n; for (auto& e : edges) { int a = find(p,e[0]), b = find(p,e[1]); if (a != b) { p[a] = b; count--; } } return count; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "  int find(vector<int>& p, int x) {",
+        "    while (p[x] != x) {",
+        "      p[x] = p[p[x]];",
+        "      x = p[x];",
+        "    }",
+        "    return x;",
+        "  }",
+        "public:",
+        "  int countComponents(int n, vector<vector<int>>& edges) {",
+        "    vector<int> p(n);",
+        "    iota(p.begin(), p.end(), 0);",
+        "    int count = n;",
+        "    for (auto& e : edges) {",
+        "      int a = find(p,e[0]), b = find(p,e[1]);",
+        "      if (a != b) {",
+        "        p[a] = b;",
+        "        count--;",
+        "      }",
+        "    }",
+        "    return count;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

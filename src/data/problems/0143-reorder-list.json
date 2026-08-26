@@ -1,0 +1,214 @@
+{
+  "id": 143,
+  "slug": "reorder-list",
+  "title": "Reorder List",
+  "difficulty": "Medium",
+  "categories": [
+    "Linked Lists"
+  ],
+  "patterns": [
+    "Fast / Slow Pointers",
+    "Linked List Manipulation"
+  ],
+  "aliases": [
+    "reorder list",
+    "rearrange linked list",
+    "fold linked list"
+  ],
+  "keywords": [
+    "linked list",
+    "reverse",
+    "merge",
+    "slow pointer"
+  ],
+  "summary": "Solve Reorder List using the standard optimized interview approach.",
+  "hint": "Look for the Fast / Slow Pointers structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Linked List Manipulation",
+    "idea": [
+      "Find the middle with slow and fast pointers.",
+      "Reverse the second half.",
+      "Merge the two halves by alternating nodes."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Reorder List.",
+    "Use Fast / Slow Pointers and Linked List Manipulation to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "find middle of list",
+    "second = reverse after middle",
+    "first = head",
+    "",
+    "while second exists:",
+    "    save next first and second",
+    "    first.next = second",
+    "    second.next = saved first next",
+    "    advance both halves"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function reorderList(head) { if (!head || !head.next) return; let slow = head, fast = head; while (fast.next && fast.next.next) { slow = slow.next; fast = fast.next.next; } let prev = null, cur = slow.next; slow.next = null; while (cur) { const next = cur.next; cur.next = prev; prev = cur; cur = next; } let first = head, second = prev; while (second) { const n1 = first.next, n2 = second.next; first.next = second; second.next = n1; first = n1; second = n2; } }"
+      ],
+      "g2": [
+        "function reorderList(head) {",
+        "  if (!head || !head.next) {",
+        "    return;",
+        "  }",
+        "  let slow = head, fast = head;",
+        "  while (fast.next && fast.next.next) {",
+        "    slow = slow.next;",
+        "    fast = fast.next.next;",
+        "  }",
+        "  let prev = null, cur = slow.next;",
+        "  slow.next = null;",
+        "  while (cur) {",
+        "    const next = cur.next;",
+        "    cur.next = prev;",
+        "    prev = cur;",
+        "    cur = next;",
+        "  }",
+        "  let first = head, second = prev;",
+        "  while (second) {",
+        "    const n1 = first.next, n2 = second.next;",
+        "    first.next = second;",
+        "    second.next = n1;",
+        "    first = n1;",
+        "    second = n2;",
+        "  }",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def reorderList(self, head):",
+        "        if not head or not head.next: return",
+        "        slow = fast = head",
+        "        while fast.next and fast.next.next:",
+        "  slow = slow.next; fast = fast.next.next",
+        "        prev, cur = None, slow.next; slow.next = None",
+        "        while cur:",
+        "  nxt = cur.next; cur.next = prev; prev = cur; cur = nxt",
+        "        first, second = head, prev",
+        "        while second:",
+        "  n1, n2 = first.next, second.next",
+        "  first.next = second; second.next = n1",
+        "  first, second = n1, n2"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def reorderList(self, head):",
+        "        if not head or not head.next:",
+        "            return",
+        "        slow = fast = head",
+        "        while fast.next and fast.next.next:",
+        "            slow = slow.next",
+        "            fast = fast.next.next",
+        "        prev, cur = None, slow.next",
+        "        slow.next = None",
+        "        while cur:",
+        "            nxt = cur.next",
+        "            cur.next = prev",
+        "            prev = cur",
+        "            cur = nxt",
+        "        first, second = head, prev",
+        "        while second:",
+        "            n1, n2 = first.next, second.next",
+        "            first.next = second",
+        "            second.next = n1",
+        "            first, second = n1, n2"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public void reorderList(ListNode head) { if (head == null || head.next == null) return; ListNode slow = head, fast = head; while (fast.next != null && fast.next.next != null) { slow = slow.next; fast = fast.next.next; } ListNode prev = null, cur = slow.next; slow.next = null; while (cur != null) { ListNode next = cur.next; cur.next = prev; prev = cur; cur = next; } ListNode first = head, second = prev; while (second != null) { ListNode n1 = first.next, n2 = second.next; first.next = second; second.next = n1; first = n1; second = n2; } } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public void reorderList(ListNode head) {",
+        "    if (head == null || head.next == null) {",
+        "      return;",
+        "    }",
+        "    ListNode slow = head, fast = head;",
+        "    while (fast.next != null && fast.next.next != null) {",
+        "      slow = slow.next;",
+        "      fast = fast.next.next;",
+        "    }",
+        "    ListNode prev = null, cur = slow.next;",
+        "    slow.next = null;",
+        "    while (cur != null) {",
+        "      ListNode next = cur.next;",
+        "      cur.next = prev;",
+        "      prev = cur;",
+        "      cur = next;",
+        "    }",
+        "    ListNode first = head, second = prev;",
+        "    while (second != null) {",
+        "      ListNode n1 = first.next,",
+        "        n2 = second.next;",
+        "      first.next = second;",
+        "      second.next = n1;",
+        "      first = n1;",
+        "      second = n2;",
+        "    }",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: void reorderList(ListNode* head) { if (!head || !head->next) return; ListNode *slow = head, *fast = head; while (fast->next && fast->next->next) { slow = slow->next; fast = fast->next->next; } ListNode *prev = nullptr, *cur = slow->next; slow->next = nullptr; while (cur) { auto next = cur->next; cur->next = prev; prev = cur; cur = next; } auto first = head; auto second = prev; while (second) { auto n1 = first->next, n2 = second->next; first->next = second; second->next = n1; first = n1; second = n2; } } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  void reorderList(ListNode* head) {",
+        "    if (!head || !head->next) {",
+        "      return;",
+        "    }",
+        "    ListNode *slow = head, *fast = head;",
+        "    while (fast->next && fast->next->next) {",
+        "      slow = slow->next;",
+        "      fast = fast->next->next;",
+        "    }",
+        "    ListNode *prev = nullptr, *cur = slow->next;",
+        "    slow->next = nullptr;",
+        "    while (cur) {",
+        "      auto next = cur->next;",
+        "      cur->next = prev;",
+        "      prev = cur;",
+        "      cur = next;",
+        "    }",
+        "    auto first = head;",
+        "    auto second = prev;",
+        "    while (second) {",
+        "      auto n1 = first->next, n2 = second->next;",
+        "      first->next = second;",
+        "      second->next = n1;",
+        "      first = n1;",
+        "      second = n2;",
+        "    }",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

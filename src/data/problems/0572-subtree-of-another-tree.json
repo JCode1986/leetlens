@@ -1,0 +1,155 @@
+{
+  "id": 572,
+  "slug": "subtree-of-another-tree",
+  "title": "Subtree of Another Tree",
+  "difficulty": "Easy",
+  "categories": [
+    "Trees",
+    "DFS"
+  ],
+  "patterns": [
+    "Tree Recursion"
+  ],
+  "aliases": [
+    "subtree of another tree",
+    "is subtree",
+    "check subtree"
+  ],
+  "keywords": [
+    "tree",
+    "subtree",
+    "dfs",
+    "recursion"
+  ],
+  "summary": "Solve Subtree of Another Tree using the standard optimized interview approach.",
+  "hint": "Look for the Tree Recursion structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Tree Recursion",
+    "idea": [
+      "A subtree must match from some node.",
+      "Check same-tree at each candidate node.",
+      "Otherwise search left and right."
+    ],
+    "complexity": {
+      "time": "O(m * n)",
+      "space": "O(h)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Subtree of Another Tree.",
+    "Use Tree Recursion to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "isSubtree(root, sub):",
+    "    if root is null:",
+    "        return false",
+    "    if sameTree(root, sub):",
+    "        return true",
+    "    return search left or right",
+    "",
+    "sameTree(a, b):",
+    "    if both null:",
+    "        return true",
+    "    if one null or values differ:",
+    "        return false",
+    "    return same left and same right"
+  ],
+  "complexity": {
+    "time": "O(m * n)",
+    "space": "O(h)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function isSubtree(root, subRoot) { const same = (a,b) => !a || !b ? a === b : a.val === b.val && same(a.left,b.left) && same(a.right,b.right); return !!root && (same(root, subRoot) || isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot)); }"
+      ],
+      "g2": [
+        "function isSubtree(root, subRoot) {",
+        "  const same = (a,b) => !a ||",
+        "    !b ? a === b : a.val === b.val &&",
+        "    same(a.left,b.left) &&",
+        "    same(a.right,b.right);",
+        "  return !!root && (same(root,",
+        "    subRoot) || isSubtree(root.left,",
+        "    subRoot) || isSubtree(root.right, subRoot));",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def isSubtree(self, root, subRoot):",
+        "        def same(a, b):",
+        "  if not a or not b: return a is b",
+        "  return a.val == b.val and same(a.left, b.left) and same(a.right, b.right)",
+        "        return bool(root) and (same(root, subRoot) or self.isSubtree(root.left, subRoot) or self.isSubtree(root.right, subRoot))"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def isSubtree(self, root, subRoot):",
+        "        def same(a, b):",
+        "            if not a or not b:",
+        "                return a is b",
+        "            return a.val == b.val and same(a.left, b.left) and same(a.right, b.right)",
+        "        return bool(root) and (same(root, subRoot) or self.isSubtree(root.left, subRoot) or self.isSubtree(root.right, subRoot))"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public boolean isSubtree(TreeNode root, TreeNode subRoot) { if (root == null) return false; return same(root, subRoot) || isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot); } private boolean same(TreeNode a, TreeNode b) { if (a == null || b == null) return a == b; return a.val == b.val && same(a.left, b.left) && same(a.right, b.right); } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean isSubtree(TreeNode root, TreeNode subRoot) {",
+        "    if (root == null) {",
+        "      return false;",
+        "    }",
+        "    return same(root,",
+        "      subRoot) || isSubtree(root.left,",
+        "      subRoot) || isSubtree(root.right,",
+        "      subRoot);",
+        "  }",
+        "  private boolean same(TreeNode a, TreeNode b) {",
+        "    if (a == null || b == null) {",
+        "      return a == b;",
+        "    }",
+        "    return a.val == b.val && same(a.left,",
+        "      b.left) && same(a.right, b.right);",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { bool same(TreeNode* a, TreeNode* b) { if (!a || !b) return a == b; return a->val == b->val && same(a->left,b->left) && same(a->right,b->right); } public: bool isSubtree(TreeNode* root, TreeNode* subRoot) { return root && (same(root,subRoot) || isSubtree(root->left,subRoot) || isSubtree(root->right,subRoot)); } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "  bool same(TreeNode* a, TreeNode* b) {",
+        "    if (!a || !b) {",
+        "      return a == b;",
+        "    }",
+        "    return a->val == b->val &&",
+        "      same(a->left,b->left) &&",
+        "      same(a->right,b->right);",
+        "  }",
+        "public:",
+        "  bool isSubtree(TreeNode* root, TreeNode* subRoot) {",
+        "    return root &&",
+        "      (same(root,subRoot) ||",
+        "      isSubtree(root->left,subRoot) ||",
+        "      isSubtree(root->right,subRoot));",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

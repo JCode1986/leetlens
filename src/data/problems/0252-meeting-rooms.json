@@ -1,0 +1,137 @@
+{
+  "id": 252,
+  "slug": "meeting-rooms",
+  "title": "Meeting Rooms",
+  "difficulty": "Easy",
+  "categories": [
+    "Intervals"
+  ],
+  "patterns": [
+    "Intervals"
+  ],
+  "aliases": [
+    "meeting rooms",
+    "can attend meetings",
+    "meeting overlap"
+  ],
+  "keywords": [
+    "interval",
+    "meeting",
+    "overlap",
+    "sort"
+  ],
+  "summary": "Solve Meeting Rooms using the standard optimized interview approach.",
+  "hint": "Look for the Intervals structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Intervals",
+    "idea": [
+      "Sort meetings by start time.",
+      "Any meeting starting before the previous end conflicts.",
+      "No conflicts means all meetings can be attended."
+    ],
+    "complexity": {
+      "time": "O(n log n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Meeting Rooms.",
+    "Use Intervals to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "sort intervals by start",
+    "",
+    "for each meeting after first:",
+    "    if current start < previous end:",
+    "        return false",
+    "",
+    "return true"
+  ],
+  "complexity": {
+    "time": "O(n log n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function canAttendMeetings(intervals) { intervals.sort((a, b) => a[0] - b[0]); for (let i = 1; i < intervals.length; i += 1) if (intervals[i][0] < intervals[i - 1][1]) return false; return true; }"
+      ],
+      "g2": [
+        "function canAttendMeetings(intervals) {",
+        "  intervals.sort((a, b) => a[0] - b[0]);",
+        "  for (let i = 1; i < intervals.length; i += 1) {",
+        "    if (intervals[i][0] < intervals[i - 1][1]) {",
+        "      return false;",
+        "    }",
+        "  }",
+        "  return true;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def canAttendMeetings(self, intervals):",
+        "        intervals.sort(key=lambda x: x[0])",
+        "        for i in range(1, len(intervals)):",
+        "  if intervals[i][0] < intervals[i - 1][1]: return False",
+        "        return True"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def canAttendMeetings(self, intervals):",
+        "        intervals.sort(key=lambda x: x[0])",
+        "        for i in range(1, len(intervals)):",
+        "            if intervals[i][0] < intervals[i - 1][1]:",
+        "                return False",
+        "        return True"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public boolean canAttendMeetings(int[][] intervals) { Arrays.sort(intervals, (a, b) -> a[0] - b[0]); for (int i = 1; i < intervals.length; i++) if (intervals[i][0] < intervals[i - 1][1]) return false; return true; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean canAttendMeetings(int[][] intervals) {",
+        "    Arrays.sort(intervals, (a,",
+        "      b) -> a[0] - b[0]);",
+        "    for (int i = 1; i < intervals.length; i++) {",
+        "      if (intervals[i][0] < intervals[i - 1][1]) {",
+        "        return false;",
+        "      }",
+        "    }",
+        "    return true;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: bool canAttendMeetings(vector<vector<int>>& intervals) { sort(intervals.begin(), intervals.end()); for (int i = 1; i < intervals.size(); i++) if (intervals[i][0] < intervals[i - 1][1]) return false; return true; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  bool canAttendMeetings(vector<vector<int>>& intervals) {",
+        "    sort(intervals.begin(), intervals.end());",
+        "    for (int i = 1; i < intervals.size(); i++) {",
+        "      if (intervals[i][0] < intervals[i - 1][1]) {",
+        "        return false;",
+        "      }",
+        "    }",
+        "    return true;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

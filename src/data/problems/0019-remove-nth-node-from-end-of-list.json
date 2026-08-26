@@ -1,0 +1,193 @@
+{
+  "id": 19,
+  "slug": "remove-nth-node-from-end-of-list",
+  "title": "Remove Nth Node From End of List",
+  "difficulty": "Medium",
+  "categories": [
+    "Linked Lists"
+  ],
+  "patterns": [
+    "Two Pointers"
+  ],
+  "aliases": [
+    "remove nth node",
+    "remove nth from end",
+    "delete nth node from end"
+  ],
+  "keywords": [
+    "linked list",
+    "two pointers",
+    "dummy node",
+    "nth from end"
+  ],
+  "summary": "Solve Remove Nth Node From End of List using the standard optimized interview approach.",
+  "hint": "Look for the Two Pointers structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Two Pointers",
+    "idea": [
+      "Use a dummy before the head.",
+      "Advance fast n steps ahead.",
+      "Move both pointers, then unlink slow.next."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Remove Nth Node From End of List.",
+    "Use Two Pointers to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "dummy points to head",
+    "fast = dummy",
+    "slow = dummy",
+    "",
+    "repeat n times:",
+    "    move fast forward",
+    "",
+    "while fast.next exists:",
+    "    move fast forward",
+    "    move slow forward",
+    "",
+    "remove slow.next",
+    "return dummy.next"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function removeNthFromEnd(head, n) {",
+        "  const dummy = new ListNode(0, head);",
+        "  let fast = dummy;",
+        "  let slow = dummy;",
+        "  for (let i = 0; i < n; i += 1) fast = fast.next;",
+        "  while (fast.next) { fast = fast.next; slow = slow.next; }",
+        "  slow.next = slow.next.next;",
+        "  return dummy.next;",
+        "}"
+      ],
+      "g2": [
+        "function removeNthFromEnd(head, n) {",
+        "  const dummy = new ListNode(0, head);",
+        "  let fast = dummy;",
+        "  let slow = dummy;",
+        "  for (let i = 0; i < n; i += 1) {",
+        "    fast = fast.next;",
+        "  }",
+        "  while (fast.next) {",
+        "    fast = fast.next;",
+        "    slow = slow.next;",
+        "  }",
+        "  slow.next = slow.next.next;",
+        "  return dummy.next;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def removeNthFromEnd(self, head, n):",
+        "        dummy = ListNode(0, head)",
+        "        fast = slow = dummy",
+        "        for _ in range(n):",
+        "            fast = fast.next",
+        "        while fast.next:",
+        "            fast = fast.next",
+        "            slow = slow.next",
+        "        slow.next = slow.next.next",
+        "        return dummy.next"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def removeNthFromEnd(self, head, n):",
+        "        dummy = ListNode(0, head)",
+        "        fast = slow = dummy",
+        "        for _ in range(n):",
+        "            fast = fast.next",
+        "        while fast.next:",
+        "            fast = fast.next",
+        "            slow = slow.next",
+        "        slow.next = slow.next.next",
+        "        return dummy.next"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public ListNode removeNthFromEnd(ListNode head, int n) {",
+        "        ListNode dummy = new ListNode(0, head);",
+        "        ListNode fast = dummy, slow = dummy;",
+        "        for (int i = 0; i < n; i++) fast = fast.next;",
+        "        while (fast.next != null) { fast = fast.next; slow = slow.next; }",
+        "        slow.next = slow.next.next;",
+        "        return dummy.next;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public ListNode removeNthFromEnd(ListNode head, int n) {",
+        "    ListNode dummy = new ListNode(0, head);",
+        "    ListNode fast = dummy, slow = dummy;",
+        "    for (int i = 0; i < n; i++) {",
+        "      fast = fast.next;",
+        "    }",
+        "    while (fast.next != null) {",
+        "      fast = fast.next;",
+        "      slow = slow.next;",
+        "    }",
+        "    slow.next = slow.next.next;",
+        "    return dummy.next;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    ListNode* removeNthFromEnd(ListNode* head, int n) {",
+        "        ListNode dummy(0, head);",
+        "        ListNode* fast = &dummy;",
+        "        ListNode* slow = &dummy;",
+        "        for (int i = 0; i < n; i++) fast = fast->next;",
+        "        while (fast->next) { fast = fast->next; slow = slow->next; }",
+        "        slow->next = slow->next->next;",
+        "        return dummy.next;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  ListNode* removeNthFromEnd(ListNode* head, int n) {",
+        "    ListNode dummy(0, head);",
+        "    ListNode* fast = &dummy;",
+        "    ListNode* slow = &dummy;",
+        "    for (int i = 0; i < n; i++) {",
+        "      fast = fast->next;",
+        "    }",
+        "    while (fast->next) {",
+        "      fast = fast->next;",
+        "      slow = slow->next;",
+        "    }",
+        "    slow->next = slow->next->next;",
+        "    return dummy.next;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

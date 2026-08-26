@@ -3,9 +3,19 @@ import type { NavigationState } from '../types/navigation'
 import { LANGUAGE_LABELS } from '../utils/language'
 import { clampPageIndex, paginateLines } from '../utils/pagination'
 import { wrapText } from '../utils/text'
-import { createTextObjects } from './g2Layout'
+import { createTextObjects, G2_TEXT_LAYOUT, MAX_TEXT_CONTAINERS } from './g2Layout'
 
-export const CODE_LINES_PER_PAGE = 6
+const SOLUTION_TITLE_Y = 14
+const SOLUTION_LINE_HEIGHT = 26
+const SOLUTION_META_GAP = 4
+const SOLUTION_BODY_GAP = 10
+
+function getCodeLinesPerPage(title: string): number {
+  const titleLineCount = wrapText(title.toUpperCase(), G2_TEXT_LAYOUT.defaultCharsPerLine).length
+  const metaContainerCount = 1
+
+  return Math.max(1, MAX_TEXT_CONTAINERS - titleLineCount - metaContainerCount)
+}
 
 function getSolutionLines(state: NavigationState): string[] {
   const problem = state.selectedProblemId === undefined
@@ -33,22 +43,27 @@ export function createSolutionTextObjects(state: NavigationState) {
     ? undefined
     : getProblemById(state.selectedProblemId)
   const lines = getSolutionLines(state)
-  const pages = paginateLines(lines, CODE_LINES_PER_PAGE)
+  const title = problem?.title ?? 'Problem'
+  const titleLines = wrapText(title.toUpperCase(), G2_TEXT_LAYOUT.defaultCharsPerLine)
+  const linesPerPage = getCodeLinesPerPage(title)
+  const pages = paginateLines(lines, linesPerPage)
   const pageIndex = clampPageIndex(state.codePageIndex, pages.length)
   const pageLines = pages[pageIndex] ?? []
   const totalPages = Math.max(1, pages.length)
   const languageLabel = LANGUAGE_LABELS[state.selectedLanguage].compactName
+  const metaY = SOLUTION_TITLE_Y + titleLines.length * SOLUTION_LINE_HEIGHT + SOLUTION_META_GAP
+  const bodyY = metaY + SOLUTION_LINE_HEIGHT + SOLUTION_BODY_GAP
 
   return createTextObjects([
-    {
-      y: 14,
-      height: 28,
-      name: 'solution-title',
-      content: (problem?.title ?? 'Problem').toUpperCase(),
+    ...titleLines.map((line, index) => ({
+      y: SOLUTION_TITLE_Y + index * SOLUTION_LINE_HEIGHT,
+      height: SOLUTION_LINE_HEIGHT,
+      name: `solution-title-${index}`,
+      content: line,
       textColor: 4,
-    },
+    })),
     {
-      y: 46,
+      y: metaY,
       height: 24,
       name: 'solution-meta',
       content: `${languageLabel}                 ${pageIndex + 1}/${totalPages}`,
@@ -56,7 +71,7 @@ export function createSolutionTextObjects(state: NavigationState) {
     },
     ...pageLines.map((line, index) => ({
       x: 30,
-      y: 82 + index * 31,
+      y: bodyY + index * 31,
       width: 516,
       height: 26,
       name: `solution-line-${index}`,
@@ -68,5 +83,12 @@ export function createSolutionTextObjects(state: NavigationState) {
 }
 
 export function getSolutionPageCount(state: NavigationState): number {
-  return paginateLines(getSolutionLines(state), CODE_LINES_PER_PAGE).length
+  const problem = state.selectedProblemId === undefined
+    ? undefined
+    : getProblemById(state.selectedProblemId)
+
+  return paginateLines(
+    getSolutionLines(state),
+    getCodeLinesPerPage(problem?.title ?? 'Problem'),
+  ).length
 }

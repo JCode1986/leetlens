@@ -1,0 +1,248 @@
+{
+  "id": 21,
+  "slug": "merge-two-sorted-lists",
+  "title": "Merge Two Sorted Lists",
+  "difficulty": "Easy",
+  "categories": [
+    "Linked Lists"
+  ],
+  "patterns": [
+    "Iterative Pointer Manipulation"
+  ],
+  "aliases": [
+    "merge two lists",
+    "merge sorted lists",
+    "merge linked lists",
+    "combine sorted linked lists"
+  ],
+  "keywords": [
+    "linked list",
+    "merge",
+    "sorted",
+    "pointer",
+    "dummy node"
+  ],
+  "summary": "Merge two sorted linked lists into one sorted linked list.",
+  "hint": "Use a dummy head and repeatedly attach the smaller current node.",
+  "quickAnswer": {
+    "pattern": "Iterative Pointers",
+    "idea": [
+      "Use a dummy result head.",
+      "Repeatedly append the smaller front node.",
+      "Attach the remaining list at the end."
+    ],
+    "complexity": {
+      "time": "O(m + n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Create a dummy node to simplify appending.",
+    "Compare the current nodes of both lists.",
+    "Attach the smaller node and advance that list.",
+    "When one list ends, attach the remaining nodes.",
+    "Return the node after the dummy head."
+  ],
+  "pseudocode": [
+    "dummy = new node",
+    "tail = dummy",
+    "",
+    "while both lists exist:",
+    "    choose smaller head node",
+    "    append chosen node",
+    "    advance chosen list",
+    "    advance tail",
+    "",
+    "append remaining list",
+    "return dummy.next"
+  ],
+  "complexity": {
+    "time": "O(m + n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Both lists are empty.",
+    "One list is empty.",
+    "Values are equal in both lists.",
+    "One list is much longer than the other."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function mergeTwoLists(list1, list2) {",
+        "  const dummy = new ListNode(0);",
+        "  let tail = dummy;",
+        "",
+        "  while (list1 && list2) {",
+        "    if (list1.val <= list2.val) {",
+        "      tail.next = list1;",
+        "      list1 = list1.next;",
+        "    } else {",
+        "      tail.next = list2;",
+        "      list2 = list2.next;",
+        "    }",
+        "    tail = tail.next;",
+        "  }",
+        "",
+        "  tail.next = list1 || list2;",
+        "  return dummy.next;",
+        "}"
+      ],
+      "g2": [
+        "function mergeTwoLists(list1, list2) {",
+        "  const dummy = new ListNode(0);",
+        "  let tail = dummy;",
+        "",
+        "  while (list1 && list2) {",
+        "    if (list1.val <= list2.val) {",
+        "      tail.next = list1;",
+        "      list1 = list1.next;",
+        "    }",
+        "    else {",
+        "      tail.next = list2;",
+        "      list2 = list2.next;",
+        "    }",
+        "    tail = tail.next;",
+        "  }",
+        "",
+        "  tail.next = list1 || list2;",
+        "  return dummy.next;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:",
+        "        dummy = ListNode(0)",
+        "        tail = dummy",
+        "",
+        "        while list1 and list2:",
+        "            if list1.val <= list2.val:",
+        "                tail.next = list1",
+        "                list1 = list1.next",
+        "            else:",
+        "                tail.next = list2",
+        "                list2 = list2.next",
+        "            tail = tail.next",
+        "",
+        "        tail.next = list1 or list2",
+        "        return dummy.next"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:",
+        "        dummy = ListNode(0)",
+        "        tail = dummy",
+        "",
+        "        while list1 and list2:",
+        "            if list1.val <= list2.val:",
+        "                tail.next = list1",
+        "                list1 = list1.next",
+        "            else:",
+        "                tail.next = list2",
+        "                list2 = list2.next",
+        "            tail = tail.next",
+        "",
+        "        tail.next = list1 or list2",
+        "        return dummy.next"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {",
+        "        ListNode dummy = new ListNode(0);",
+        "        ListNode tail = dummy;",
+        "",
+        "        while (list1 != null && list2 != null) {",
+        "            if (list1.val <= list2.val) {",
+        "                tail.next = list1;",
+        "                list1 = list1.next;",
+        "            } else {",
+        "                tail.next = list2;",
+        "                list2 = list2.next;",
+        "            }",
+        "            tail = tail.next;",
+        "        }",
+        "",
+        "        tail.next = list1 != null ? list1 : list2;",
+        "        return dummy.next;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public ListNode mergeTwoLists(ListNode list1, ListNode list2) {",
+        "    ListNode dummy = new ListNode(0);",
+        "    ListNode tail = dummy;",
+        "",
+        "    while (list1 != null && list2 != null) {",
+        "      if (list1.val <= list2.val) {",
+        "        tail.next = list1;",
+        "        list1 = list1.next;",
+        "      }",
+        "      else {",
+        "        tail.next = list2;",
+        "        list2 = list2.next;",
+        "      }",
+        "      tail = tail.next;",
+        "    }",
+        "",
+        "    tail.next = list1 != null ? list1 : list2;",
+        "    return dummy.next;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {",
+        "        ListNode dummy(0);",
+        "        ListNode* tail = &dummy;",
+        "",
+        "        while (list1 && list2) {",
+        "            if (list1->val <= list2->val) {",
+        "                tail->next = list1;",
+        "                list1 = list1->next;",
+        "            } else {",
+        "                tail->next = list2;",
+        "                list2 = list2->next;",
+        "            }",
+        "            tail = tail->next;",
+        "        }",
+        "",
+        "        tail->next = list1 ? list1 : list2;",
+        "        return dummy.next;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {",
+        "    ListNode dummy(0);",
+        "    ListNode* tail = &dummy;",
+        "",
+        "    while (list1 && list2) {",
+        "      if (list1->val <= list2->val) {",
+        "        tail->next = list1;",
+        "        list1 = list1->next;",
+        "      }",
+        "      else {",
+        "        tail->next = list2;",
+        "        list2 = list2->next;",
+        "      }",
+        "      tail = tail->next;",
+        "    }",
+        "",
+        "    tail->next = list1 ? list1 : list2;",
+        "    return dummy.next;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

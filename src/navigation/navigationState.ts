@@ -5,11 +5,13 @@ import {
   PROBLEM_MENU_ITEM_COUNT,
   PROBLEM_TABS,
   SETTINGS_MENU_ITEMS,
+  STUDY_MENU_ITEMS,
 } from '../types/navigation'
-import type { NavigationState, ProblemListSource, ProblemTab } from '../types/navigation'
+import type { NavigationState, ProblemListSource, ProblemTab, StudySource } from '../types/navigation'
 import { DIFFICULTIES } from '../types/problem'
 import type { Problem, ProblemId } from '../types/problem'
 import type { SearchDecision } from '../services/searchService'
+import { createStudyQuestion, pushStudyRecentProblemId } from '../services/studyService'
 import {
   getSelectableLanguageIndex,
   SELECTABLE_PROGRAMMING_LANGUAGES,
@@ -41,21 +43,30 @@ export function createInitialNavigationState(
     selectedProblemId: undefined,
     problemEntrySource: undefined,
     selectedLanguage,
-    selectedProblemTab: 'hint',
+    selectedProblemTab: 'quickAnswer',
     codePageIndex: 0,
     voiceSearchStatus: 'idle',
     voiceTranscript: '',
     voiceError: undefined,
     voiceResultMode: undefined,
     voiceResultProblemIds: [],
+    studySource: undefined,
+    studyPattern: undefined,
+    studyProblemId: undefined,
+    studyQuestionType: undefined,
+    studyChoices: [],
+    studySelectedIndex: 0,
+    studyAnswered: false,
+    studyCorrect: undefined,
+    studyRecentProblemIds: [],
   }
 }
 
-export function clampIndex(index: number, itemCount: number): number {
+function clampIndex(index: number, itemCount: number): number {
   return Math.max(0, Math.min(Math.max(0, itemCount - 1), index))
 }
 
-export function setSelectedMenuIndex(
+function setSelectedMenuIndex(
   state: NavigationState,
   selectedMenuIndex: number,
   itemCount: number = HOME_MENU_ITEMS.length,
@@ -101,6 +112,10 @@ function getFindMenuIndex(screen: NavigationState['currentScreen']): number {
   return Math.max(0, FIND_MENU_ITEMS.findIndex((candidate) => candidate.screen === screen))
 }
 
+function getStudyMenuIndex(source: StudySource | undefined): number {
+  return Math.max(0, STUDY_MENU_ITEMS.findIndex((candidate) => candidate.source === source))
+}
+
 function getStringIndex(items: string[], selectedItem: string | undefined): number {
   if (!selectedItem) {
     return 0
@@ -121,6 +136,59 @@ function getProblemIndex(
     problems.findIndex((problem) => problem.id === selectedProblemId),
     problems.length,
   )
+}
+
+function getStudyFeedbackActionCount(state: NavigationState): number {
+  return state.studyCorrect ? 4 : 3
+}
+
+function beginStudyQuestion(
+  state: NavigationState,
+  source: StudySource,
+  pattern?: string,
+): NavigationState {
+  const question = createStudyQuestion({
+    source,
+    pattern,
+    recentProblemIds: state.studyRecentProblemIds,
+  })
+
+  if (!question) {
+    return {
+      ...state,
+      currentScreen: source === 'pattern' ? 'studyPattern' : 'study',
+      studySource: source,
+      studyPattern: pattern,
+      studyProblemId: undefined,
+      studyQuestionType: undefined,
+      studyChoices: [],
+      studySelectedIndex: 0,
+      studyAnswered: false,
+      studyCorrect: undefined,
+      codePageIndex: 0,
+    }
+  }
+
+  return {
+    ...state,
+    currentScreen: 'studyQuestion',
+    selectedProblemId: question.problem.id,
+    problemEntrySource: 'study',
+    selectedProblemTab: 'quickAnswer',
+    studySource: source,
+    studyPattern: pattern,
+    studyProblemId: question.problem.id,
+    studyQuestionType: question.questionType,
+    studyChoices: question.choices,
+    studySelectedIndex: 0,
+    studyAnswered: false,
+    studyCorrect: undefined,
+    studyRecentProblemIds: pushStudyRecentProblemId(
+      state.studyRecentProblemIds,
+      question.problem.id,
+    ),
+    codePageIndex: 0,
+  }
 }
 
 function getSourceScreen(source: ProblemListSource | undefined): NavigationState['currentScreen'] {
@@ -187,6 +255,7 @@ function selectCurrentItem(
       selectedItem.screen !== 'patterns' &&
       selectedItem.screen !== 'collections' &&
       selectedItem.screen !== 'find' &&
+      selectedItem.screen !== 'study' &&
       selectedItem.screen !== 'favorites' &&
       selectedItem.screen !== 'recent' &&
       selectedItem.screen !== 'settings'
@@ -215,9 +284,47 @@ function selectCurrentItem(
             ? getStringIndex(context.collections, state.selectedCollection)
             : selectedItem.screen === 'find'
               ? 0
+              : selectedItem.screen === 'study'
+                ? 0
             : 0,
       codePageIndex: 0,
     }
+  }
+
+  if (state.currentScreen === 'study') {
+    const selectedItem = STUDY_MENU_ITEMS[clampIndex(
+      state.selectedMenuIndex,
+      STUDY_MENU_ITEMS.length,
+    )]
+
+    if (!selectedItem) {
+      return state
+    }
+
+    if (selectedItem.source === 'pattern') {
+      return {
+        ...state,
+        currentScreen: 'studyPattern',
+        selectedMenuIndex: getStringIndex(context.patterns, state.studyPattern),
+        studySource: 'pattern',
+        codePageIndex: 0,
+      }
+    }
+
+    return beginStudyQuestion(state, selectedItem.source)
+  }
+
+  if (state.currentScreen === 'studyPattern') {
+    const selectedPattern = context.patterns[clampIndex(
+      state.selectedMenuIndex,
+      context.patterns.length,
+    )]
+
+    if (!selectedPattern) {
+      return state
+    }
+
+    return beginStudyQuestion(state, 'pattern', selectedPattern)
   }
 
   if (state.currentScreen === 'find') {
@@ -380,7 +487,7 @@ function selectCurrentItem(
       currentScreen: 'problem',
       selectedProblemId: selectedProblem.id,
       problemEntrySource: 'problemList',
-      selectedProblemTab: 'hint',
+      selectedProblemTab: 'quickAnswer',
       selectedMenuIndex: 0,
       codePageIndex: 0,
     }
@@ -399,7 +506,7 @@ function selectCurrentItem(
         currentScreen: 'problem',
         selectedProblemId: matchedProblem.id,
         problemEntrySource: 'voiceMatch',
-        selectedProblemTab: 'hint',
+        selectedProblemTab: 'quickAnswer',
         selectedMenuIndex: 0,
         codePageIndex: 0,
       }
@@ -430,7 +537,7 @@ function selectCurrentItem(
       currentScreen: 'problem',
       selectedProblemId: selectedProblem.id,
       problemEntrySource: 'voiceResults',
-      selectedProblemTab: 'hint',
+      selectedProblemTab: 'quickAnswer',
       selectedMenuIndex: 0,
       codePageIndex: 0,
     }
@@ -450,6 +557,91 @@ function selectCurrentItem(
       selectedMenuIndex: 0,
       codePageIndex: 0,
     }
+  }
+
+  if (state.currentScreen === 'studyQuestion') {
+    const selectedChoice = state.studyChoices[clampIndex(
+      state.studySelectedIndex,
+      state.studyChoices.length,
+    )]
+
+    if (!selectedChoice) {
+      return state
+    }
+
+    return {
+      ...state,
+      currentScreen: 'studyFeedback',
+      studyAnswered: true,
+      studyCorrect: selectedChoice.isCorrect,
+      studySelectedIndex: 0,
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'studyFeedback') {
+    const actionIndex = clampIndex(state.studySelectedIndex, getStudyFeedbackActionCount(state))
+
+    if (state.studyCorrect) {
+      if (actionIndex === 0) {
+        return {
+          ...state,
+          currentScreen: 'quickAnswer',
+          selectedProblemId: state.studyProblemId,
+          problemEntrySource: 'study',
+          selectedProblemTab: 'quickAnswer',
+          codePageIndex: 0,
+        }
+      }
+
+      if (actionIndex === 1) {
+        return {
+          ...state,
+          currentScreen: 'pseudocode',
+          selectedProblemId: state.studyProblemId,
+          problemEntrySource: 'study',
+          selectedProblemTab: 'pseudocode',
+          codePageIndex: 0,
+        }
+      }
+
+      if (actionIndex === 2) {
+        return {
+          ...state,
+          currentScreen: 'solution',
+          selectedProblemId: state.studyProblemId,
+          problemEntrySource: 'study',
+          selectedProblemTab: 'solution',
+          codePageIndex: 0,
+        }
+      }
+
+      return beginStudyQuestion(state, state.studySource ?? 'random', state.studyPattern)
+    }
+
+    if (actionIndex === 0) {
+      return {
+        ...state,
+        currentScreen: 'approach',
+        selectedProblemId: state.studyProblemId,
+        problemEntrySource: 'study',
+        selectedProblemTab: 'approach',
+        codePageIndex: 0,
+      }
+    }
+
+    if (actionIndex === 1) {
+      return {
+        ...state,
+        currentScreen: 'quickAnswer',
+        selectedProblemId: state.studyProblemId,
+        problemEntrySource: 'study',
+        selectedProblemTab: 'quickAnswer',
+        codePageIndex: 0,
+      }
+    }
+
+    return beginStudyQuestion(state, state.studySource ?? 'random', state.studyPattern)
   }
 
   return state
@@ -488,6 +680,51 @@ function goBack(state: NavigationState, context: NavigationContext): NavigationS
       ...state,
       currentScreen: 'home',
       selectedMenuIndex: getHomeMenuIndex('find'),
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'study') {
+    return {
+      ...state,
+      currentScreen: 'home',
+      selectedMenuIndex: getHomeMenuIndex('study'),
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'studyPattern') {
+    return {
+      ...state,
+      currentScreen: 'study',
+      selectedMenuIndex: getStudyMenuIndex('pattern'),
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'studyQuestion') {
+    if (state.studySource === 'pattern') {
+      return {
+        ...state,
+        currentScreen: 'studyPattern',
+        selectedMenuIndex: getStringIndex(context.patterns, state.studyPattern),
+        codePageIndex: 0,
+      }
+    }
+
+    return {
+      ...state,
+      currentScreen: 'study',
+      selectedMenuIndex: getStudyMenuIndex(state.studySource),
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'studyFeedback') {
+    return {
+      ...state,
+      currentScreen: 'studyQuestion',
+      studySelectedIndex: 0,
       codePageIndex: 0,
     }
   }
@@ -589,11 +826,22 @@ function goBack(state: NavigationState, context: NavigationContext): NavigationS
   }
 
   if (
+    state.currentScreen === 'quickAnswer' ||
     state.currentScreen === 'hint' ||
     state.currentScreen === 'approach' ||
+    state.currentScreen === 'pseudocode' ||
     state.currentScreen === 'solution' ||
     state.currentScreen === 'edgeCases'
   ) {
+    if (state.problemEntrySource === 'study') {
+      return {
+        ...state,
+        currentScreen: 'studyFeedback',
+        studySelectedIndex: 0,
+        codePageIndex: 0,
+      }
+    }
+
     return {
       ...state,
       currentScreen: 'problem',
@@ -630,6 +878,14 @@ export function transitionNavigation(
 
   if (state.currentScreen === 'find') {
     return moveSelectedMenu(state, delta, FIND_MENU_ITEMS.length)
+  }
+
+  if (state.currentScreen === 'study') {
+    return moveSelectedMenu(state, delta, STUDY_MENU_ITEMS.length)
+  }
+
+  if (state.currentScreen === 'studyPattern') {
+    return moveSelectedMenu(state, delta, context.patterns.length)
   }
 
   if (state.currentScreen === 'patterns') {
@@ -676,9 +932,28 @@ export function transitionNavigation(
     }
   }
 
+  if (state.currentScreen === 'studyQuestion') {
+    return {
+      ...state,
+      studySelectedIndex: clampIndex(state.studySelectedIndex + delta, state.studyChoices.length),
+    }
+  }
+
+  if (state.currentScreen === 'studyFeedback') {
+    return {
+      ...state,
+      studySelectedIndex: clampIndex(
+        state.studySelectedIndex + delta,
+        getStudyFeedbackActionCount(state),
+      ),
+    }
+  }
+
   if (
+    state.currentScreen === 'quickAnswer' ||
     state.currentScreen === 'hint' ||
     state.currentScreen === 'approach' ||
+    state.currentScreen === 'pseudocode' ||
     state.currentScreen === 'solution' ||
     state.currentScreen === 'edgeCases'
   ) {
