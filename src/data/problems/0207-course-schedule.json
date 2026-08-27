@@ -1,0 +1,217 @@
+{
+  "id": 207,
+  "slug": "course-schedule",
+  "title": "Course Schedule",
+  "difficulty": "Medium",
+  "categories": [
+    "Graphs"
+  ],
+  "patterns": [
+    "Topological Sort"
+  ],
+  "aliases": [
+    "course schedule",
+    "can finish courses",
+    "course prerequisites",
+    "detect prerequisite cycle"
+  ],
+  "keywords": [
+    "graph",
+    "cycle",
+    "directed",
+    "prerequisite",
+    "topological",
+    "dfs",
+    "indegree"
+  ],
+  "summary": "Solve Course Schedule using the standard optimized interview approach.",
+  "hint": "Look for the Topological Sort structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Topological Sort",
+    "idea": [
+      "Courses form a directed graph.",
+      "Remove courses with zero prerequisites.",
+      "A cycle exists if not all courses are removed."
+    ],
+    "complexity": {
+      "time": "O(v + e)",
+      "space": "O(v + e)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Course Schedule.",
+    "Use Topological Sort to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "build graph and indegrees",
+    "queue = courses with indegree zero",
+    "completed = 0",
+    "",
+    "while queue is not empty:",
+    "    course = pop queue",
+    "    completed += 1",
+    "",
+    "    for each next course:",
+    "        reduce indegree",
+    "        if indegree is zero:",
+    "            push next course",
+    "",
+    "return completed equals course count"
+  ],
+  "complexity": {
+    "time": "O(v + e)",
+    "space": "O(v + e)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function canFinish(numCourses, prerequisites) { const graph = Array.from({ length: numCourses }, () => []); const indeg = Array(numCourses).fill(0); for (const [a, b] of prerequisites) { graph[b].push(a); indeg[a] += 1; } const q = []; for (let i = 0; i < numCourses; i += 1) if (indeg[i] === 0) q.push(i); let seen = 0; for (let h = 0; h < q.length; h += 1) { seen += 1; for (const next of graph[q[h]]) if (--indeg[next] === 0) q.push(next); } return seen === numCourses; }"
+      ],
+      "g2": [
+        "function canFinish(numCourses, prerequisites) {",
+        "  const graph = Array.from( {",
+        "    length: numCourses",
+        "  }",
+        "  , () => []);",
+        "  const indeg = Array(numCourses).fill(0);",
+        "  for (const [a, b] of prerequisites) {",
+        "    graph[b].push(a);",
+        "    indeg[a] += 1;",
+        "  }",
+        "  const q = [];",
+        "  for (let i = 0; i < numCourses; i += 1) {",
+        "    if (indeg[i] === 0) {",
+        "      q.push(i);",
+        "    }",
+        "  }",
+        "  let seen = 0;",
+        "  for (let h = 0; h < q.length; h += 1) {",
+        "    seen += 1;",
+        "    for (const next of graph[q[h]]) {",
+        "      if (--indeg[next] === 0) {",
+        "        q.push(next);",
+        "      }",
+        "    }",
+        "  }",
+        "  return seen === numCourses;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def canFinish(self, numCourses, prerequisites):",
+        "        graph = [[] for _ in range(numCourses)]; indeg = [0] * numCourses",
+        "        for a, b in prerequisites:",
+        "  graph[b].append(a); indeg[a] += 1",
+        "        q = deque(i for i, d in enumerate(indeg) if d == 0); seen = 0",
+        "        while q:",
+        "  node = q.popleft(); seen += 1",
+        "  for nxt in graph[node]:",
+        "      indeg[nxt] -= 1",
+        "      if indeg[nxt] == 0: q.append(nxt)",
+        "        return seen == numCourses"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def canFinish(self, numCourses, prerequisites):",
+        "        graph = [[] for _ in range(numCourses)]",
+        "        indeg = [0] * numCourses",
+        "        for a, b in prerequisites:",
+        "            graph[b].append(a)",
+        "            indeg[a] += 1",
+        "        q = deque(i for i, d in enumerate(indeg) if d == 0)",
+        "        seen = 0",
+        "        while q:",
+        "            node = q.popleft()",
+        "            seen += 1",
+        "            for nxt in graph[node]:",
+        "                indeg[nxt] -= 1",
+        "                if indeg[nxt] == 0:",
+        "                    q.append(nxt)",
+        "        return seen == numCourses"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public boolean canFinish(int numCourses, int[][] prerequisites) { List<List<Integer>> graph = new ArrayList<>(); for (int i = 0; i < numCourses; i++) graph.add(new ArrayList<>()); int[] indeg = new int[numCourses]; for (int[] e : prerequisites) { graph.get(e[1]).add(e[0]); indeg[e[0]]++; } Queue<Integer> q = new ArrayDeque<>(); for (int i = 0; i < numCourses; i++) if (indeg[i] == 0) q.add(i); int seen = 0; while (!q.isEmpty()) { int node = q.remove(); seen++; for (int next : graph.get(node)) if (--indeg[next] == 0) q.add(next); } return seen == numCourses; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean canFinish(int numCourses, int[][] prerequisites) {",
+        "    List<List<Integer>> graph = new ArrayList<>();",
+        "    for (int i = 0; i < numCourses; i++) {",
+        "      graph.add(new ArrayList<>());",
+        "    }",
+        "    int[] indeg = new int[numCourses];",
+        "    for (int[] e : prerequisites) {",
+        "      graph.get(e[1]).add(e[0]);",
+        "      indeg[e[0]]++;",
+        "    }",
+        "    Queue<Integer> q = new ArrayDeque<>();",
+        "    for (int i = 0; i < numCourses; i++) {",
+        "      if (indeg[i] == 0) {",
+        "        q.add(i);",
+        "      }",
+        "    }",
+        "    int seen = 0;",
+        "    while (!q.isEmpty()) {",
+        "      int node = q.remove();",
+        "      seen++;",
+        "      for (int next : graph.get(node)) {",
+        "        if (--indeg[next] == 0) {",
+        "          q.add(next);",
+        "        }",
+        "      }",
+        "    }",
+        "    return seen == numCourses;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: bool canFinish(int numCourses, vector<vector<int>>& prerequisites) { vector<vector<int>> graph(numCourses); vector<int> indeg(numCourses); for (auto& e : prerequisites) { graph[e[1]].push_back(e[0]); indeg[e[0]]++; } queue<int> q; for (int i = 0; i < numCourses; i++) if (indeg[i] == 0) q.push(i); int seen = 0; while (!q.empty()) { int node = q.front(); q.pop(); seen++; for (int next : graph[node]) if (--indeg[next] == 0) q.push(next); } return seen == numCourses; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {",
+        "    vector<vector<int>> graph(numCourses);",
+        "    vector<int> indeg(numCourses);",
+        "    for (auto& e : prerequisites) {",
+        "      graph[e[1]].push_back(e[0]);",
+        "      indeg[e[0]]++;",
+        "    }",
+        "    queue<int> q;",
+        "    for (int i = 0; i < numCourses; i++) {",
+        "      if (indeg[i] == 0) {",
+        "        q.push(i);",
+        "      }",
+        "    }",
+        "    int seen = 0;",
+        "    while (!q.empty()) {",
+        "      int node = q.front();",
+        "      q.pop();",
+        "      seen++;",
+        "      for (int next : graph[node]) {",
+        "        if (--indeg[next] == 0) {",
+        "          q.push(next);",
+        "        }",
+        "      }",
+        "    }",
+        "    return seen == numCourses;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

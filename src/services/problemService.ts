@@ -1,11 +1,6 @@
 import categoriesData from '../data/categories.json'
 import collectionsData from '../data/collections.json'
 import patternsData from '../data/patterns.json'
-import twoSum from '../data/problems/0001-two-sum.json'
-import longestSubstring from '../data/problems/0003-longest-substring-without-repeating-characters.json'
-import validParentheses from '../data/problems/0020-valid-parentheses.json'
-import maximumDepth from '../data/problems/0104-maximum-depth-of-binary-tree.json'
-import reverseLinkedList from '../data/problems/0206-reverse-linked-list.json'
 import { DIFFICULTIES } from '../types/problem'
 import type { Difficulty, Problem, ProblemId, ProblemReferenceIndex } from '../types/problem'
 
@@ -13,13 +8,14 @@ type JsonProblem = Omit<Problem, 'difficulty'> & {
   difficulty: string
 }
 
-const jsonProblems: JsonProblem[] = [
-  twoSum,
-  longestSubstring,
-  validParentheses,
-  maximumDepth,
-  reverseLinkedList,
-]
+const problemModules = import.meta.glob<JsonProblem>('../data/problems/*.json', {
+  eager: true,
+  import: 'default',
+})
+
+const jsonProblems: JsonProblem[] = Object.keys(problemModules)
+  .sort()
+  .map((fileName) => problemModules[fileName])
 
 const categories: ProblemReferenceIndex = categoriesData
 const patterns: ProblemReferenceIndex = patternsData
@@ -87,7 +83,7 @@ function assertProblemTagsExistInIndexes(): void {
   }
 }
 
-export function validateProblemData(): void {
+function validateProblemData(): void {
   assertUniqueProblems()
   assertKnownProblemReferences('Category', categories)
   assertKnownProblemReferences('Pattern', patterns)
@@ -115,10 +111,6 @@ export function getAllProblems(): Problem[] {
 
 export function getProblemById(id: ProblemId): Problem | undefined {
   return problemsById.get(id)
-}
-
-export function getProblemBySlug(slug: string): Problem | undefined {
-  return problemsBySlug.get(slug)
 }
 
 export function getProblemsByCategory(category: string): Problem[] {

@@ -1,0 +1,223 @@
+{
+  "id": 235,
+  "slug": "lowest-common-ancestor-of-a-binary-search-tree",
+  "title": "Lowest Common Ancestor of a Binary Search Tree",
+  "difficulty": "Medium",
+  "categories": [
+    "Trees",
+    "Binary Search Trees"
+  ],
+  "patterns": [
+    "BST"
+  ],
+  "aliases": [
+    "lowest common ancestor",
+    "lca bst",
+    "lowest common ancestor bst",
+    "common ancestor in bst"
+  ],
+  "keywords": [
+    "tree",
+    "bst",
+    "binary search tree",
+    "ancestor",
+    "lca",
+    "search"
+  ],
+  "summary": "Find the lowest node in a BST that has two given nodes as descendants.",
+  "hint": "Use BST ordering to move left, move right, or stop when the two targets split around the current node.",
+  "quickAnswer": {
+    "pattern": "BST Search",
+    "idea": [
+      "BST ordering tells which side contains both nodes.",
+      "Move left if both values are smaller.",
+      "Move right if both are larger; otherwise current is LCA."
+    ],
+    "complexity": {
+      "time": "O(h)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Start at the root.",
+    "If both target values are smaller, move left.",
+    "If both target values are larger, move right.",
+    "Otherwise the current node is where the paths split.",
+    "Return that split node as the lowest common ancestor."
+  ],
+  "pseudocode": [
+    "node = root",
+    "",
+    "while node exists:",
+    "    if both targets are smaller:",
+    "        node = node.left",
+    "    else if both targets are larger:",
+    "        node = node.right",
+    "    else:",
+    "        return node"
+  ],
+  "complexity": {
+    "time": "O(h)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "One target is the ancestor of the other.",
+    "The answer is the root.",
+    "The tree is skewed.",
+    "Targets are on the same side of the root."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function lowestCommonAncestor(root, p, q) {",
+        "  let node = root;",
+        "",
+        "  while (node) {",
+        "    if (p.val < node.val && q.val < node.val) {",
+        "      node = node.left;",
+        "    } else if (p.val > node.val && q.val > node.val) {",
+        "      node = node.right;",
+        "    } else {",
+        "      return node;",
+        "    }",
+        "  }",
+        "",
+        "  return null;",
+        "}"
+      ],
+      "g2": [
+        "function lowestCommonAncestor(root, p, q) {",
+        "  let node = root;",
+        "",
+        "  while (node) {",
+        "    if (p.val < node.val && q.val < node.val) {",
+        "      node = node.left;",
+        "    }",
+        "    else if (p.val > node.val && q.val > node.val) {",
+        "      node = node.right;",
+        "    }",
+        "    else {",
+        "      return node;",
+        "    }",
+        "  }",
+        "",
+        "  return null;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:",
+        "        node = root",
+        "",
+        "        while node:",
+        "            if p.val < node.val and q.val < node.val:",
+        "                node = node.left",
+        "            elif p.val > node.val and q.val > node.val:",
+        "                node = node.right",
+        "            else:",
+        "                return node"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:",
+        "        node = root",
+        "",
+        "        while node:",
+        "            if p.val < node.val and q.val < node.val:",
+        "                node = node.left",
+        "            elif p.val > node.val and q.val > node.val:",
+        "                node = node.right",
+        "            else:",
+        "                return node"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {",
+        "        TreeNode node = root;",
+        "",
+        "        while (node != null) {",
+        "            if (p.val < node.val && q.val < node.val) {",
+        "                node = node.left;",
+        "            } else if (p.val > node.val && q.val > node.val) {",
+        "                node = node.right;",
+        "            } else {",
+        "                return node;",
+        "            }",
+        "        }",
+        "",
+        "        return null;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {",
+        "    TreeNode node = root;",
+        "",
+        "    while (node != null) {",
+        "      if (p.val < node.val && q.val < node.val) {",
+        "        node = node.left;",
+        "      }",
+        "      else if (p.val > node.val && q.val > node.val) {",
+        "        node = node.right;",
+        "      }",
+        "      else {",
+        "        return node;",
+        "      }",
+        "    }",
+        "",
+        "    return null;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {",
+        "        TreeNode* node = root;",
+        "",
+        "        while (node) {",
+        "            if (p->val < node->val && q->val < node->val) {",
+        "                node = node->left;",
+        "            } else if (p->val > node->val && q->val > node->val) {",
+        "                node = node->right;",
+        "            } else {",
+        "                return node;",
+        "            }",
+        "        }",
+        "",
+        "        return nullptr;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {",
+        "    TreeNode* node = root;",
+        "",
+        "    while (node) {",
+        "      if (p->val < node->val && q->val < node->val) {",
+        "        node = node->left;",
+        "      }",
+        "      else if (p->val > node->val && q->val > node->val) {",
+        "        node = node->right;",
+        "      }",
+        "      else {",
+        "        return node;",
+        "      }",
+        "    }",
+        "",
+        "    return nullptr;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

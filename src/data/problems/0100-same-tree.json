@@ -1,0 +1,132 @@
+{
+  "id": 100,
+  "slug": "same-tree",
+  "title": "Same Tree",
+  "difficulty": "Easy",
+  "categories": [
+    "Trees",
+    "DFS"
+  ],
+  "patterns": [
+    "Tree Recursion"
+  ],
+  "aliases": [
+    "same tree",
+    "identical trees",
+    "compare binary trees"
+  ],
+  "keywords": [
+    "tree",
+    "dfs",
+    "recursion",
+    "compare"
+  ],
+  "summary": "Solve Same Tree using the standard optimized interview approach.",
+  "hint": "Look for the Tree Recursion structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Tree Recursion",
+    "idea": [
+      "Two empty nodes match.",
+      "One empty node or different values fail.",
+      "Both left and right subtrees must match."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(h)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Same Tree.",
+    "Use Tree Recursion to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "same(a, b):",
+    "    if both are null:",
+    "        return true",
+    "    if only one is null:",
+    "        return false",
+    "    if values differ:",
+    "        return false",
+    "",
+    "    return same(left children)",
+    "        and same(right children)"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function isSameTree(p, q) { if (!p || !q) return p === q; return p.val === q.val && isSameTree(p.left, q.left) && isSameTree(p.right, q.right); }"
+      ],
+      "g2": [
+        "function isSameTree(p, q) {",
+        "  if (!p || !q) {",
+        "    return p === q;",
+        "  }",
+        "  return p.val === q.val && isSameTree(p.left,",
+        "    q.left) && isSameTree(p.right, q.right);",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def isSameTree(self, p, q):",
+        "        if not p or not q: return p is q",
+        "        return p.val == q.val and self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def isSameTree(self, p, q):",
+        "        if not p or not q:",
+        "            return p is q",
+        "        return p.val == q.val and self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public boolean isSameTree(TreeNode p, TreeNode q) { if (p == null || q == null) return p == q; return p.val == q.val && isSameTree(p.left, q.left) && isSameTree(p.right, q.right); } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean isSameTree(TreeNode p, TreeNode q) {",
+        "    if (p == null || q == null) {",
+        "      return p == q;",
+        "    }",
+        "    return p.val == q.val && isSameTree(p.left,",
+        "      q.left) && isSameTree(p.right, q.right);",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: bool isSameTree(TreeNode* p, TreeNode* q) { if (!p || !q) return p == q; return p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right); } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  bool isSameTree(TreeNode* p, TreeNode* q) {",
+        "    if (!p || !q) {",
+        "      return p == q;",
+        "    }",
+        "    return p->val == q->val &&",
+        "      isSameTree(p->left,",
+        "      q->left) && isSameTree(p->right,",
+        "      q->right);",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

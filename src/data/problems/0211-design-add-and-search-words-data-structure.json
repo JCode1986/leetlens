@@ -1,0 +1,226 @@
+{
+  "id": 211,
+  "slug": "design-add-and-search-words-data-structure",
+  "title": "Design Add and Search Words Data Structure",
+  "difficulty": "Medium",
+  "categories": [
+    "Strings"
+  ],
+  "patterns": [
+    "Trie",
+    "DFS"
+  ],
+  "aliases": [
+    "add and search word",
+    "word dictionary",
+    "wildcard word search"
+  ],
+  "keywords": [
+    "trie",
+    "dfs",
+    "wildcard",
+    "dot",
+    "word"
+  ],
+  "summary": "Solve Design Add and Search Words Data Structure using the standard optimized interview approach.",
+  "hint": "Look for the Trie structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Trie + DFS",
+    "idea": [
+      "Store words in a trie.",
+      "Normal characters follow one child.",
+      "A dot branches to every child."
+    ],
+    "complexity": {
+      "time": "O(l * branches)",
+      "space": "O(total characters)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Design Add and Search Words Data Structure.",
+    "Use Trie and DFS to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "addWord(word):",
+    "    insert word into trie",
+    "",
+    "search(pattern):",
+    "    return dfs(root, 0)",
+    "",
+    "dfs(node, index):",
+    "    if index is pattern length:",
+    "        return node is word end",
+    "",
+    "    char = pattern[index]",
+    "    if char is dot:",
+    "        try every child with index + 1",
+    "    else:",
+    "        follow matching child",
+    "",
+    "    return whether any path works"
+  ],
+  "complexity": {
+    "time": "O(l * branches)",
+    "space": "O(total characters)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "class WordDictionary { constructor(){ this.root = {}; } addWord(word){ let node = this.root; for(const ch of word) node = node[ch] ||= {}; node.end = true; } search(word){ const dfs = (node,i) => { if(i === word.length) return !!node.end; const ch = word[i]; if(ch !== '.') return !!node[ch] && dfs(node[ch], i + 1); return Object.keys(node).some(k => k !== 'end' && dfs(node[k], i + 1)); }; return dfs(this.root,0); } }"
+      ],
+      "g2": [
+        "class WordDictionary {",
+        "  constructor() {",
+        "    this.root = {",
+        "    };",
+        "  }",
+        "  addWord(word) {",
+        "    let node = this.root;",
+        "    for(const ch of word) {",
+        "      node = node[ch] ||= {",
+        "      }",
+        "    };",
+        "    node.end = true;",
+        "  }",
+        "  search(word) {",
+        "    const dfs = (node,i) => {",
+        "      if(i === word.length) {",
+        "        return !!node.end;",
+        "      }",
+        "      const ch = word[i];",
+        "      if(ch !== '.') {",
+        "        return !!node[ch] && dfs(node[ch],",
+        "          i + 1);",
+        "      }",
+        "      return Object.keys(node).some(k => k !== 'end' && dfs(node[k], i + 1));",
+        "    };",
+        "    return dfs(this.root,0);",
+        "  }",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class WordDictionary:",
+        "    def __init__(self): self.root = {}",
+        "    def addWord(self, word):",
+        "        node = self.root",
+        "        for ch in word: node = node.setdefault(ch, {})",
+        "        node['#'] = True",
+        "    def search(self, word):",
+        "        def dfs(node, i):",
+        "  if i == len(word): return '#' in node",
+        "  ch = word[i]",
+        "  if ch != '.': return ch in node and dfs(node[ch], i + 1)",
+        "  return any(k != '#' and dfs(v, i + 1) for k, v in node.items())",
+        "        return dfs(self.root, 0)"
+      ],
+      "g2": [
+        "class WordDictionary:",
+        "    def __init__(self): self.root = {}",
+        "    def addWord(self, word):",
+        "        node = self.root",
+        "        for ch in word:",
+        "            node = node.setdefault(ch, {})",
+        "        node['#'] = True",
+        "    def search(self, word):",
+        "        def dfs(node, i):",
+        "            if i == len(word):",
+        "                return '#' in node",
+        "            ch = word[i]",
+        "            if ch != '.':",
+        "                return ch in node and dfs(node[ch], i + 1)",
+        "            return any(k != '#' and dfs(v, i + 1) for k, v in node.items())",
+        "        return dfs(self.root, 0)"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class WordDictionary { Map<Character, WordDictionary> child = new HashMap<>(); boolean end; public void addWord(String word) { WordDictionary node = this; for (char ch : word.toCharArray()) node = node.child.computeIfAbsent(ch, k -> new WordDictionary()); node.end = true; } public boolean search(String word) { return dfs(word, 0); } private boolean dfs(String word, int i) { if (i == word.length()) return end; char ch = word.charAt(i); if (ch != '.') return child.containsKey(ch) && child.get(ch).dfs(word, i + 1); for (WordDictionary next : child.values()) if (next.dfs(word, i + 1)) return true; return false; } }"
+      ],
+      "g2": [
+        "class WordDictionary {",
+        "  Map<Character,",
+        "    WordDictionary> child = new HashMap<>();",
+        "  boolean end;",
+        "  public void addWord(String word) {",
+        "    WordDictionary node = this;",
+        "    for (char ch : word.toCharArray()) {",
+        "      node = node.child.computeIfAbsent(ch,",
+        "        k -> new WordDictionary());",
+        "    }",
+        "    node.end = true;",
+        "  }",
+        "  public boolean search(String word) {",
+        "    return dfs(word, 0);",
+        "  }",
+        "  private boolean dfs(String word, int i) {",
+        "    if (i == word.length()) {",
+        "      return end;",
+        "    }",
+        "    char ch = word.charAt(i);",
+        "    if (ch != '.') {",
+        "      return child.containsKey(ch) &&",
+        "        child.get(ch).dfs(word, i + 1);",
+        "    }",
+        "    for (WordDictionary next : child.values()) {",
+        "      if (next.dfs(word, i + 1)) {",
+        "        return true;",
+        "      }",
+        "    }",
+        "    return false;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class WordDictionary { unordered_map<char, WordDictionary*> child; bool end = false; public: void addWord(string word) { auto node = this; for (char ch : word) { if (!node->child.count(ch)) node->child[ch] = new WordDictionary(); node = node->child[ch]; } node->end = true; } bool search(string word) { return dfs(word, 0); } bool dfs(string& word, int i) { if (i == word.size()) return end; char ch = word[i]; if (ch != '.') return child.count(ch) && child[ch]->dfs(word, i + 1); for (auto& [_, next] : child) if (next->dfs(word, i + 1)) return true; return false; } };"
+      ],
+      "g2": [
+        "class WordDictionary {",
+        "  unordered_map<char, WordDictionary*> child;",
+        "  bool end = false;",
+        "public:",
+        "  void addWord(string word) {",
+        "    auto node = this;",
+        "    for (char ch : word) {",
+        "      if (!node->child.count(ch)) {",
+        "        node->child[ch] = new WordDictionary();",
+        "      }",
+        "      node = node->child[ch];",
+        "    }",
+        "    node->end = true;",
+        "  }",
+        "  bool search(string word) {",
+        "    return dfs(word, 0);",
+        "  }",
+        "  bool dfs(string& word, int i) {",
+        "    if (i == word.size()) {",
+        "      return end;",
+        "    }",
+        "    char ch = word[i];",
+        "    if (ch != '.') {",
+        "      return child.count(ch) &&",
+        "        child[ch]->dfs(word, i + 1);",
+        "    }",
+        "    for (auto& [_, next] : child) {",
+        "      if (next->dfs(word, i + 1)) {",
+        "        return true;",
+        "      }",
+        "    }",
+        "    return false;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

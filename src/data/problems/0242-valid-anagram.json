@@ -1,0 +1,234 @@
+{
+  "id": 242,
+  "slug": "valid-anagram",
+  "title": "Valid Anagram",
+  "difficulty": "Easy",
+  "categories": [
+    "Strings",
+    "Hash Maps"
+  ],
+  "patterns": [
+    "Hash Map"
+  ],
+  "aliases": [
+    "valid anagram",
+    "is anagram",
+    "check anagram",
+    "same letters"
+  ],
+  "keywords": [
+    "string",
+    "anagram",
+    "count",
+    "frequency",
+    "letters",
+    "hash map"
+  ],
+  "summary": "Determine whether two strings contain the same characters with the same counts.",
+  "hint": "Count characters from the first string, then subtract counts using the second string.",
+  "quickAnswer": {
+    "pattern": "Hash Map",
+    "idea": [
+      "Anagrams have identical character counts.",
+      "Increment counts for the first string.",
+      "Decrement for the second and reject mismatches."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "If lengths differ, return false immediately.",
+    "Count each character in the first string.",
+    "Scan the second string and decrement counts.",
+    "If a count would go below zero, return false.",
+    "If all characters balance, the strings are anagrams."
+  ],
+  "pseudocode": [
+    "if lengths differ:",
+    "    return false",
+    "",
+    "counts = empty map",
+    "",
+    "for each char in first string:",
+    "    increase count",
+    "",
+    "for each char in second string:",
+    "    decrease count",
+    "    if count is negative:",
+    "        return false",
+    "",
+    "return true"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "The strings have different lengths.",
+    "A character appears too many times in one string.",
+    "Both strings are empty.",
+    "The same letters appear in different order."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function isAnagram(s, t) {",
+        "  if (s.length !== t.length) return false;",
+        "  const counts = new Map();",
+        "",
+        "  for (const ch of s) {",
+        "    counts.set(ch, (counts.get(ch) || 0) + 1);",
+        "  }",
+        "",
+        "  for (const ch of t) {",
+        "    const next = (counts.get(ch) || 0) - 1;",
+        "    if (next < 0) return false;",
+        "    counts.set(ch, next);",
+        "  }",
+        "",
+        "  return true;",
+        "}"
+      ],
+      "g2": [
+        "function isAnagram(s, t) {",
+        "  if (s.length !== t.length) {",
+        "    return false;",
+        "  }",
+        "  const counts = new Map();",
+        "",
+        "  for (const ch of s) {",
+        "    counts.set(ch, (counts.get(ch) || 0) + 1);",
+        "  }",
+        "",
+        "  for (const ch of t) {",
+        "    const next = (counts.get(ch) || 0) - 1;",
+        "    if (next < 0) {",
+        "      return false;",
+        "    }",
+        "    counts.set(ch, next);",
+        "  }",
+        "",
+        "  return true;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def isAnagram(self, s: str, t: str) -> bool:",
+        "        if len(s) != len(t):",
+        "            return False",
+        "        counts = Counter(s)",
+        "",
+        "        for ch in t:",
+        "            counts[ch] -= 1",
+        "            if counts[ch] < 0:",
+        "                return False",
+        "",
+        "        return True"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def isAnagram(self, s: str, t: str) -> bool:",
+        "        if len(s) != len(t):",
+        "            return False",
+        "        counts = Counter(s)",
+        "",
+        "        for ch in t:",
+        "            counts[ch] -= 1",
+        "            if counts[ch] < 0:",
+        "                return False",
+        "",
+        "        return True"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public boolean isAnagram(String s, String t) {",
+        "        if (s.length() != t.length()) return false;",
+        "        int[] counts = new int[26];",
+        "",
+        "        for (char ch : s.toCharArray()) counts[ch - 'a']++;",
+        "        for (char ch : t.toCharArray()) {",
+        "            int index = ch - 'a';",
+        "            counts[index]--;",
+        "            if (counts[index] < 0) return false;",
+        "        }",
+        "",
+        "        return true;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean isAnagram(String s, String t) {",
+        "    if (s.length() != t.length()) {",
+        "      return false;",
+        "    }",
+        "    int[] counts = new int[26];",
+        "",
+        "    for (char ch : s.toCharArray()) {",
+        "      counts[ch - 'a']++;",
+        "    }",
+        "    for (char ch : t.toCharArray()) {",
+        "      int index = ch - 'a';",
+        "      counts[index]--;",
+        "      if (counts[index] < 0) {",
+        "        return false;",
+        "      }",
+        "    }",
+        "",
+        "    return true;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    bool isAnagram(string s, string t) {",
+        "        if (s.size() != t.size()) return false;",
+        "        vector<int> counts(26, 0);",
+        "",
+        "        for (char ch : s) counts[ch - 'a']++;",
+        "        for (char ch : t) {",
+        "            int index = ch - 'a';",
+        "            counts[index]--;",
+        "            if (counts[index] < 0) return false;",
+        "        }",
+        "",
+        "        return true;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  bool isAnagram(string s, string t) {",
+        "    if (s.size() != t.size()) {",
+        "      return false;",
+        "    }",
+        "    vector<int> counts(26, 0);",
+        "",
+        "    for (char ch : s) {",
+        "      counts[ch - 'a']++;",
+        "    }",
+        "    for (char ch : t) {",
+        "      int index = ch - 'a';",
+        "      counts[index]--;",
+        "      if (counts[index] < 0) {",
+        "        return false;",
+        "      }",
+        "    }",
+        "",
+        "    return true;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

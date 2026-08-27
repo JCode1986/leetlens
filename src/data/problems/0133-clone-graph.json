@@ -1,0 +1,176 @@
+{
+  "id": 133,
+  "slug": "clone-graph",
+  "title": "Clone Graph",
+  "difficulty": "Medium",
+  "categories": [
+    "Graphs"
+  ],
+  "patterns": [
+    "Graph Traversal"
+  ],
+  "aliases": [
+    "clone graph",
+    "copy graph",
+    "deep copy graph"
+  ],
+  "keywords": [
+    "graph",
+    "dfs",
+    "bfs",
+    "hash map",
+    "clone"
+  ],
+  "summary": "Solve Clone Graph using the standard optimized interview approach.",
+  "hint": "Look for the Graph Traversal structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Graph Traversal",
+    "idea": [
+      "Map original nodes to cloned nodes.",
+      "DFS or BFS each neighbor once.",
+      "Reconnect clone neighbors using the map."
+    ],
+    "complexity": {
+      "time": "O(v + e)",
+      "space": "O(v)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Clone Graph.",
+    "Use Graph Traversal to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "if node is null:",
+    "    return null",
+    "",
+    "clones = empty map",
+    "",
+    "clone(node):",
+    "    if node already cloned:",
+    "        return clone",
+    "",
+    "    create clone for node",
+    "    for each neighbor:",
+    "        add clone(neighbor)",
+    "    return clone",
+    "",
+    "return clone(start node)"
+  ],
+  "complexity": {
+    "time": "O(v + e)",
+    "space": "O(v)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function cloneGraph(node) { if(!node) return null; const seen = new Map(); function dfs(cur){ if(seen.has(cur)) return seen.get(cur); const copy = new Node(cur.val); seen.set(cur, copy); for(const nei of cur.neighbors) copy.neighbors.push(dfs(nei)); return copy; } return dfs(node); }"
+      ],
+      "g2": [
+        "function cloneGraph(node) {",
+        "  if(!node) {",
+        "    return null;",
+        "  }",
+        "  const seen = new Map();",
+        "  function dfs(cur) {",
+        "    if(seen.has(cur)) {",
+        "      return seen.get(cur);",
+        "    }",
+        "    const copy = new Node(cur.val);",
+        "    seen.set(cur, copy);",
+        "    for(const nei of cur.neighbors) {",
+        "      copy.neighbors.push(dfs(nei));",
+        "    }",
+        "    return copy;",
+        "  }",
+        "  return dfs(node);",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def cloneGraph(self, node):",
+        "        if not node: return None",
+        "        seen = {}",
+        "        def dfs(cur):",
+        "  if cur in seen: return seen[cur]",
+        "  copy = Node(cur.val); seen[cur] = copy",
+        "  copy.neighbors = [dfs(nei) for nei in cur.neighbors]",
+        "  return copy",
+        "        return dfs(node)"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def cloneGraph(self, node):",
+        "        if not node:",
+        "            return None",
+        "        seen = {}",
+        "        def dfs(cur):",
+        "            if cur in seen:",
+        "                return seen[cur]",
+        "            copy = Node(cur.val)",
+        "            seen[cur] = copy",
+        "            copy.neighbors = [dfs(nei) for nei in cur.neighbors]",
+        "            return copy",
+        "        return dfs(node)"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { Map<Node,Node> seen = new HashMap<>(); public Node cloneGraph(Node node) { if (node == null) return null; if (seen.containsKey(node)) return seen.get(node); Node copy = new Node(node.val); seen.put(node, copy); for (Node nei : node.neighbors) copy.neighbors.add(cloneGraph(nei)); return copy; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  Map<Node,Node> seen = new HashMap<>();",
+        "  public Node cloneGraph(Node node) {",
+        "    if (node == null) {",
+        "      return null;",
+        "    }",
+        "    if (seen.containsKey(node)) {",
+        "      return seen.get(node);",
+        "    }",
+        "    Node copy = new Node(node.val);",
+        "    seen.put(node, copy);",
+        "    for (Node nei : node.neighbors) {",
+        "      copy.neighbors.add(cloneGraph(nei));",
+        "    }",
+        "    return copy;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { unordered_map<Node*, Node*> seen; public: Node* cloneGraph(Node* node) { if (!node) return nullptr; if (seen.count(node)) return seen[node]; Node* copy = new Node(node->val); seen[node] = copy; for (auto nei : node->neighbors) copy->neighbors.push_back(cloneGraph(nei)); return copy; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "  unordered_map<Node*, Node*> seen;",
+        "public:",
+        "  Node* cloneGraph(Node* node) {",
+        "    if (!node) {",
+        "      return nullptr;",
+        "    }",
+        "    if (seen.count(node)) {",
+        "      return seen[node];",
+        "    }",
+        "    Node* copy = new Node(node->val);",
+        "    seen[node] = copy;",
+        "    for (auto nei : node->neighbors) {",
+        "      copy->neighbors.push_back(cloneGraph(nei));",
+        "    }",
+        "    return copy;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

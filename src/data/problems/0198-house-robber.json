@@ -1,0 +1,203 @@
+{
+  "id": 198,
+  "slug": "house-robber",
+  "title": "House Robber",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Dynamic Programming"
+  ],
+  "patterns": [
+    "Dynamic Programming"
+  ],
+  "aliases": [
+    "house robber",
+    "rob houses",
+    "maximum rob amount",
+    "non adjacent house money"
+  ],
+  "keywords": [
+    "dynamic programming",
+    "array",
+    "adjacent",
+    "rob",
+    "max profit",
+    "rolling state"
+  ],
+  "summary": "Maximize money robbed from a row of houses without robbing adjacent houses.",
+  "hint": "At each house, choose between skipping it or taking it plus the best value two houses back.",
+  "quickAnswer": {
+    "pattern": "Dynamic Programming",
+    "idea": [
+      "At each house, choose rob or skip.",
+      "Rob uses best value two houses back.",
+      "Skip keeps the previous best."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Keep the best total excluding the current house.",
+    "Keep the best total including choices up to the previous house.",
+    "For each amount, compute take as previous skip plus amount.",
+    "The new best is max(skip current, take current).",
+    "Use two variables instead of a full DP array."
+  ],
+  "pseudocode": [
+    "prevTwo = 0",
+    "prevOne = 0",
+    "",
+    "for each money amount:",
+    "    rob = prevTwo + amount",
+    "    skip = prevOne",
+    "    current = max(rob, skip)",
+    "    prevTwo = prevOne",
+    "    prevOne = current",
+    "",
+    "return prevOne"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "No houses.",
+    "One house.",
+    "Two houses.",
+    "Large values separated by small values."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function rob(nums) {",
+        "  let prev2 = 0;",
+        "  let prev1 = 0;",
+        "",
+        "  for (const money of nums) {",
+        "    const current = Math.max(prev1, prev2 + money);",
+        "    prev2 = prev1;",
+        "    prev1 = current;",
+        "  }",
+        "",
+        "  return prev1;",
+        "}"
+      ],
+      "g2": [
+        "function rob(nums) {",
+        "  let prev2 = 0;",
+        "  let prev1 = 0;",
+        "",
+        "  for (const money of nums) {",
+        "    const current = Math.max(prev1,",
+        "      prev2 + money);",
+        "    prev2 = prev1;",
+        "    prev1 = current;",
+        "  }",
+        "",
+        "  return prev1;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def rob(self, nums: List[int]) -> int:",
+        "        prev2 = 0",
+        "        prev1 = 0",
+        "",
+        "        for money in nums:",
+        "            current = max(prev1, prev2 + money)",
+        "            prev2 = prev1",
+        "            prev1 = current",
+        "",
+        "        return prev1"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def rob(self, nums: List[int]) -> int:",
+        "        prev2 = 0",
+        "        prev1 = 0",
+        "",
+        "        for money in nums:",
+        "            current = max(prev1, prev2 + money)",
+        "            prev2 = prev1",
+        "            prev1 = current",
+        "",
+        "        return prev1"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int rob(int[] nums) {",
+        "        int prev2 = 0;",
+        "        int prev1 = 0;",
+        "",
+        "        for (int money : nums) {",
+        "            int current = Math.max(prev1, prev2 + money);",
+        "            prev2 = prev1;",
+        "            prev1 = current;",
+        "        }",
+        "",
+        "        return prev1;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int rob(int[] nums) {",
+        "    int prev2 = 0;",
+        "    int prev1 = 0;",
+        "",
+        "    for (int money : nums) {",
+        "      int current = Math.max(prev1,",
+        "        prev2 + money);",
+        "      prev2 = prev1;",
+        "      prev1 = current;",
+        "    }",
+        "",
+        "    return prev1;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    int rob(vector<int>& nums) {",
+        "        int prev2 = 0;",
+        "        int prev1 = 0;",
+        "",
+        "        for (int money : nums) {",
+        "            int current = max(prev1, prev2 + money);",
+        "            prev2 = prev1;",
+        "            prev1 = current;",
+        "        }",
+        "",
+        "        return prev1;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int rob(vector<int>& nums) {",
+        "    int prev2 = 0;",
+        "    int prev1 = 0;",
+        "",
+        "    for (int money : nums) {",
+        "      int current = max(prev1, prev2 + money);",
+        "      prev2 = prev1;",
+        "      prev1 = current;",
+        "    }",
+        "",
+        "    return prev1;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

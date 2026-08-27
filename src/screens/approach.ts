@@ -31,5 +31,9 @@ export function createApproachTextObjects(state: NavigationState) {
 }
 
 export function getApproachPageCount(state: NavigationState): number {
-  return getDetailPageCount(getApproachLines(state))
+  const problem = state.selectedProblemId === undefined
+    ? undefined
+    : getProblemById(state.selectedProblemId)
+
+  return getDetailPageCount(problem?.title ?? 'Problem', getApproachLines(state))
 }

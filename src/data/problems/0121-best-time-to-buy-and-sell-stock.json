@@ -1,0 +1,190 @@
+{
+  "id": 121,
+  "slug": "best-time-to-buy-and-sell-stock",
+  "title": "Best Time to Buy and Sell Stock",
+  "difficulty": "Easy",
+  "categories": [
+    "Arrays"
+  ],
+  "patterns": [
+    "One Pass"
+  ],
+  "aliases": [
+    "buy and sell stock",
+    "best time to buy stock",
+    "stock profit",
+    "maximum stock profit",
+    "stock prices"
+  ],
+  "keywords": [
+    "array",
+    "stock",
+    "profit",
+    "minimum price",
+    "one pass"
+  ],
+  "summary": "Find the maximum profit from one buy followed by one later sell.",
+  "hint": "Track the lowest price seen so far and test selling at each later price.",
+  "quickAnswer": {
+    "pattern": "One Pass",
+    "idea": [
+      "Track the cheapest price seen so far.",
+      "Sell at the current price to compute profit.",
+      "Keep the best profit."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Initialize the minimum price with a large value.",
+    "Scan prices from left to right.",
+    "Update the minimum price when a cheaper buy appears.",
+    "Otherwise compute profit from selling today.",
+    "Keep the best profit found."
+  ],
+  "pseudocode": [
+    "minPrice = infinity",
+    "best = 0",
+    "",
+    "for each price:",
+    "    minPrice = min(minPrice, price)",
+    "    profit = price - minPrice",
+    "    best = max(best, profit)",
+    "",
+    "return best"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Prices only decrease.",
+    "The best buy is the first day.",
+    "The best sell is the last day.",
+    "Only one price is present."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function maxProfit(prices) {",
+        "  let minPrice = Infinity;",
+        "  let best = 0;",
+        "",
+        "  for (const price of prices) {",
+        "    minPrice = Math.min(minPrice, price);",
+        "    best = Math.max(best, price - minPrice);",
+        "  }",
+        "",
+        "  return best;",
+        "}"
+      ],
+      "g2": [
+        "function maxProfit(prices) {",
+        "  let minPrice = Infinity;",
+        "  let best = 0;",
+        "",
+        "  for (const price of prices) {",
+        "    minPrice = Math.min(minPrice, price);",
+        "    best = Math.max(best, price - minPrice);",
+        "  }",
+        "",
+        "  return best;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def maxProfit(self, prices: List[int]) -> int:",
+        "        min_price = float('inf')",
+        "        best = 0",
+        "",
+        "        for price in prices:",
+        "            min_price = min(min_price, price)",
+        "            best = max(best, price - min_price)",
+        "",
+        "        return best"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def maxProfit(self, prices: List[int]) -> int:",
+        "        min_price = float('inf')",
+        "        best = 0",
+        "",
+        "        for price in prices:",
+        "            min_price = min(min_price, price)",
+        "            best = max(best, price - min_price)",
+        "",
+        "        return best"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int maxProfit(int[] prices) {",
+        "        int minPrice = Integer.MAX_VALUE;",
+        "        int best = 0;",
+        "",
+        "        for (int price : prices) {",
+        "            minPrice = Math.min(minPrice, price);",
+        "            best = Math.max(best, price - minPrice);",
+        "        }",
+        "",
+        "        return best;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int maxProfit(int[] prices) {",
+        "    int minPrice = Integer.MAX_VALUE;",
+        "    int best = 0;",
+        "",
+        "    for (int price : prices) {",
+        "      minPrice = Math.min(minPrice, price);",
+        "      best = Math.max(best, price - minPrice);",
+        "    }",
+        "",
+        "    return best;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    int maxProfit(vector<int>& prices) {",
+        "        int minPrice = INT_MAX;",
+        "        int best = 0;",
+        "",
+        "        for (int price : prices) {",
+        "            minPrice = min(minPrice, price);",
+        "            best = max(best, price - minPrice);",
+        "        }",
+        "",
+        "        return best;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int maxProfit(vector<int>& prices) {",
+        "    int minPrice = INT_MAX;",
+        "    int best = 0;",
+        "",
+        "    for (int price : prices) {",
+        "      minPrice = min(minPrice, price);",
+        "      best = max(best, price - minPrice);",
+        "    }",
+        "",
+        "    return best;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

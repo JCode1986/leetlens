@@ -1,0 +1,129 @@
+{
+  "id": 268,
+  "slug": "missing-number",
+  "title": "Missing Number",
+  "difficulty": "Easy",
+  "categories": [
+    "Arrays",
+    "Bit Manipulation"
+  ],
+  "patterns": [
+    "Bit Manipulation"
+  ],
+  "aliases": [
+    "missing number",
+    "find missing number",
+    "missing value zero to n"
+  ],
+  "keywords": [
+    "array",
+    "xor",
+    "sum",
+    "bit manipulation"
+  ],
+  "summary": "Solve Missing Number using the standard optimized interview approach.",
+  "hint": "Look for the Bit Manipulation structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Bit Manipulation",
+    "idea": [
+      "XOR all indices and values.",
+      "Equal numbers cancel out.",
+      "The leftover value is missing."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Missing Number.",
+    "Use Bit Manipulation to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "answer = n",
+    "",
+    "for index from 0 to n - 1:",
+    "    answer = answer xor index",
+    "    answer = answer xor nums[index]",
+    "",
+    "return answer"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function missingNumber(nums) { let ans = nums.length; for (let i = 0; i < nums.length; i += 1) ans ^= i ^ nums[i]; return ans; }"
+      ],
+      "g2": [
+        "function missingNumber(nums) {",
+        "  let ans = nums.length;",
+        "  for (let i = 0; i < nums.length; i += 1) {",
+        "    ans ^= i ^ nums[i];",
+        "  }",
+        "  return ans;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def missingNumber(self, nums):",
+        "        ans = len(nums)",
+        "        for i, n in enumerate(nums): ans ^= i ^ n",
+        "        return ans"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def missingNumber(self, nums):",
+        "        ans = len(nums)",
+        "        for i, n in enumerate(nums):",
+        "            ans ^= i ^ n",
+        "        return ans"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int missingNumber(int[] nums) { int ans = nums.length; for (int i = 0; i < nums.length; i++) ans ^= i ^ nums[i]; return ans; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int missingNumber(int[] nums) {",
+        "    int ans = nums.length;",
+        "    for (int i = 0; i < nums.length; i++) {",
+        "      ans ^= i ^ nums[i];",
+        "    }",
+        "    return ans;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int missingNumber(vector<int>& nums) { int ans = nums.size(); for (int i = 0; i < nums.size(); i++) ans ^= i ^ nums[i]; return ans; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int missingNumber(vector<int>& nums) {",
+        "    int ans = nums.size();",
+        "    for (int i = 0; i < nums.size(); i++) {",
+        "      ans ^= i ^ nums[i];",
+        "    }",
+        "    return ans;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

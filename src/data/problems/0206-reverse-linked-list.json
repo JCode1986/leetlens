@@ -3,8 +3,12 @@
   "slug": "reverse-linked-list",
   "title": "Reverse Linked List",
   "difficulty": "Easy",
-  "categories": ["Linked Lists"],
-  "patterns": ["Iterative Pointer Manipulation"],
+  "categories": [
+    "Linked Lists"
+  ],
+  "patterns": [
+    "Iterative Pointer Manipulation"
+  ],
   "aliases": [
     "reverse a linked list",
     "reverse list",
@@ -21,12 +25,36 @@
   ],
   "summary": "Reverse a singly linked list in place and return the new head node.",
   "hint": "Keep the previous node, redirect the current node's next pointer, then advance.",
+  "quickAnswer": {
+    "pattern": "Pointer Reversal",
+    "idea": [
+      "Keep previous, current, and next pointers.",
+      "Redirect current.next to previous.",
+      "Advance until current is null."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
   "approach": [
     "Start with prev as null and current as the head.",
     "Save current.next before changing pointers.",
     "Point current.next back to prev.",
     "Move prev and current one node forward.",
     "When current is null, prev is the new head."
+  ],
+  "pseudocode": [
+    "previous = null",
+    "current = head",
+    "",
+    "while current exists:",
+    "    nextNode = current.next",
+    "    current.next = previous",
+    "    previous = current",
+    "    current = nextNode",
+    "",
+    "return previous"
   ],
   "complexity": {
     "time": "O(n)",
@@ -89,15 +117,12 @@
       ],
       "g2": [
         "class Solution:",
-        "    def reverseList(",
-        "        self, head",
-        "    ):",
+        "    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:",
         "        prev = None",
         "        current = head",
         "",
         "        while current:",
-        "            next_node =",
-        "                current.next",
+        "            next_node = current.next",
         "            current.next = prev",
         "            prev = current",
         "            current = next_node",
@@ -125,22 +150,19 @@
       ],
       "g2": [
         "class Solution {",
-        "    public ListNode reverseList(",
-        "        ListNode head",
-        "    ) {",
-        "        ListNode prev = null;",
-        "        ListNode current = head;",
+        "  public ListNode reverseList(ListNode head) {",
+        "    ListNode prev = null;",
+        "    ListNode current = head;",
         "",
-        "        while (current != null) {",
-        "            ListNode next =",
-        "                current.next;",
-        "            current.next = prev;",
-        "            prev = current;",
-        "            current = next;",
-        "        }",
-        "",
-        "        return prev;",
+        "    while (current != null) {",
+        "      ListNode next = current.next;",
+        "      current.next = prev;",
+        "      prev = current;",
+        "      current = next;",
         "    }",
+        "",
+        "    return prev;",
+        "  }",
         "}"
       ]
     },
@@ -166,22 +188,19 @@
       "g2": [
         "class Solution {",
         "public:",
-        "    ListNode* reverseList(",
-        "        ListNode* head",
-        "    ) {",
-        "        ListNode* prev = nullptr;",
-        "        ListNode* current = head;",
+        "  ListNode* reverseList(ListNode* head) {",
+        "    ListNode* prev = nullptr;",
+        "    ListNode* current = head;",
         "",
-        "        while (current != nullptr) {",
-        "            ListNode* next =",
-        "                current->next;",
-        "            current->next = prev;",
-        "            prev = current;",
-        "            current = next;",
-        "        }",
-        "",
-        "        return prev;",
+        "    while (current != nullptr) {",
+        "      ListNode* next = current->next;",
+        "      current->next = prev;",
+        "      prev = current;",
+        "      current = next;",
         "    }",
+        "",
+        "    return prev;",
+        "  }",
         "};"
       ]
     }

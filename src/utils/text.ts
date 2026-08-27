@@ -3,19 +3,32 @@ export function truncateLine(value: string, maxLength: number): string {
     return value
   }
 
-  if (maxLength <= 3) {
-    return value.slice(0, maxLength)
-  }
-
-  return `${value.slice(0, maxLength - 3)}...`
+  return `${value.slice(0, Math.max(0, maxLength - 3))}...`
 }
 
 export function wrapText(value: string, maxLineLength: number): string[] {
+  const safeLineLength = Math.max(1, maxLineLength)
   const words = value.split(/\s+/).filter(Boolean)
   const lines: string[] = []
   let currentLine = ''
 
+  function pushWordParts(word: string): void {
+    for (let index = 0; index < word.length; index += safeLineLength) {
+      lines.push(word.slice(index, index + safeLineLength))
+    }
+  }
+
   for (const word of words) {
+    if (word.length > safeLineLength) {
+      if (currentLine.length > 0) {
+        lines.push(currentLine)
+        currentLine = ''
+      }
+
+      pushWordParts(word)
+      continue
+    }
+
     if (currentLine.length === 0) {
       currentLine = word
       continue
@@ -23,7 +36,7 @@ export function wrapText(value: string, maxLineLength: number): string[] {
 
     const candidate = `${currentLine} ${word}`
 
-    if (candidate.length <= maxLineLength) {
+    if (candidate.length <= safeLineLength) {
       currentLine = candidate
       continue
     }

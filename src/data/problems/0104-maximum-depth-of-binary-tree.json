@@ -3,8 +3,14 @@
   "slug": "maximum-depth-of-binary-tree",
   "title": "Maximum Depth of Binary Tree",
   "difficulty": "Easy",
-  "categories": ["Trees", "DFS"],
-  "patterns": ["DFS", "Recursion"],
+  "categories": [
+    "Trees",
+    "DFS"
+  ],
+  "patterns": [
+    "DFS",
+    "Recursion"
+  ],
   "aliases": [
     "max depth binary tree",
     "tree depth",
@@ -21,12 +27,35 @@
   ],
   "summary": "Compute the number of nodes on the longest path from the root down to any leaf.",
   "hint": "A node's depth is one plus the larger depth of its left and right subtrees.",
+  "quickAnswer": {
+    "pattern": "DFS Recursion",
+    "idea": [
+      "An empty tree has depth zero.",
+      "Depth is one plus the deeper subtree.",
+      "Return the recursive height from root."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(h)"
+    }
+  },
   "approach": [
     "Return zero when the current node is null.",
     "Recursively compute the left subtree depth.",
     "Recursively compute the right subtree depth.",
     "Return one plus the larger subtree depth.",
     "The root call gives the maximum tree depth."
+  ],
+  "pseudocode": [
+    "depth(node):",
+    "    if node is null:",
+    "        return 0",
+    "",
+    "    left = depth(node.left)",
+    "    right = depth(node.right)",
+    "    return 1 + max(left, right)",
+    "",
+    "return depth(root)"
   ],
   "complexity": {
     "time": "O(n)",
@@ -56,10 +85,8 @@
         "    return 0;",
         "  }",
         "",
-        "  return 1 + Math.max(",
-        "    maxDepth(root.left),",
-        "    maxDepth(root.right)",
-        "  );",
+        "  return 1 + Math.max(maxDepth(root.left),",
+        "    maxDepth(root.right));",
         "}"
       ]
     },
@@ -74,14 +101,11 @@
       ],
       "g2": [
         "class Solution:",
-        "    def maxDepth(self, root):",
+        "    def maxDepth(self, root: Optional[TreeNode]) -> int:",
         "        if root is None:",
         "            return 0",
         "",
-        "        return 1 + max(",
-        "            self.maxDepth(root.left),",
-        "            self.maxDepth(root.right)",
-        "        )"
+        "        return 1 + max(self.maxDepth(root.left), self.maxDepth(root.right))"
       ]
     },
     "java": {
@@ -98,18 +122,14 @@
       ],
       "g2": [
         "class Solution {",
-        "    public int maxDepth(",
-        "        TreeNode root",
-        "    ) {",
-        "        if (root == null) {",
-        "            return 0;",
-        "        }",
-        "",
-        "        return 1 + Math.max(",
-        "            maxDepth(root.left),",
-        "            maxDepth(root.right)",
-        "        );",
+        "  public int maxDepth(TreeNode root) {",
+        "    if (root == null) {",
+        "      return 0;",
         "    }",
+        "",
+        "    return 1 + Math.max(maxDepth(root.left),",
+        "      maxDepth(root.right));",
+        "  }",
         "}"
       ]
     },
@@ -129,16 +149,14 @@
       "g2": [
         "class Solution {",
         "public:",
-        "    int maxDepth(TreeNode* root) {",
-        "        if (root == nullptr) {",
-        "            return 0;",
-        "        }",
-        "",
-        "        return 1 + max(",
-        "            maxDepth(root->left),",
-        "            maxDepth(root->right)",
-        "        );",
+        "  int maxDepth(TreeNode* root) {",
+        "    if (root == nullptr) {",
+        "      return 0;",
         "    }",
+        "",
+        "    return 1 + max(maxDepth(root->left),",
+        "      maxDepth(root->right));",
+        "  }",
         "};"
       ]
     }

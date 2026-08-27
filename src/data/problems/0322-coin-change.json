@@ -1,0 +1,220 @@
+{
+  "id": 322,
+  "slug": "coin-change",
+  "title": "Coin Change",
+  "difficulty": "Medium",
+  "categories": [
+    "Dynamic Programming"
+  ],
+  "patterns": [
+    "Dynamic Programming"
+  ],
+  "aliases": [
+    "coin change",
+    "minimum coins",
+    "fewest coins",
+    "make amount with coins"
+  ],
+  "keywords": [
+    "dynamic programming",
+    "coins",
+    "amount",
+    "minimum",
+    "unbounded",
+    "dp"
+  ],
+  "summary": "Find the fewest coins needed to make a target amount, or report that it is impossible.",
+  "hint": "Let dp[x] be the fewest coins needed for amount x, then try adding each coin.",
+  "quickAnswer": {
+    "pattern": "Dynamic Programming",
+    "idea": [
+      "dp[amount] stores fewest coins for that amount.",
+      "Try every coin for every reachable amount.",
+      "Unreachable amounts stay infinity."
+    ],
+    "complexity": {
+      "time": "O(amount * c)",
+      "space": "O(amount)"
+    }
+  },
+  "approach": [
+    "Create a DP array from 0 through amount.",
+    "Set dp[0] to zero and other values to a large sentinel.",
+    "For each amount, try every coin that can fit.",
+    "Update the amount from the smaller subproblem plus one coin.",
+    "Return -1 if the target remains unreachable."
+  ],
+  "pseudocode": [
+    "dp = infinity array of size amount + 1",
+    "dp[0] = 0",
+    "",
+    "for total from 1 to amount:",
+    "    for each coin:",
+    "        if coin <= total:",
+    "            dp[total] = min(dp[total], dp[total - coin] + 1)",
+    "",
+    "if dp[amount] is infinity:",
+    "    return -1",
+    "return dp[amount]"
+  ],
+  "complexity": {
+    "time": "O(amount * c)",
+    "space": "O(amount)"
+  },
+  "edgeCases": [
+    "Amount is zero.",
+    "No coin combination can make the amount.",
+    "A coin value is larger than the amount.",
+    "The optimal answer uses repeated coins."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function coinChange(coins, amount) {",
+        "  const dp = new Array(amount + 1).fill(amount + 1);",
+        "  dp[0] = 0;",
+        "",
+        "  for (let value = 1; value <= amount; value += 1) {",
+        "    for (const coin of coins) {",
+        "      if (coin <= value) {",
+        "        dp[value] = Math.min(dp[value], dp[value - coin] + 1);",
+        "      }",
+        "    }",
+        "  }",
+        "",
+        "  return dp[amount] > amount ? -1 : dp[amount];",
+        "}"
+      ],
+      "g2": [
+        "function coinChange(coins, amount) {",
+        "  const dp = new Array(amount + 1).fill(amount +",
+        "    1);",
+        "  dp[0] = 0;",
+        "",
+        "  for (let value = 1; value <= amount; value += 1) {",
+        "    for (const coin of coins) {",
+        "      if (coin <= value) {",
+        "        dp[value] = Math.min(dp[value],",
+        "          dp[value - coin] + 1);",
+        "      }",
+        "    }",
+        "  }",
+        "",
+        "  return dp[amount] > amount ? -1 : dp[amount];",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def coinChange(self, coins: List[int], amount: int) -> int:",
+        "        dp = [amount + 1] * (amount + 1)",
+        "        dp[0] = 0",
+        "",
+        "        for value in range(1, amount + 1):",
+        "            for coin in coins:",
+        "                if coin <= value:",
+        "                    dp[value] = min(dp[value], dp[value - coin] + 1)",
+        "",
+        "        return -1 if dp[amount] > amount else dp[amount]"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def coinChange(self, coins: List[int], amount: int) -> int:",
+        "        dp = [amount + 1] * (amount + 1)",
+        "        dp[0] = 0",
+        "",
+        "        for value in range(1, amount + 1):",
+        "            for coin in coins:",
+        "                if coin <= value:",
+        "                    dp[value] = min(dp[value], dp[value - coin] + 1)",
+        "",
+        "        return -1 if dp[amount] > amount else dp[amount]"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int coinChange(int[] coins, int amount) {",
+        "        int[] dp = new int[amount + 1];",
+        "        Arrays.fill(dp, amount + 1);",
+        "        dp[0] = 0;",
+        "",
+        "        for (int value = 1; value <= amount; value++) {",
+        "            for (int coin : coins) {",
+        "                if (coin <= value) {",
+        "                    dp[value] = Math.min(dp[value], dp[value - coin] + 1);",
+        "                }",
+        "            }",
+        "        }",
+        "",
+        "        return dp[amount] > amount ? -1 : dp[amount];",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int coinChange(int[] coins, int amount) {",
+        "    int[] dp = new int[amount + 1];",
+        "    Arrays.fill(dp, amount + 1);",
+        "    dp[0] = 0;",
+        "",
+        "    for (int value = 1; value <= amount; value++) {",
+        "      for (int coin : coins) {",
+        "        if (coin <= value) {",
+        "          dp[value] = Math.min(dp[value],",
+        "            dp[value - coin] + 1);",
+        "        }",
+        "      }",
+        "    }",
+        "",
+        "    return dp[amount] > amount ?",
+        "      -1 : dp[amount];",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    int coinChange(vector<int>& coins, int amount) {",
+        "        vector<int> dp(amount + 1, amount + 1);",
+        "        dp[0] = 0;",
+        "",
+        "        for (int value = 1; value <= amount; value++) {",
+        "            for (int coin : coins) {",
+        "                if (coin <= value) {",
+        "                    dp[value] = min(dp[value], dp[value - coin] + 1);",
+        "                }",
+        "            }",
+        "        }",
+        "",
+        "        return dp[amount] > amount ? -1 : dp[amount];",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int coinChange(vector<int>& coins, int amount) {",
+        "    vector<int> dp(amount + 1, amount + 1);",
+        "    dp[0] = 0;",
+        "",
+        "    for (int value = 1; value <= amount; value++) {",
+        "      for (int coin : coins) {",
+        "        if (coin <= value) {",
+        "          dp[value] = min(dp[value],",
+        "            dp[value - coin] + 1);",
+        "        }",
+        "      }",
+        "    }",
+        "",
+        "    return dp[amount] > amount ?",
+        "      -1 : dp[amount];",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

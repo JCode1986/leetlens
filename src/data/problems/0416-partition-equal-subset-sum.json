@@ -1,0 +1,171 @@
+{
+  "id": 416,
+  "slug": "partition-equal-subset-sum",
+  "title": "Partition Equal Subset Sum",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Dynamic Programming"
+  ],
+  "patterns": [
+    "1D Dynamic Programming"
+  ],
+  "aliases": [
+    "partition equal subset sum",
+    "equal subset partition",
+    "can partition array"
+  ],
+  "keywords": [
+    "dynamic programming",
+    "subset sum",
+    "array",
+    "partition"
+  ],
+  "summary": "Solve Partition Equal Subset Sum using the standard optimized interview approach.",
+  "hint": "Look for the 1D Dynamic Programming structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Subset Sum DP",
+    "idea": [
+      "Equal partition requires even total sum.",
+      "Target is half the sum.",
+      "Use 1D subset DP from target downward."
+    ],
+    "complexity": {
+      "time": "O(n * target)",
+      "space": "O(target)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Partition Equal Subset Sum.",
+    "Use 1D Dynamic Programming to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "total = sum of nums",
+    "if total is odd:",
+    "    return false",
+    "",
+    "target = total / 2",
+    "dp[0] = true",
+    "",
+    "for each number:",
+    "    for sum from target down to number:",
+    "        dp[sum] = dp[sum] or dp[sum - number]",
+    "",
+    "return dp[target]"
+  ],
+  "complexity": {
+    "time": "O(n * target)",
+    "space": "O(target)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function canPartition(nums) { const sum = nums.reduce((a,b)=>a+b,0); if (sum % 2) return false; const target = sum / 2; const dp = new Array(target + 1).fill(false); dp[0] = true; for (const n of nums) for (let t = target; t >= n; t -= 1) dp[t] ||= dp[t - n]; return dp[target]; }"
+      ],
+      "g2": [
+        "function canPartition(nums) {",
+        "  const sum = nums.reduce((a,b)=>a+b,0);",
+        "  if (sum % 2) {",
+        "    return false;",
+        "  }",
+        "  const target = sum / 2;",
+        "  const dp = new Array(target + 1).fill(false);",
+        "  dp[0] = true;",
+        "  for (const n of nums) {",
+        "    for (let t = target; t >= n; t -= 1) {",
+        "      dp[t] ||= dp[t - n];",
+        "    }",
+        "  }",
+        "  return dp[target];",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def canPartition(self, nums):",
+        "        total = sum(nums)",
+        "        if total % 2: return False",
+        "        target = total // 2; dp = [False] * (target + 1); dp[0] = True",
+        "        for n in nums:",
+        "  for t in range(target, n - 1, -1): dp[t] = dp[t] or dp[t - n]",
+        "        return dp[target]"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def canPartition(self, nums):",
+        "        total = sum(nums)",
+        "        if total % 2:",
+        "            return False",
+        "        target = total // 2",
+        "        dp = [False] * (target + 1)",
+        "        dp[0] = True",
+        "        for n in nums:",
+        "            for t in range(target, n - 1, -1):",
+        "                dp[t] = dp[t] or dp[t - n]",
+        "        return dp[target]"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public boolean canPartition(int[] nums) { int sum = 0; for (int n : nums) sum += n; if (sum % 2 == 1) return false; int target = sum / 2; boolean[] dp = new boolean[target + 1]; dp[0] = true; for (int n : nums) for (int t = target; t >= n; t--) dp[t] |= dp[t - n]; return dp[target]; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean canPartition(int[] nums) {",
+        "    int sum = 0;",
+        "    for (int n : nums) {",
+        "      sum += n;",
+        "    }",
+        "    if (sum % 2 == 1) {",
+        "      return false;",
+        "    }",
+        "    int target = sum / 2;",
+        "    boolean[] dp = new boolean[target + 1];",
+        "    dp[0] = true;",
+        "    for (int n : nums) {",
+        "      for (int t = target; t >= n; t--) {",
+        "        dp[t] |= dp[t - n];",
+        "      }",
+        "    }",
+        "    return dp[target];",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: bool canPartition(vector<int>& nums) { int sum = accumulate(nums.begin(), nums.end(), 0); if (sum % 2) return false; int target = sum / 2; vector<bool> dp(target + 1); dp[0] = true; for (int n : nums) for (int t = target; t >= n; t--) dp[t] = dp[t] || dp[t - n]; return dp[target]; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  bool canPartition(vector<int>& nums) {",
+        "    int sum = accumulate(nums.begin(),",
+        "      nums.end(), 0);",
+        "    if (sum % 2) {",
+        "      return false;",
+        "    }",
+        "    int target = sum / 2;",
+        "    vector<bool> dp(target + 1);",
+        "    dp[0] = true;",
+        "    for (int n : nums) {",
+        "      for (int t = target; t >= n; t--) {",
+        "        dp[t] = dp[t] || dp[t - n];",
+        "      }",
+        "    }",
+        "    return dp[target];",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

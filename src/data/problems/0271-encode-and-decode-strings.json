@@ -1,0 +1,192 @@
+{
+  "id": 271,
+  "slug": "encode-and-decode-strings",
+  "title": "Encode and Decode Strings",
+  "difficulty": "Medium",
+  "categories": [
+    "Strings"
+  ],
+  "patterns": [
+    "String Encoding"
+  ],
+  "aliases": [
+    "encode and decode strings",
+    "serialize strings",
+    "string codec"
+  ],
+  "keywords": [
+    "string",
+    "encoding",
+    "length prefix",
+    "decode"
+  ],
+  "summary": "Solve Encode and Decode Strings using the standard optimized interview approach.",
+  "hint": "Look for the String Encoding structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "String Encoding",
+    "idea": [
+      "Prefix each string with its length and delimiter.",
+      "During decode, read the length first.",
+      "Then take exactly that many characters."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Encode and Decode Strings.",
+    "Use String Encoding to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "encode(strings):",
+    "    result = empty text",
+    "    for each string:",
+    "        append length, marker, string",
+    "    return result",
+    "",
+    "decode(text):",
+    "    strings = empty list",
+    "    index = 0",
+    "    while index < text length:",
+    "        read length before marker",
+    "        read next length characters",
+    "        append string",
+    "    return strings"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "class Codec { encode(strs) { return strs.map(s => s.length + '#' + s).join(''); } decode(s) { const ans = []; let i = 0; while (i < s.length) { let j = i; while (s[j] !== '#') j += 1; const len = Number(s.slice(i, j)); ans.push(s.slice(j + 1, j + 1 + len)); i = j + 1 + len; } return ans; } }"
+      ],
+      "g2": [
+        "class Codec {",
+        "  encode(strs) {",
+        "    return strs.map(s => s.length + '#' +",
+        "      s).join('');",
+        "  }",
+        "  decode(s) {",
+        "    const ans = [];",
+        "    let i = 0;",
+        "    while (i < s.length) {",
+        "      let j = i;",
+        "      while (s[j] !== '#') {",
+        "        j += 1;",
+        "      }",
+        "      const len = Number(s.slice(i, j));",
+        "      ans.push(s.slice(j + 1, j + 1 + len));",
+        "      i = j + 1 + len;",
+        "    }",
+        "    return ans;",
+        "  }",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Codec:",
+        "    def encode(self, strs):",
+        "        return ''.join(str(len(s)) + '#' + s for s in strs)",
+        "    def decode(self, s):",
+        "        ans = []; i = 0",
+        "        while i < len(s):",
+        "  j = i",
+        "  while s[j] != '#': j += 1",
+        "  size = int(s[i:j])",
+        "  ans.append(s[j + 1:j + 1 + size])",
+        "  i = j + 1 + size",
+        "        return ans"
+      ],
+      "g2": [
+        "class Codec:",
+        "    def encode(self, strs):",
+        "        return ''.join(str(len(s)) + '#' + s for s in strs)",
+        "    def decode(self, s):",
+        "        ans = []",
+        "        i = 0",
+        "        while i < len(s):",
+        "            j = i",
+        "            while s[j] != '#':",
+        "                j += 1",
+        "            size = int(s[i:j])",
+        "            ans.append(s[j + 1:j + 1 + size])",
+        "            i = j + 1 + size",
+        "        return ans"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "public class Codec { public String encode(List<String> strs) { StringBuilder out = new StringBuilder(); for (String s : strs) out.append(s.length()).append('#').append(s); return out.toString(); } public List<String> decode(String s) { List<String> ans = new ArrayList<>(); int i = 0; while (i < s.length()) { int j = i; while (s.charAt(j) != '#') j++; int len = Integer.parseInt(s.substring(i, j)); ans.add(s.substring(j + 1, j + 1 + len)); i = j + 1 + len; } return ans; } }"
+      ],
+      "g2": [
+        "public class Codec {",
+        "  public String encode(List<String> strs) {",
+        "    StringBuilder out = new StringBuilder();",
+        "    for (String s : strs) {",
+        "      out.append(s.length()).append('#').append(s);",
+        "    }",
+        "    return out.toString();",
+        "  }",
+        "  public List<String> decode(String s) {",
+        "    List<String> ans = new ArrayList<>();",
+        "    int i = 0;",
+        "    while (i < s.length()) {",
+        "      int j = i;",
+        "      while (s.charAt(j) != '#') {",
+        "        j++;",
+        "      }",
+        "      int len = Integer.parseInt(s.substring(i,",
+        "        j));",
+        "      ans.add(s.substring(j + 1, j + 1 + len));",
+        "      i = j + 1 + len;",
+        "    }",
+        "    return ans;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Codec { public: string encode(vector<string>& strs) { string out; for (auto& s : strs) out += to_string(s.size()) + '#' + s; return out; } vector<string> decode(string s) { vector<string> ans; int i = 0; while (i < s.size()) { int j = i; while (s[j] != '#') j++; int len = stoi(s.substr(i, j - i)); ans.push_back(s.substr(j + 1, len)); i = j + 1 + len; } return ans; } };"
+      ],
+      "g2": [
+        "class Codec {",
+        "public:",
+        "  string encode(vector<string>& strs) {",
+        "    string out;",
+        "    for (auto& s : strs) {",
+        "      out += to_string(s.size()) + '#' + s;",
+        "    }",
+        "    return out;",
+        "  }",
+        "  vector<string> decode(string s) {",
+        "    vector<string> ans;",
+        "    int i = 0;",
+        "    while (i < s.size()) {",
+        "      int j = i;",
+        "      while (s[j] != '#') {",
+        "        j++;",
+        "      }",
+        "      int len = stoi(s.substr(i, j - i));",
+        "      ans.push_back(s.substr(j + 1, len));",
+        "      i = j + 1 + len;",
+        "    }",
+        "    return ans;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

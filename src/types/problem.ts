@@ -21,6 +21,12 @@ export interface Complexity {
   space: string
 }
 
+export interface QuickAnswer {
+  pattern: string
+  idea: string[]
+  complexity: Complexity
+}
+
 export interface LanguageSolution {
   desktop: string[]
   g2: string[]
@@ -39,7 +45,9 @@ export interface Problem {
   keywords?: string[]
   summary: string
   hint: string
+  quickAnswer: QuickAnswer
   approach: string[]
+  pseudocode: string[]
   complexity: Complexity
   edgeCases: string[]
   solutions: ProblemSolutions

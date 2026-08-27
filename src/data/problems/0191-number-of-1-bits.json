@@ -1,0 +1,134 @@
+{
+  "id": 191,
+  "slug": "number-of-1-bits",
+  "title": "Number of 1 Bits",
+  "difficulty": "Easy",
+  "categories": [
+    "Bit Manipulation"
+  ],
+  "patterns": [
+    "Bit Manipulation"
+  ],
+  "aliases": [
+    "number of one bits",
+    "hamming weight",
+    "count set bits"
+  ],
+  "keywords": [
+    "bits",
+    "hamming weight",
+    "set bits",
+    "binary"
+  ],
+  "summary": "Solve Number of 1 Bits using the standard optimized interview approach.",
+  "hint": "Look for the Bit Manipulation structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Bit Manipulation",
+    "idea": [
+      "Repeatedly remove the lowest set bit.",
+      "Each removal adds one to the count.",
+      "Stop when the number becomes zero."
+    ],
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Number of 1 Bits.",
+    "Use Bit Manipulation to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "count = 0",
+    "",
+    "while number is not zero:",
+    "    number = number and number - 1",
+    "    count += 1",
+    "",
+    "return count"
+  ],
+  "complexity": {
+    "time": "O(1)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function hammingWeight(n) { let count = 0; while (n) { count += n & 1; n >>>= 1; } return count; }"
+      ],
+      "g2": [
+        "function hammingWeight(n) {",
+        "  let count = 0;",
+        "  while (n) {",
+        "    count += n & 1;",
+        "    n >>>= 1;",
+        "  }",
+        "  return count;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def hammingWeight(self, n):",
+        "        count = 0",
+        "        while n:",
+        "  count += n & 1",
+        "  n >>= 1",
+        "        return count"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def hammingWeight(self, n):",
+        "        count = 0",
+        "        while n:",
+        "            count += n & 1",
+        "            n >>= 1",
+        "        return count"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int hammingWeight(int n) { int count = 0; while (n != 0) { count += n & 1; n >>>= 1; } return count; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int hammingWeight(int n) {",
+        "    int count = 0;",
+        "    while (n != 0) {",
+        "      count += n & 1;",
+        "      n >>>= 1;",
+        "    }",
+        "    return count;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int hammingWeight(uint32_t n) { int count = 0; while (n) { count += n & 1; n >>= 1; } return count; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int hammingWeight(uint32_t n) {",
+        "    int count = 0;",
+        "    while (n) {",
+        "      count += n & 1;",
+        "      n >>= 1;",
+        "    }",
+        "    return count;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

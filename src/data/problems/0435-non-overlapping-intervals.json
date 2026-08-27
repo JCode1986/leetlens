@@ -1,0 +1,164 @@
+{
+  "id": 435,
+  "slug": "non-overlapping-intervals",
+  "title": "Non-overlapping Intervals",
+  "difficulty": "Medium",
+  "categories": [
+    "Intervals",
+    "Greedy"
+  ],
+  "patterns": [
+    "Greedy",
+    "Intervals"
+  ],
+  "aliases": [
+    "non overlapping intervals",
+    "erase overlap intervals",
+    "remove overlapping intervals"
+  ],
+  "keywords": [
+    "interval",
+    "greedy",
+    "overlap",
+    "sort"
+  ],
+  "summary": "Solve Non-overlapping Intervals using the standard optimized interview approach.",
+  "hint": "Look for the Greedy structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Greedy Intervals",
+    "idea": [
+      "Sort intervals by end time.",
+      "Keep intervals that finish earliest.",
+      "Remove intervals that overlap the last kept end."
+    ],
+    "complexity": {
+      "time": "O(n log n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Non-overlapping Intervals.",
+    "Use Greedy and Intervals to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "sort intervals by end",
+    "removed = 0",
+    "lastEnd = first end",
+    "",
+    "for each next interval:",
+    "    if start < lastEnd:",
+    "        removed += 1",
+    "    else:",
+    "        lastEnd = interval end",
+    "",
+    "return removed"
+  ],
+  "complexity": {
+    "time": "O(n log n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function eraseOverlapIntervals(intervals) { intervals.sort((a,b)=>a[1]-b[1]); let removed = 0, end = -Infinity; for (const [s,e] of intervals) { if (s >= end) end = e; else removed += 1; } return removed; }"
+      ],
+      "g2": [
+        "function eraseOverlapIntervals(intervals) {",
+        "  intervals.sort((a,b)=>a[1]-b[1]);",
+        "  let removed = 0, end = -Infinity;",
+        "  for (const [s,e] of intervals) {",
+        "    if (s >= end) {",
+        "      end = e;",
+        "    }",
+        "    else {",
+        "      removed += 1;",
+        "    }",
+        "  }",
+        "  return removed;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def eraseOverlapIntervals(self, intervals):",
+        "        intervals.sort(key=lambda x: x[1])",
+        "        removed = 0; end = float('-inf')",
+        "        for s, e in intervals:",
+        "  if s >= end: end = e",
+        "  else: removed += 1",
+        "        return removed"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def eraseOverlapIntervals(self, intervals):",
+        "        intervals.sort(key=lambda x: x[1])",
+        "        removed = 0",
+        "        end = float('-inf')",
+        "        for s, e in intervals:",
+        "            if s >= end:",
+        "                end = e",
+        "            else:",
+        "                removed += 1",
+        "        return removed"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int eraseOverlapIntervals(int[][] intervals) { Arrays.sort(intervals, (a,b) -> a[1] - b[1]); int removed = 0, end = Integer.MIN_VALUE; for (int[] in : intervals) { if (in[0] >= end) end = in[1]; else removed++; } return removed; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int eraseOverlapIntervals(int[][] intervals) {",
+        "    Arrays.sort(intervals,",
+        "      (a,b) -> a[1] - b[1]);",
+        "    int removed = 0, end = Integer.MIN_VALUE;",
+        "    for (int[] in : intervals) {",
+        "      if (in[0] >= end) {",
+        "        end = in[1];",
+        "      }",
+        "      else {",
+        "        removed++;",
+        "      }",
+        "    }",
+        "    return removed;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int eraseOverlapIntervals(vector<vector<int>>& intervals) { sort(intervals.begin(), intervals.end(), [](auto&a, auto&b){return a[1] < b[1];}); int removed = 0, end = INT_MIN; for (auto& in : intervals) { if (in[0] >= end) end = in[1]; else removed++; } return removed; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int eraseOverlapIntervals(vector<vector<int>>& intervals) {",
+        "    sort(intervals.begin(), intervals.end(), [](auto&a, auto&b) {",
+        "      return a[1] < b[1];",
+        "    }",
+        "    );",
+        "    int removed = 0, end = INT_MIN;",
+        "    for (auto& in : intervals) {",
+        "      if (in[0] >= end) {",
+        "        end = in[1];",
+        "      }",
+        "      else {",
+        "        removed++;",
+        "      }",
+        "    }",
+        "    return removed;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

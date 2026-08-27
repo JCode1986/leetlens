@@ -1,0 +1,155 @@
+{
+  "id": 53,
+  "slug": "maximum-subarray",
+  "title": "Maximum Subarray",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Dynamic Programming"
+  ],
+  "patterns": [
+    "Dynamic Programming"
+  ],
+  "aliases": [
+    "maximum subarray",
+    "max subarray",
+    "kadane algorithm"
+  ],
+  "keywords": [
+    "array",
+    "kadane",
+    "dynamic programming",
+    "sum"
+  ],
+  "summary": "Solve Maximum Subarray using the standard optimized interview approach.",
+  "hint": "Look for the Dynamic Programming structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Kadane DP",
+    "idea": [
+      "Track the best subarray ending here.",
+      "Either extend the previous sum or restart at current value.",
+      "Keep the global best."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Maximum Subarray.",
+    "Use Dynamic Programming to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "current = first value",
+    "best = first value",
+    "",
+    "for each next value:",
+    "    current = max(value, current + value)",
+    "    best = max(best, current)",
+    "",
+    "return best"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function maxSubArray(nums) {",
+        "  let best = nums[0], current = nums[0];",
+        "  for (let i = 1; i < nums.length; i += 1) { current = Math.max(nums[i], current + nums[i]); best = Math.max(best, current); }",
+        "  return best;",
+        "}"
+      ],
+      "g2": [
+        "function maxSubArray(nums) {",
+        "  let best = nums[0], current = nums[0];",
+        "  for (let i = 1; i < nums.length; i += 1) {",
+        "    current = Math.max(nums[i],",
+        "      current + nums[i]);",
+        "    best = Math.max(best, current);",
+        "  }",
+        "  return best;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def maxSubArray(self, nums):",
+        "        best = current = nums[0]",
+        "        for num in nums[1:]:",
+        "            current = max(num, current + num)",
+        "            best = max(best, current)",
+        "        return best"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def maxSubArray(self, nums):",
+        "        best = current = nums[0]",
+        "        for num in nums[1:]:",
+        "            current = max(num, current + num)",
+        "            best = max(best, current)",
+        "        return best"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int maxSubArray(int[] nums) {",
+        "        int best = nums[0], current = nums[0];",
+        "        for (int i = 1; i < nums.length; i++) { current = Math.max(nums[i], current + nums[i]); best = Math.max(best, current); }",
+        "        return best;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int maxSubArray(int[] nums) {",
+        "    int best = nums[0], current = nums[0];",
+        "    for (int i = 1; i < nums.length; i++) {",
+        "      current = Math.max(nums[i],",
+        "        current + nums[i]);",
+        "      best = Math.max(best, current);",
+        "    }",
+        "    return best;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    int maxSubArray(vector<int>& nums) {",
+        "        int best = nums[0], current = nums[0];",
+        "        for (int i = 1; i < nums.size(); i++) { current = max(nums[i], current + nums[i]); best = max(best, current); }",
+        "        return best;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int maxSubArray(vector<int>& nums) {",
+        "    int best = nums[0], current = nums[0];",
+        "    for (int i = 1; i < nums.size(); i++) {",
+        "      current = max(nums[i], current + nums[i]);",
+        "      best = max(best, current);",
+        "    }",
+        "    return best;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

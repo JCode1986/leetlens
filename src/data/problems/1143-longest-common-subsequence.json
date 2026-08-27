@@ -1,0 +1,159 @@
+{
+  "id": 1143,
+  "slug": "longest-common-subsequence",
+  "title": "Longest Common Subsequence",
+  "difficulty": "Medium",
+  "categories": [
+    "Strings",
+    "Dynamic Programming"
+  ],
+  "patterns": [
+    "2D Dynamic Programming"
+  ],
+  "aliases": [
+    "longest common subsequence",
+    "lcs",
+    "common subsequence"
+  ],
+  "keywords": [
+    "dynamic programming",
+    "string",
+    "subsequence",
+    "2d dp"
+  ],
+  "summary": "Solve Longest Common Subsequence using the standard optimized interview approach.",
+  "hint": "Look for the 2D Dynamic Programming structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "2D Dynamic Programming",
+    "idea": [
+      "dp cell stores LCS length for prefixes.",
+      "Matching characters extend the diagonal result.",
+      "Otherwise keep the better neighboring prefix."
+    ],
+    "complexity": {
+      "time": "O(m * n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Longest Common Subsequence.",
+    "Use 2D Dynamic Programming to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "dp = zero grid",
+    "",
+    "for each index in first text:",
+    "    for each index in second text:",
+    "        if characters match:",
+    "            dp = diagonal + 1",
+    "        else:",
+    "            dp = max(top, left)",
+    "",
+    "return bottom-right dp value"
+  ],
+  "complexity": {
+    "time": "O(m * n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function longestCommonSubsequence(text1, text2) { const dp = Array(text2.length + 1).fill(0); for (const a of text1) { let prev = 0; for (let j = 1; j <= text2.length; j += 1) { const saved = dp[j]; dp[j] = a === text2[j - 1] ? prev + 1 : Math.max(dp[j], dp[j - 1]); prev = saved; } } return dp[text2.length]; }"
+      ],
+      "g2": [
+        "function longestCommonSubsequence(text1, text2) {",
+        "  const dp = Array(text2.length + 1).fill(0);",
+        "  for (const a of text1) {",
+        "    let prev = 0;",
+        "    for (let j = 1; j <= text2.length; j += 1) {",
+        "      const saved = dp[j];",
+        "      dp[j] = a === text2[j - 1] ? prev +",
+        "        1 : Math.max(dp[j], dp[j - 1]);",
+        "      prev = saved;",
+        "    }",
+        "  }",
+        "  return dp[text2.length];",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def longestCommonSubsequence(self, text1, text2):",
+        "        dp = [0] * (len(text2) + 1)",
+        "        for a in text1:",
+        "  prev = 0",
+        "  for j, b in enumerate(text2, 1):",
+        "      saved = dp[j]",
+        "      dp[j] = prev + 1 if a == b else max(dp[j], dp[j - 1])",
+        "      prev = saved",
+        "        return dp[-1]"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def longestCommonSubsequence(self, text1, text2):",
+        "        dp = [0] * (len(text2) + 1)",
+        "        for a in text1:",
+        "            prev = 0",
+        "            for j, b in enumerate(text2, 1):",
+        "                saved = dp[j]",
+        "                dp[j] = prev + 1 if a == b else max(dp[j], dp[j - 1])",
+        "                prev = saved",
+        "        return dp[-1]"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int longestCommonSubsequence(String text1, String text2) { int[] dp = new int[text2.length() + 1]; for (char a : text1.toCharArray()) { int prev = 0; for (int j = 1; j <= text2.length(); j++) { int saved = dp[j]; dp[j] = a == text2.charAt(j - 1) ? prev + 1 : Math.max(dp[j], dp[j - 1]); prev = saved; } } return dp[text2.length()]; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int longestCommonSubsequence(String text1, String text2) {",
+        "    int[] dp = new int[text2.length() + 1];",
+        "    for (char a : text1.toCharArray()) {",
+        "      int prev = 0;",
+        "      for (int j = 1; j <= text2.length(); j++) {",
+        "        int saved = dp[j];",
+        "        dp[j] = a == text2.charAt(j - 1) ? prev +",
+        "          1 : Math.max(dp[j], dp[j - 1]);",
+        "        prev = saved;",
+        "      }",
+        "    }",
+        "    return dp[text2.length()];",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int longestCommonSubsequence(string text1, string text2) { vector<int> dp(text2.size() + 1); for (char a : text1) { int prev = 0; for (int j = 1; j <= text2.size(); j++) { int saved = dp[j]; dp[j] = a == text2[j - 1] ? prev + 1 : max(dp[j], dp[j - 1]); prev = saved; } } return dp[text2.size()]; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int longestCommonSubsequence(string text1, string text2) {",
+        "    vector<int> dp(text2.size() + 1);",
+        "    for (char a : text1) {",
+        "      int prev = 0;",
+        "      for (int j = 1; j <= text2.size(); j++) {",
+        "        int saved = dp[j];",
+        "        dp[j] = a == text2[j - 1] ? prev +",
+        "          1 : max(dp[j], dp[j - 1]);",
+        "        prev = saved;",
+        "      }",
+        "    }",
+        "    return dp[text2.size()];",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

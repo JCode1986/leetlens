@@ -1,0 +1,239 @@
+{
+  "id": 23,
+  "slug": "merge-k-sorted-lists",
+  "title": "Merge K Sorted Lists",
+  "difficulty": "Hard",
+  "categories": [
+    "Linked Lists",
+    "Heap",
+    "Priority Queue"
+  ],
+  "patterns": [
+    "Heap / Priority Queue"
+  ],
+  "aliases": [
+    "merge k sorted lists",
+    "merge many sorted lists",
+    "k sorted linked lists"
+  ],
+  "keywords": [
+    "linked list",
+    "heap",
+    "priority queue",
+    "merge"
+  ],
+  "summary": "Solve Merge K Sorted Lists using the standard optimized interview approach.",
+  "hint": "Look for the Heap / Priority Queue structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Min Heap",
+    "idea": [
+      "Push each list head into a min heap.",
+      "Pop the smallest node and append it.",
+      "Push that node next pointer when present."
+    ],
+    "complexity": {
+      "time": "O(n log k)",
+      "space": "O(k)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Merge K Sorted Lists.",
+    "Use Heap / Priority Queue to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "heap = empty min heap",
+    "",
+    "for each list head:",
+    "    if head exists:",
+    "        push head into heap",
+    "",
+    "dummy = new node",
+    "tail = dummy",
+    "",
+    "while heap is not empty:",
+    "    node = pop smallest",
+    "    append node to tail",
+    "    if node.next exists:",
+    "        push node.next into heap",
+    "",
+    "return dummy.next"
+  ],
+  "complexity": {
+    "time": "O(n log k)",
+    "space": "O(k)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function mergeKLists(lists) {",
+        "  function merge(a, b) {",
+        "    const dummy = new ListNode(0);",
+        "    let tail = dummy;",
+        "    while (a && b) { if (a.val <= b.val) { tail.next = a; a = a.next; } else { tail.next = b; b = b.next; } tail = tail.next; }",
+        "    tail.next = a || b;",
+        "    return dummy.next;",
+        "  }",
+        "  let result = null;",
+        "  for (const list of lists) result = merge(result, list);",
+        "  return result;",
+        "}"
+      ],
+      "g2": [
+        "function mergeKLists(lists) {",
+        "  function merge(a, b) {",
+        "    const dummy = new ListNode(0);",
+        "    let tail = dummy;",
+        "    while (a && b) {",
+        "      if (a.val <= b.val) {",
+        "        tail.next = a;",
+        "        a = a.next;",
+        "      }",
+        "      else {",
+        "        tail.next = b;",
+        "        b = b.next;",
+        "      }",
+        "      tail = tail.next;",
+        "    }",
+        "    tail.next = a || b;",
+        "    return dummy.next;",
+        "  }",
+        "  let result = null;",
+        "  for (const list of lists) {",
+        "    result = merge(result, list);",
+        "  }",
+        "  return result;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def mergeKLists(self, lists):",
+        "        def merge(a, b):",
+        "            dummy = ListNode(0)",
+        "            tail = dummy",
+        "            while a and b:",
+        "                if a.val <= b.val:",
+        "                    tail.next = a; a = a.next",
+        "                else:",
+        "                    tail.next = b; b = b.next",
+        "                tail = tail.next",
+        "            tail.next = a or b",
+        "            return dummy.next",
+        "        result = None",
+        "        for node in lists:",
+        "            result = merge(result, node)",
+        "        return result"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def mergeKLists(self, lists):",
+        "        def merge(a, b):",
+        "            dummy = ListNode(0)",
+        "            tail = dummy",
+        "            while a and b:",
+        "                if a.val <= b.val:",
+        "                    tail.next = a",
+        "                    a = a.next",
+        "                else:",
+        "                    tail.next = b",
+        "                    b = b.next",
+        "                tail = tail.next",
+        "            tail.next = a or b",
+        "            return dummy.next",
+        "        result = None",
+        "        for node in lists:",
+        "            result = merge(result, node)",
+        "        return result"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public ListNode mergeKLists(ListNode[] lists) {",
+        "        PriorityQueue<ListNode> pq = new PriorityQueue<>((a, b) -> a.val - b.val);",
+        "        for (ListNode node : lists) if (node != null) pq.add(node);",
+        "        ListNode dummy = new ListNode(0), tail = dummy;",
+        "        while (!pq.isEmpty()) { ListNode node = pq.remove(); tail.next = node; tail = tail.next; if (node.next != null) pq.add(node.next); }",
+        "        return dummy.next;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public ListNode mergeKLists(ListNode[] lists) {",
+        "    PriorityQueue<ListNode> pq = new PriorityQueue<>((a, b) -> a.val - b.val);",
+        "    for (ListNode node : lists) {",
+        "      if (node != null) {",
+        "        pq.add(node);",
+        "      }",
+        "    }",
+        "    ListNode dummy = new ListNode(0),",
+        "      tail = dummy;",
+        "    while (!pq.isEmpty()) {",
+        "      ListNode node = pq.remove();",
+        "      tail.next = node;",
+        "      tail = tail.next;",
+        "      if (node.next != null) {",
+        "        pq.add(node.next);",
+        "      }",
+        "    }",
+        "    return dummy.next;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    ListNode* mergeKLists(vector<ListNode*>& lists) {",
+        "        auto cmp = [](ListNode* a, ListNode* b) { return a->val > b->val; };",
+        "        priority_queue<ListNode*, vector<ListNode*>, decltype(cmp)> pq(cmp);",
+        "        for (auto node : lists) if (node) pq.push(node);",
+        "        ListNode dummy(0); ListNode* tail = &dummy;",
+        "        while (!pq.empty()) { auto node = pq.top(); pq.pop(); tail->next = node; tail = tail->next; if (node->next) pq.push(node->next); }",
+        "        return dummy.next;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  ListNode* mergeKLists(vector<ListNode*>& lists) {",
+        "    auto cmp = [](ListNode* a, ListNode* b) {",
+        "      return a->val > b->val;",
+        "    };",
+        "    priority_queue<ListNode*, vector<ListNode*>,",
+        "      decltype(cmp)> pq(cmp);",
+        "    for (auto node : lists) {",
+        "      if (node) {",
+        "        pq.push(node);",
+        "      }",
+        "    }",
+        "    ListNode dummy(0);",
+        "    ListNode* tail = &dummy;",
+        "    while (!pq.empty()) {",
+        "      auto node = pq.top();",
+        "      pq.pop();",
+        "      tail->next = node;",
+        "      tail = tail->next;",
+        "      if (node->next) {",
+        "        pq.push(node->next);",
+        "      }",
+        "    }",
+        "    return dummy.next;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "id": 377,
+  "slug": "combination-sum-iv",
+  "title": "Combination Sum IV",
+  "difficulty": "Medium",
+  "categories": [
+    "Dynamic Programming"
+  ],
+  "patterns": [
+    "1D Dynamic Programming"
+  ],
+  "aliases": [
+    "combination sum four",
+    "combination sum 4",
+    "ordered combinations"
+  ],
+  "keywords": [
+    "dynamic programming",
+    "combination",
+    "target",
+    "order"
+  ],
+  "summary": "Solve Combination Sum IV using the standard optimized interview approach.",
+  "hint": "Look for the 1D Dynamic Programming structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "1D Dynamic Programming",
+    "idea": [
+      "Order matters, so build totals from small to large.",
+      "For each total, try every number as the last step.",
+      "Add ways from the remaining total."
+    ],
+    "complexity": {
+      "time": "O(target * n)",
+      "space": "O(target)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Combination Sum IV.",
+    "Use 1D Dynamic Programming to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "dp[0] = 1",
+    "",
+    "for total from 1 to target:",
+    "    for each number:",
+    "        if number <= total:",
+    "            dp[total] += dp[total - number]",
+    "",
+    "return dp[target]"
+  ],
+  "complexity": {
+    "time": "O(target * n)",
+    "space": "O(target)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function combinationSum4(nums, target) { const dp = new Array(target + 1).fill(0); dp[0] = 1; for (let total = 1; total <= target; total += 1) for (const n of nums) if (n <= total) dp[total] += dp[total - n]; return dp[target]; }"
+      ],
+      "g2": [
+        "function combinationSum4(nums, target) {",
+        "  const dp = new Array(target + 1).fill(0);",
+        "  dp[0] = 1;",
+        "  for (let total = 1; total <= target; total += 1) {",
+        "    for (const n of nums) {",
+        "      if (n <= total) {",
+        "        dp[total] += dp[total - n];",
+        "      }",
+        "    }",
+        "  }",
+        "  return dp[target];",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def combinationSum4(self, nums, target):",
+        "        dp = [0] * (target + 1); dp[0] = 1",
+        "        for total in range(1, target + 1):",
+        "  for n in nums:",
+        "      if n <= total: dp[total] += dp[total - n]",
+        "        return dp[target]"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def combinationSum4(self, nums, target):",
+        "        dp = [0] * (target + 1)",
+        "        dp[0] = 1",
+        "        for total in range(1, target + 1):",
+        "            for n in nums:",
+        "                if n <= total:",
+        "                    dp[total] += dp[total - n]",
+        "        return dp[target]"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int combinationSum4(int[] nums, int target) { int[] dp = new int[target + 1]; dp[0] = 1; for (int total = 1; total <= target; total++) for (int n : nums) if (n <= total) dp[total] += dp[total - n]; return dp[target]; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int combinationSum4(int[] nums, int target) {",
+        "    int[] dp = new int[target + 1];",
+        "    dp[0] = 1;",
+        "    for (int total = 1; total <= target; total++) {",
+        "      for (int n : nums) {",
+        "        if (n <= total) {",
+        "          dp[total] += dp[total - n];",
+        "        }",
+        "      }",
+        "    }",
+        "    return dp[target];",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int combinationSum4(vector<int>& nums, int target) { vector<unsigned int> dp(target + 1); dp[0] = 1; for (int total = 1; total <= target; total++) for (int n : nums) if (n <= total) dp[total] += dp[total - n]; return dp[target]; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int combinationSum4(vector<int>& nums, int target) {",
+        "    vector<unsigned int> dp(target + 1);",
+        "    dp[0] = 1;",
+        "    for (int total = 1; total <= target; total++) {",
+        "      for (int n : nums) {",
+        "        if (n <= total) {",
+        "          dp[total] += dp[total - n];",
+        "        }",
+        "      }",
+        "    }",
+        "    return dp[target];",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

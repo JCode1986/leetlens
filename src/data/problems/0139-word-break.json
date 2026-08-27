@@ -1,0 +1,162 @@
+{
+  "id": 139,
+  "slug": "word-break",
+  "title": "Word Break",
+  "difficulty": "Medium",
+  "categories": [
+    "Strings",
+    "Dynamic Programming"
+  ],
+  "patterns": [
+    "1D Dynamic Programming"
+  ],
+  "aliases": [
+    "word break",
+    "segment string",
+    "dictionary words"
+  ],
+  "keywords": [
+    "dynamic programming",
+    "string",
+    "dictionary",
+    "word"
+  ],
+  "summary": "Solve Word Break using the standard optimized interview approach.",
+  "hint": "Look for the 1D Dynamic Programming structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "1D Dynamic Programming",
+    "idea": [
+      "dp[i] means prefix length i can be segmented.",
+      "Try each previous cut that is already valid.",
+      "Check whether the suffix is in the dictionary."
+    ],
+    "complexity": {
+      "time": "O(n^2)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Word Break.",
+    "Use 1D Dynamic Programming to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "words = dictionary set",
+    "dp[0] = true",
+    "",
+    "for end from 1 to length:",
+    "    for start from 0 to end:",
+    "        if dp[start] and substring is word:",
+    "            dp[end] = true",
+    "            stop inner loop",
+    "",
+    "return dp[length]"
+  ],
+  "complexity": {
+    "time": "O(n^2)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function wordBreak(s, wordDict) { const words = new Set(wordDict); const dp = new Array(s.length + 1).fill(false); dp[0] = true; for (let i = 1; i <= s.length; i += 1) for (let j = 0; j < i; j += 1) if (dp[j] && words.has(s.slice(j, i))) { dp[i] = true; break; } return dp[s.length]; }"
+      ],
+      "g2": [
+        "function wordBreak(s, wordDict) {",
+        "  const words = new Set(wordDict);",
+        "  const dp = new Array(s.length +",
+        "    1).fill(false);",
+        "  dp[0] = true;",
+        "  for (let i = 1; i <= s.length; i += 1) {",
+        "    for (let j = 0; j < i; j += 1) {",
+        "      if (dp[j] && words.has(s.slice(j, i))) {",
+        "      }",
+        "    }",
+        "    dp[i] = true;",
+        "    break;",
+        "  }",
+        "  return dp[s.length];",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def wordBreak(self, s, wordDict):",
+        "        words = set(wordDict); dp = [False] * (len(s) + 1); dp[0] = True",
+        "        for i in range(1, len(s) + 1):",
+        "  for j in range(i):",
+        "      if dp[j] and s[j:i] in words:",
+        "          dp[i] = True; break",
+        "        return dp[-1]"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def wordBreak(self, s, wordDict):",
+        "        words = set(wordDict)",
+        "        dp = [False] * (len(s) + 1)",
+        "        dp[0] = True",
+        "        for i in range(1, len(s) + 1):",
+        "            for j in range(i):",
+        "                if dp[j] and s[j:i] in words:",
+        "                    dp[i] = True",
+        "                    break",
+        "        return dp[-1]"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public boolean wordBreak(String s, List<String> wordDict) { Set<String> words = new HashSet<>(wordDict); boolean[] dp = new boolean[s.length() + 1]; dp[0] = true; for (int i = 1; i <= s.length(); i++) for (int j = 0; j < i; j++) if (dp[j] && words.contains(s.substring(j, i))) { dp[i] = true; break; } return dp[s.length()]; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean wordBreak(String s, List<String> wordDict) {",
+        "    Set<String> words = new HashSet<>(wordDict);",
+        "    boolean[] dp = new boolean[s.length() + 1];",
+        "    dp[0] = true;",
+        "    for (int i = 1; i <= s.length(); i++) {",
+        "      for (int j = 0; j < i; j++) {",
+        "        if (dp[j] && words.contains(s.substring(j, i))) {",
+        "        }",
+        "      }",
+        "      dp[i] = true;",
+        "      break;",
+        "    }",
+        "    return dp[s.length()];",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> words(wordDict.begin(), wordDict.end()); vector<bool> dp(s.size() + 1); dp[0] = true; for (int i = 1; i <= s.size(); i++) for (int j = 0; j < i; j++) if (dp[j] && words.count(s.substr(j, i - j))) { dp[i] = true; break; } return dp[s.size()]; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  bool wordBreak(string s, vector<string>& wordDict) {",
+        "    unordered_set<string> words(wordDict.begin(), wordDict.end());",
+        "    vector<bool> dp(s.size() + 1);",
+        "    dp[0] = true;",
+        "    for (int i = 1; i <= s.size(); i++) {",
+        "      for (int j = 0; j < i; j++) {",
+        "        if (dp[j] && words.count(s.substr(j, i - j))) {",
+        "        }",
+        "      }",
+        "      dp[i] = true;",
+        "      break;",
+        "    }",
+        "    return dp[s.size()];",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

@@ -1,0 +1,241 @@
+{
+  "id": 704,
+  "slug": "binary-search",
+  "title": "Binary Search",
+  "difficulty": "Easy",
+  "categories": [
+    "Arrays",
+    "Binary Search"
+  ],
+  "patterns": [
+    "Binary Search"
+  ],
+  "aliases": [
+    "binary search",
+    "search sorted array",
+    "find target in sorted array",
+    "classic binary search"
+  ],
+  "keywords": [
+    "sorted array",
+    "search",
+    "middle",
+    "left",
+    "right",
+    "logarithmic",
+    "binary search"
+  ],
+  "summary": "Find a target value in a sorted array and return its index, or -1 if missing.",
+  "hint": "Compare the target with the middle value and discard the half that cannot contain it.",
+  "quickAnswer": {
+    "pattern": "Binary Search",
+    "idea": [
+      "Sorted input lets you discard half each step.",
+      "Compare target with the middle value.",
+      "Move left or right bounds inward."
+    ],
+    "complexity": {
+      "time": "O(log n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Set left and right bounds around the whole array.",
+    "Compute the middle index without overflowing.",
+    "Return the middle index if it matches the target.",
+    "Move left or right based on the comparison.",
+    "Return -1 when the bounds cross."
+  ],
+  "pseudocode": [
+    "left = 0",
+    "right = last index",
+    "",
+    "while left <= right:",
+    "    mid = middle index",
+    "    if nums[mid] is target:",
+    "        return mid",
+    "    if nums[mid] < target:",
+    "        left = mid + 1",
+    "    else:",
+    "        right = mid - 1",
+    "",
+    "return -1"
+  ],
+  "complexity": {
+    "time": "O(log n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "The target is at the first index.",
+    "The target is at the last index.",
+    "The target is missing.",
+    "The array has one element."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function search(nums, target) {",
+        "  let left = 0;",
+        "  let right = nums.length - 1;",
+        "",
+        "  while (left <= right) {",
+        "    const mid = Math.floor(left + (right - left) / 2);",
+        "    if (nums[mid] === target) return mid;",
+        "    if (nums[mid] < target) left = mid + 1;",
+        "    else right = mid - 1;",
+        "  }",
+        "",
+        "  return -1;",
+        "}"
+      ],
+      "g2": [
+        "function search(nums, target) {",
+        "  let left = 0;",
+        "  let right = nums.length - 1;",
+        "",
+        "  while (left <= right) {",
+        "    const mid = Math.floor(left +",
+        "      (right - left) / 2);",
+        "    if (nums[mid] === target) {",
+        "      return mid;",
+        "    }",
+        "    if (nums[mid] < target) {",
+        "      left = mid + 1;",
+        "    }",
+        "    else {",
+        "      right = mid - 1;",
+        "    }",
+        "  }",
+        "",
+        "  return -1;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def search(self, nums: List[int], target: int) -> int:",
+        "        left, right = 0, len(nums) - 1",
+        "",
+        "        while left <= right:",
+        "            mid = left + (right - left) // 2",
+        "            if nums[mid] == target:",
+        "                return mid",
+        "            if nums[mid] < target:",
+        "                left = mid + 1",
+        "            else:",
+        "                right = mid - 1",
+        "",
+        "        return -1"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def search(self, nums: List[int], target: int) -> int:",
+        "        left, right = 0, len(nums) - 1",
+        "",
+        "        while left <= right:",
+        "            mid = left + (right - left) // 2",
+        "            if nums[mid] == target:",
+        "                return mid",
+        "            if nums[mid] < target:",
+        "                left = mid + 1",
+        "            else:",
+        "                right = mid - 1",
+        "",
+        "        return -1"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int search(int[] nums, int target) {",
+        "        int left = 0;",
+        "        int right = nums.length - 1;",
+        "",
+        "        while (left <= right) {",
+        "            int mid = left + (right - left) / 2;",
+        "            if (nums[mid] == target) return mid;",
+        "            if (nums[mid] < target) {",
+        "                left = mid + 1;",
+        "            } else {",
+        "                right = mid - 1;",
+        "            }",
+        "        }",
+        "",
+        "        return -1;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int search(int[] nums, int target) {",
+        "    int left = 0;",
+        "    int right = nums.length - 1;",
+        "",
+        "    while (left <= right) {",
+        "      int mid = left + (right - left) / 2;",
+        "      if (nums[mid] == target) {",
+        "        return mid;",
+        "      }",
+        "      if (nums[mid] < target) {",
+        "        left = mid + 1;",
+        "      }",
+        "      else {",
+        "        right = mid - 1;",
+        "      }",
+        "    }",
+        "",
+        "    return -1;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    int search(vector<int>& nums, int target) {",
+        "        int left = 0;",
+        "        int right = nums.size() - 1;",
+        "",
+        "        while (left <= right) {",
+        "            int mid = left + (right - left) / 2;",
+        "            if (nums[mid] == target) return mid;",
+        "            if (nums[mid] < target) {",
+        "                left = mid + 1;",
+        "            } else {",
+        "                right = mid - 1;",
+        "            }",
+        "        }",
+        "",
+        "        return -1;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int search(vector<int>& nums, int target) {",
+        "    int left = 0;",
+        "    int right = nums.size() - 1;",
+        "",
+        "    while (left <= right) {",
+        "      int mid = left + (right - left) / 2;",
+        "      if (nums[mid] == target) {",
+        "        return mid;",
+        "      }",
+        "      if (nums[mid] < target) {",
+        "        left = mid + 1;",
+        "      }",
+        "      else {",
+        "        right = mid - 1;",
+        "      }",
+        "    }",
+        "",
+        "    return -1;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

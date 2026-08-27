@@ -1,0 +1,163 @@
+{
+  "id": 55,
+  "slug": "jump-game",
+  "title": "Jump Game",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Greedy"
+  ],
+  "patterns": [
+    "Greedy"
+  ],
+  "aliases": [
+    "jump game",
+    "can reach end",
+    "array jumps"
+  ],
+  "keywords": [
+    "array",
+    "greedy",
+    "reach",
+    "jump"
+  ],
+  "summary": "Solve Jump Game using the standard optimized interview approach.",
+  "hint": "Look for the Greedy structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Greedy Reach",
+    "idea": [
+      "Track the farthest reachable index.",
+      "If current index is beyond reach, fail.",
+      "Success once reach covers the end."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Jump Game.",
+    "Use Greedy to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "farthest = 0",
+    "",
+    "for each index:",
+    "    if index > farthest:",
+    "        return false",
+    "",
+    "    farthest = max(farthest, index + jump)",
+    "    if farthest reaches end:",
+    "        return true",
+    "",
+    "return true"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function canJump(nums) {",
+        "  let reach = 0;",
+        "  for (let i = 0; i < nums.length; i += 1) { if (i > reach) return false; reach = Math.max(reach, i + nums[i]); }",
+        "  return true;",
+        "}"
+      ],
+      "g2": [
+        "function canJump(nums) {",
+        "  let reach = 0;",
+        "  for (let i = 0; i < nums.length; i += 1) {",
+        "    if (i > reach) {",
+        "      return false;",
+        "    }",
+        "    reach = Math.max(reach, i + nums[i]);",
+        "  }",
+        "  return true;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def canJump(self, nums):",
+        "        reach = 0",
+        "        for i, jump in enumerate(nums):",
+        "            if i > reach: return False",
+        "            reach = max(reach, i + jump)",
+        "        return True"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def canJump(self, nums):",
+        "        reach = 0",
+        "        for i, jump in enumerate(nums):",
+        "            if i > reach:",
+        "                return False",
+        "            reach = max(reach, i + jump)",
+        "        return True"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public boolean canJump(int[] nums) {",
+        "        int reach = 0;",
+        "        for (int i = 0; i < nums.length; i++) { if (i > reach) return false; reach = Math.max(reach, i + nums[i]); }",
+        "        return true;",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public boolean canJump(int[] nums) {",
+        "    int reach = 0;",
+        "    for (int i = 0; i < nums.length; i++) {",
+        "      if (i > reach) {",
+        "        return false;",
+        "      }",
+        "      reach = Math.max(reach, i + nums[i]);",
+        "    }",
+        "    return true;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    bool canJump(vector<int>& nums) {",
+        "        int reach = 0;",
+        "        for (int i = 0; i < nums.size(); i++) { if (i > reach) return false; reach = max(reach, i + nums[i]); }",
+        "        return true;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  bool canJump(vector<int>& nums) {",
+        "    int reach = 0;",
+        "    for (int i = 0; i < nums.size(); i++) {",
+        "      if (i > reach) {",
+        "        return false;",
+        "      }",
+        "      reach = max(reach, i + nums[i]);",
+        "    }",
+        "    return true;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

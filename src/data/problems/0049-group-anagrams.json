@@ -1,0 +1,206 @@
+{
+  "id": 49,
+  "slug": "group-anagrams",
+  "title": "Group Anagrams",
+  "difficulty": "Medium",
+  "categories": [
+    "Strings",
+    "Hash Maps"
+  ],
+  "patterns": [
+    "Hash Map"
+  ],
+  "aliases": [
+    "group anagrams",
+    "anagram groups",
+    "group words by letters",
+    "same letters words"
+  ],
+  "keywords": [
+    "string",
+    "hash map",
+    "anagram",
+    "sort",
+    "letters",
+    "grouping"
+  ],
+  "summary": "Group words that contain the same letters in different orders.",
+  "hint": "Use a canonical key for each word, such as its sorted letters.",
+  "quickAnswer": {
+    "pattern": "Hash Map",
+    "idea": [
+      "Anagrams share the same character counts.",
+      "Use the count signature as a map key.",
+      "Group words under that signature."
+    ],
+    "complexity": {
+      "time": "O(n * k log k)",
+      "space": "O(n * k)"
+    }
+  },
+  "approach": [
+    "Create a map from canonical word key to a group.",
+    "For each string, sort its characters to build the key.",
+    "Append the original string to the matching group.",
+    "Return all groups from the map.",
+    "Strings with identical sorted keys are anagrams."
+  ],
+  "pseudocode": [
+    "groups = empty map",
+    "",
+    "for each word:",
+    "    counts = 26 zeroes",
+    "    count each character",
+    "    key = counts joined",
+    "    add word to groups[key]",
+    "",
+    "return all grouped values"
+  ],
+  "complexity": {
+    "time": "O(n * k log k)",
+    "space": "O(n * k)"
+  },
+  "edgeCases": [
+    "The input is empty.",
+    "A string is empty.",
+    "All words belong to one group.",
+    "No two words are anagrams."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function groupAnagrams(strs) {",
+        "  const groups = new Map();",
+        "",
+        "  for (const str of strs) {",
+        "    const key = str.split('').sort().join('');",
+        "    if (!groups.has(key)) {",
+        "      groups.set(key, []);",
+        "    }",
+        "    groups.get(key).push(str);",
+        "  }",
+        "",
+        "  return Array.from(groups.values());",
+        "}"
+      ],
+      "g2": [
+        "function groupAnagrams(strs) {",
+        "  const groups = new Map();",
+        "",
+        "  for (const str of strs) {",
+        "    const key = str.split('').sort().join('');",
+        "    if (!groups.has(key)) {",
+        "      groups.set(key, []);",
+        "    }",
+        "    groups.get(key).push(str);",
+        "  }",
+        "",
+        "  return Array.from(groups.values());",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:",
+        "        groups = defaultdict(list)",
+        "",
+        "        for word in strs:",
+        "            key = ''.join(sorted(word))",
+        "            groups[key].append(word)",
+        "",
+        "        return list(groups.values())"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:",
+        "        groups = defaultdict(list)",
+        "",
+        "        for word in strs:",
+        "            key = ''.join(sorted(word))",
+        "            groups[key].append(word)",
+        "",
+        "        return list(groups.values())"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public List<List<String>> groupAnagrams(String[] strs) {",
+        "        Map<String, List<String>> groups = new HashMap<>();",
+        "",
+        "        for (String str : strs) {",
+        "            char[] chars = str.toCharArray();",
+        "            Arrays.sort(chars);",
+        "            String key = new String(chars);",
+        "            groups.computeIfAbsent(key, k -> new ArrayList<>()).add(str);",
+        "        }",
+        "",
+        "        return new ArrayList<>(groups.values());",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public List<List<String>> groupAnagrams(String[] strs) {",
+        "    Map<String,",
+        "      List<String>> groups = new HashMap<>();",
+        "",
+        "    for (String str : strs) {",
+        "      char[] chars = str.toCharArray();",
+        "      Arrays.sort(chars);",
+        "      String key = new String(chars);",
+        "      groups.computeIfAbsent(key,",
+        "        k -> new ArrayList<>()).add(str);",
+        "    }",
+        "",
+        "    return new ArrayList<>(groups.values());",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    vector<vector<string>> groupAnagrams(vector<string>& strs) {",
+        "        unordered_map<string, vector<string>> groups;",
+        "",
+        "        for (string str : strs) {",
+        "            string key = str;",
+        "            sort(key.begin(), key.end());",
+        "            groups[key].push_back(str);",
+        "        }",
+        "",
+        "        vector<vector<string>> result;",
+        "        for (auto& entry : groups) {",
+        "            result.push_back(entry.second);",
+        "        }",
+        "        return result;",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  vector<vector<string>> groupAnagrams(vector<string>& strs) {",
+        "    unordered_map<string,",
+        "      vector<string>> groups;",
+        "",
+        "    for (string str : strs) {",
+        "      string key = str;",
+        "      sort(key.begin(), key.end());",
+        "      groups[key].push_back(str);",
+        "    }",
+        "",
+        "    vector<vector<string>> result;",
+        "    for (auto& entry : groups) {",
+        "      result.push_back(entry.second);",
+        "    }",
+        "    return result;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

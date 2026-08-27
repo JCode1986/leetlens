@@ -1,0 +1,226 @@
+{
+  "id": 153,
+  "slug": "find-minimum-in-rotated-sorted-array",
+  "title": "Find Minimum in Rotated Sorted Array",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Binary Search"
+  ],
+  "patterns": [
+    "Binary Search"
+  ],
+  "aliases": [
+    "rotated sorted array minimum",
+    "find minimum rotated array",
+    "minimum in rotated array",
+    "rotated array min"
+  ],
+  "keywords": [
+    "array",
+    "binary search",
+    "rotated",
+    "sorted array",
+    "minimum",
+    "left",
+    "right"
+  ],
+  "summary": "Find the smallest value in a sorted array that has been rotated.",
+  "hint": "Compare the middle value with the right edge to decide which half contains the minimum.",
+  "quickAnswer": {
+    "pattern": "Binary Search",
+    "idea": [
+      "The minimum is in the unsorted half.",
+      "Compare middle with right edge.",
+      "Shrink toward the rotation point."
+    ],
+    "complexity": {
+      "time": "O(log n)",
+      "space": "O(1)"
+    }
+  },
+  "approach": [
+    "Keep left and right bounds around the possible minimum.",
+    "Find the middle index.",
+    "If nums[mid] is greater than nums[right], the minimum is to the right.",
+    "Otherwise the minimum is at mid or to the left.",
+    "When bounds meet, that index holds the minimum."
+  ],
+  "pseudocode": [
+    "left = 0",
+    "right = last index",
+    "",
+    "while left < right:",
+    "    mid = middle index",
+    "",
+    "    if nums[mid] > nums[right]:",
+    "        left = mid + 1",
+    "    else:",
+    "        right = mid",
+    "",
+    "return nums[left]"
+  ],
+  "complexity": {
+    "time": "O(log n)",
+    "space": "O(1)"
+  },
+  "edgeCases": [
+    "The array is not rotated.",
+    "The array has one element.",
+    "The pivot is near either end.",
+    "The minimum is at index zero."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function findMin(nums) {",
+        "  let left = 0;",
+        "  let right = nums.length - 1;",
+        "",
+        "  while (left < right) {",
+        "    const mid = Math.floor((left + right) / 2);",
+        "    if (nums[mid] > nums[right]) {",
+        "      left = mid + 1;",
+        "    } else {",
+        "      right = mid;",
+        "    }",
+        "  }",
+        "",
+        "  return nums[left];",
+        "}"
+      ],
+      "g2": [
+        "function findMin(nums) {",
+        "  let left = 0;",
+        "  let right = nums.length - 1;",
+        "",
+        "  while (left < right) {",
+        "    const mid = Math.floor((left + right) / 2);",
+        "    if (nums[mid] > nums[right]) {",
+        "      left = mid + 1;",
+        "    }",
+        "    else {",
+        "      right = mid;",
+        "    }",
+        "  }",
+        "",
+        "  return nums[left];",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def findMin(self, nums: List[int]) -> int:",
+        "        left, right = 0, len(nums) - 1",
+        "",
+        "        while left < right:",
+        "            mid = (left + right) // 2",
+        "            if nums[mid] > nums[right]:",
+        "                left = mid + 1",
+        "            else:",
+        "                right = mid",
+        "",
+        "        return nums[left]"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def findMin(self, nums: List[int]) -> int:",
+        "        left, right = 0, len(nums) - 1",
+        "",
+        "        while left < right:",
+        "            mid = (left + right) // 2",
+        "            if nums[mid] > nums[right]:",
+        "                left = mid + 1",
+        "            else:",
+        "                right = mid",
+        "",
+        "        return nums[left]"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution {",
+        "    public int findMin(int[] nums) {",
+        "        int left = 0;",
+        "        int right = nums.length - 1;",
+        "",
+        "        while (left < right) {",
+        "            int mid = left + (right - left) / 2;",
+        "            if (nums[mid] > nums[right]) {",
+        "                left = mid + 1;",
+        "            } else {",
+        "                right = mid;",
+        "            }",
+        "        }",
+        "",
+        "        return nums[left];",
+        "    }",
+        "}"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int findMin(int[] nums) {",
+        "    int left = 0;",
+        "    int right = nums.length - 1;",
+        "",
+        "    while (left < right) {",
+        "      int mid = left + (right - left) / 2;",
+        "      if (nums[mid] > nums[right]) {",
+        "        left = mid + 1;",
+        "      }",
+        "      else {",
+        "        right = mid;",
+        "      }",
+        "    }",
+        "",
+        "    return nums[left];",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution {",
+        "public:",
+        "    int findMin(vector<int>& nums) {",
+        "        int left = 0;",
+        "        int right = nums.size() - 1;",
+        "",
+        "        while (left < right) {",
+        "            int mid = left + (right - left) / 2;",
+        "            if (nums[mid] > nums[right]) {",
+        "                left = mid + 1;",
+        "            } else {",
+        "                right = mid;",
+        "            }",
+        "        }",
+        "",
+        "        return nums[left];",
+        "    }",
+        "};"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int findMin(vector<int>& nums) {",
+        "    int left = 0;",
+        "    int right = nums.size() - 1;",
+        "",
+        "    while (left < right) {",
+        "      int mid = left + (right - left) / 2;",
+        "      if (nums[mid] > nums[right]) {",
+        "        left = mid + 1;",
+        "      }",
+        "      else {",
+        "        right = mid;",
+        "      }",
+        "    }",
+        "",
+        "    return nums[left];",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

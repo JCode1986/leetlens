@@ -1,0 +1,142 @@
+{
+  "id": 62,
+  "slug": "unique-paths",
+  "title": "Unique Paths",
+  "difficulty": "Medium",
+  "categories": [
+    "Dynamic Programming",
+    "Matrix"
+  ],
+  "patterns": [
+    "2D Dynamic Programming"
+  ],
+  "aliases": [
+    "unique paths",
+    "grid paths",
+    "robot unique paths"
+  ],
+  "keywords": [
+    "dynamic programming",
+    "grid",
+    "matrix",
+    "paths"
+  ],
+  "summary": "Solve Unique Paths using the standard optimized interview approach.",
+  "hint": "Look for the 2D Dynamic Programming structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "2D Dynamic Programming",
+    "idea": [
+      "Each cell can be reached from top or left.",
+      "Use one row of DP counts.",
+      "Update each column from left to right."
+    ],
+    "complexity": {
+      "time": "O(m * n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Unique Paths.",
+    "Use 2D Dynamic Programming to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "dp = row of ones",
+    "",
+    "for each row after first:",
+    "    for each column after first:",
+    "        dp[column] += dp[column - 1]",
+    "",
+    "return dp[last column]"
+  ],
+  "complexity": {
+    "time": "O(m * n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function uniquePaths(m, n) {",
+        "  const dp = new Array(n).fill(1);",
+        "  for (let r = 1; r < m; r += 1) for (let c = 1; c < n; c += 1) dp[c] += dp[c - 1];",
+        "  return dp[n - 1];",
+        "}"
+      ],
+      "g2": [
+        "function uniquePaths(m, n) {",
+        "  const dp = new Array(n).fill(1);",
+        "  for (let r = 1; r < m; r += 1) {",
+        "    for (let c = 1; c < n; c += 1) {",
+        "      dp[c] += dp[c - 1];",
+        "    }",
+        "  }",
+        "  return dp[n - 1];",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def uniquePaths(self, m, n):",
+        "        dp = [1] * n",
+        "        for _ in range(1, m):",
+        "            for c in range(1, n): dp[c] += dp[c - 1]",
+        "        return dp[-1]"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def uniquePaths(self, m, n):",
+        "        dp = [1] * n",
+        "        for _ in range(1, m):",
+        "            for c in range(1, n):",
+        "                dp[c] += dp[c - 1]",
+        "        return dp[-1]"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int uniquePaths(int m, int n) { int[] dp = new int[n]; Arrays.fill(dp, 1); for (int r = 1; r < m; r++) for (int c = 1; c < n; c++) dp[c] += dp[c - 1]; return dp[n - 1]; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int uniquePaths(int m, int n) {",
+        "    int[] dp = new int[n];",
+        "    Arrays.fill(dp, 1);",
+        "    for (int r = 1; r < m; r++) {",
+        "      for (int c = 1; c < n; c++) {",
+        "        dp[c] += dp[c - 1];",
+        "      }",
+        "    }",
+        "    return dp[n - 1];",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int uniquePaths(int m, int n) { vector<int> dp(n, 1); for (int r = 1; r < m; r++) for (int c = 1; c < n; c++) dp[c] += dp[c - 1]; return dp[n - 1]; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int uniquePaths(int m, int n) {",
+        "    vector<int> dp(n, 1);",
+        "    for (int r = 1; r < m; r++) {",
+        "      for (int c = 1; c < n; c++) {",
+        "        dp[c] += dp[c - 1];",
+        "      }",
+        "    }",
+        "    return dp[n - 1];",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

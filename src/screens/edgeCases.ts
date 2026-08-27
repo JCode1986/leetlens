@@ -29,5 +29,9 @@ export function createEdgeCasesTextObjects(state: NavigationState) {
 }
 
 export function getEdgeCasesPageCount(state: NavigationState): number {
-  return getDetailPageCount(getEdgeCaseLines(state))
+  const problem = state.selectedProblemId === undefined
+    ? undefined
+    : getProblemById(state.selectedProblemId)
+
+  return getDetailPageCount(problem?.title ?? 'Problem', getEdgeCaseLines(state))
 }

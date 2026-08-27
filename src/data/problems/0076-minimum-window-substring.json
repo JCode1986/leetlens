@@ -1,0 +1,230 @@
+{
+  "id": 76,
+  "slug": "minimum-window-substring",
+  "title": "Minimum Window Substring",
+  "difficulty": "Hard",
+  "categories": [
+    "Strings",
+    "Sliding Window"
+  ],
+  "patterns": [
+    "Sliding Window"
+  ],
+  "aliases": [
+    "minimum window",
+    "smallest substring containing characters",
+    "minimum substring",
+    "minimum window substring"
+  ],
+  "keywords": [
+    "string",
+    "window",
+    "frequency",
+    "characters",
+    "substring",
+    "sliding window"
+  ],
+  "summary": "Solve Minimum Window Substring using the standard optimized interview approach.",
+  "hint": "Look for the Sliding Window structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Sliding Window",
+    "idea": [
+      "Count required characters from t.",
+      "Expand right until all requirements are met.",
+      "Shrink left while preserving validity."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(k)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Minimum Window Substring.",
+    "Use Sliding Window to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "need = counts from t",
+    "missing = length of t",
+    "left = 0",
+    "best = none",
+    "",
+    "for each right character:",
+    "    if character is still needed:",
+    "        missing -= 1",
+    "    reduce needed count",
+    "",
+    "    while missing is zero:",
+    "        update best window",
+    "        restore left character count",
+    "        if it becomes needed:",
+    "            missing += 1",
+    "        move left rightward",
+    "",
+    "return best substring or empty"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(k)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function minWindow(s, t) {",
+        "  const need = new Map(); for (const ch of t) need.set(ch, (need.get(ch) || 0) + 1);",
+        "  let missing = t.length, left = 0, best = [0, Infinity];",
+        "  for (let right = 0; right < s.length; right += 1) { const ch = s[right]; if (need.has(ch)) { if (need.get(ch) > 0) missing -= 1; need.set(ch, need.get(ch) - 1); } while (missing === 0) { if (right - left + 1 < best[1]) best = [left, right - left + 1]; const out = s[left++]; if (need.has(out)) { need.set(out, need.get(out) + 1); if (need.get(out) > 0) missing += 1; } } }",
+        "  return best[1] === Infinity ? '' : s.slice(best[0], best[0] + best[1]);",
+        "}"
+      ],
+      "g2": [
+        "function minWindow(s, t) {",
+        "  const need = new Map();",
+        "  for (const ch of t) {",
+        "    need.set(ch, (need.get(ch) || 0) + 1);",
+        "  }",
+        "  let missing = t.length, left = 0, best = [0,",
+        "    Infinity];",
+        "  for (let right = 0; right < s.length; right += 1) {",
+        "    const ch = s[right];",
+        "    if (need.has(ch)) {",
+        "      if (need.get(ch) > 0) {",
+        "        missing -= 1;",
+        "      }",
+        "      need.set(ch, need.get(ch) - 1);",
+        "    }",
+        "    while (missing === 0) {",
+        "      if (right - left + 1 < best[1]) {",
+        "        best = [left, right - left + 1];",
+        "      }",
+        "      const out = s[left++];",
+        "      if (need.has(out)) {",
+        "        need.set(out, need.get(out) + 1);",
+        "        if (need.get(out) > 0) {",
+        "          missing += 1;",
+        "        }",
+        "      }",
+        "    }",
+        "  }",
+        "  return best[1] === Infinity ?",
+        "    '' : s.slice(best[0], best[0] + best[1]);",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def minWindow(self, s, t):",
+        "        need = Counter(t); missing = len(t); left = 0; best = (0, float('inf'))",
+        "        for right, ch in enumerate(s):",
+        "            if ch in need:",
+        "                if need[ch] > 0: missing -= 1",
+        "                need[ch] -= 1",
+        "            while missing == 0:",
+        "                if right - left + 1 < best[1]: best = (left, right - left + 1)",
+        "                out = s[left]; left += 1",
+        "                if out in need:",
+        "                    need[out] += 1",
+        "                    if need[out] > 0: missing += 1",
+        "        return '' if best[1] == float('inf') else s[best[0]:best[0] + best[1]]"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def minWindow(self, s, t):",
+        "        need = Counter(t)",
+        "        missing = len(t)",
+        "        left = 0",
+        "        best = (0, float('inf'))",
+        "        for right, ch in enumerate(s):",
+        "            if ch in need:",
+        "                if need[ch] > 0:",
+        "                    missing -= 1",
+        "                need[ch] -= 1",
+        "            while missing == 0:",
+        "                if right - left + 1 < best[1]:",
+        "                    best = (left, right - left + 1)",
+        "                out = s[left]",
+        "                left += 1",
+        "                if out in need:",
+        "                    need[out] += 1",
+        "                    if need[out] > 0:",
+        "                        missing += 1",
+        "        return '' if best[1] == float('inf') else s[best[0]:best[0] + best[1]]"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public String minWindow(String s, String t) { int[] need = new int[128]; for (char ch : t.toCharArray()) need[ch]++; int missing = t.length(), left = 0, start = 0, len = Integer.MAX_VALUE; for (int right = 0; right < s.length(); right++) { if (need[s.charAt(right)]-- > 0) missing--; while (missing == 0) { if (right - left + 1 < len) { start = left; len = right - left + 1; } if (++need[s.charAt(left++)] > 0) missing++; } } return len == Integer.MAX_VALUE ? \"\" : s.substring(start, start + len); } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public String minWindow(String s, String t) {",
+        "    int[] need = new int[128];",
+        "    for (char ch : t.toCharArray()) {",
+        "      need[ch]++;",
+        "    }",
+        "    int missing = t.length(), left = 0,",
+        "      start = 0, len = Integer.MAX_VALUE;",
+        "    for (int right = 0; right < s.length(); right++) {",
+        "      if (need[s.charAt(right)]-- > 0) {",
+        "        missing--;",
+        "      }",
+        "      while (missing == 0) {",
+        "        if (right - left + 1 < len) {",
+        "          start = left;",
+        "          len = right - left + 1;",
+        "        }",
+        "        if (++need[s.charAt(left++)] > 0) {",
+        "          missing++;",
+        "        }",
+        "      }",
+        "    }",
+        "    return len == Integer.MAX_VALUE ?",
+        "      \"\" : s.substring(start, start + len);",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: string minWindow(string s, string t) { vector<int> need(128); for (char ch : t) need[ch]++; int missing = t.size(), left = 0, start = 0, len = INT_MAX; for (int right = 0; right < s.size(); right++) { if (need[s[right]]-- > 0) missing--; while (missing == 0) { if (right - left + 1 < len) { start = left; len = right - left + 1; } if (++need[s[left++]] > 0) missing++; } } return len == INT_MAX ? \"\" : s.substr(start, len); } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  string minWindow(string s, string t) {",
+        "    vector<int> need(128);",
+        "    for (char ch : t) {",
+        "      need[ch]++;",
+        "    }",
+        "    int missing = t.size(), left = 0, start = 0,",
+        "      len = INT_MAX;",
+        "    for (int right = 0; right < s.size(); right++) {",
+        "      if (need[s[right]]-- > 0) {",
+        "        missing--;",
+        "      }",
+        "      while (missing == 0) {",
+        "        if (right - left + 1 < len) {",
+        "          start = left;",
+        "          len = right - left + 1;",
+        "        }",
+        "        if (++need[s[left++]] > 0) {",
+        "          missing++;",
+        "        }",
+        "      }",
+        "    }",
+        "    return len == INT_MAX ? \"\" : s.substr(start,",
+        "      len);",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}

@@ -7,6 +7,10 @@ export const NAVIGATION_SCREENS = [
   'patterns',
   'collections',
   'find',
+  'study',
+  'studyPattern',
+  'studyQuestion',
+  'studyFeedback',
   'search',
   'favorites',
   'recent',
@@ -18,8 +22,10 @@ export const NAVIGATION_SCREENS = [
   'difficultyList',
   'problemList',
   'problem',
+  'quickAnswer',
   'hint',
   'approach',
+  'pseudocode',
   'solution',
   'edgeCases',
 ] as const
@@ -27,8 +33,10 @@ export const NAVIGATION_SCREENS = [
 export type NavigationScreen = (typeof NAVIGATION_SCREENS)[number]
 
 export const PROBLEM_TABS = [
+  { label: 'Quick Answer', screen: 'quickAnswer' },
   { label: 'Hint', screen: 'hint' },
   { label: 'Approach', screen: 'approach' },
+  { label: 'Pseudocode', screen: 'pseudocode' },
   { label: 'Solution', screen: 'solution' },
   { label: 'Edge Cases', screen: 'edgeCases' },
 ] as const
@@ -43,18 +51,15 @@ export const HOME_MENU_ITEMS = [
   { label: 'Patterns', screen: 'patterns' },
   { label: 'Collections', screen: 'collections' },
   { label: 'Find', screen: 'find' },
+  { label: 'Study', screen: 'study' },
   { label: 'Favorites', screen: 'favorites' },
   { label: 'Recent', screen: 'recent' },
   { label: 'Settings', screen: 'settings' },
 ] as const
 
-export type HomeMenuItem = (typeof HOME_MENU_ITEMS)[number]
-
 export const SETTINGS_MENU_ITEMS = [
   { label: 'Language', screen: 'language' },
 ] as const
-
-export type SettingsMenuItem = (typeof SETTINGS_MENU_ITEMS)[number]
 
 export const FIND_MENU_ITEMS = [
   { label: 'Voice Search', screen: 'voiceSearch' },
@@ -62,7 +67,19 @@ export const FIND_MENU_ITEMS = [
   { label: 'By Difficulty', screen: 'difficultyList' },
 ] as const
 
-export type FindMenuItem = (typeof FIND_MENU_ITEMS)[number]
+export const STUDY_MENU_ITEMS = [
+  { label: 'Random Problem', source: 'random' },
+  { label: 'By Pattern', source: 'pattern' },
+  { label: 'Blind 75', source: 'blind75' },
+] as const
+
+export type StudySource = 'random' | 'pattern' | 'blind75'
+export type StudyQuestionType = 'pattern' | 'time'
+
+export interface StudyChoice {
+  label: string
+  isCorrect: boolean
+}
 
 export type ProblemListSource =
   | 'category'
@@ -72,7 +89,7 @@ export type ProblemListSource =
   | 'difficulty'
   | 'favorites'
   | 'recent'
-export type ProblemEntrySource = 'problemList' | 'voiceMatch' | 'voiceResults'
+export type ProblemEntrySource = 'problemList' | 'voiceMatch' | 'voiceResults' | 'study'
 export type VoiceSearchStatus = 'idle' | 'listening' | 'processing' | 'error'
 export type VoiceResultMode = 'exact' | 'possible' | 'related' | 'none'
 
@@ -94,4 +111,13 @@ export interface NavigationState {
   voiceError: string | undefined
   voiceResultMode: VoiceResultMode | undefined
   voiceResultProblemIds: number[]
+  studySource: StudySource | undefined
+  studyPattern: string | undefined
+  studyProblemId: number | undefined
+  studyQuestionType: StudyQuestionType | undefined
+  studyChoices: StudyChoice[]
+  studySelectedIndex: number
+  studyAnswered: boolean
+  studyCorrect: boolean | undefined
+  studyRecentProblemIds: number[]
 }

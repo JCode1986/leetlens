@@ -1,0 +1,169 @@
+{
+  "id": 128,
+  "slug": "longest-consecutive-sequence",
+  "title": "Longest Consecutive Sequence",
+  "difficulty": "Medium",
+  "categories": [
+    "Arrays",
+    "Hash Sets"
+  ],
+  "patterns": [
+    "Hash Set"
+  ],
+  "aliases": [
+    "longest consecutive sequence",
+    "consecutive numbers",
+    "longest streak"
+  ],
+  "keywords": [
+    "array",
+    "hash set",
+    "sequence",
+    "consecutive"
+  ],
+  "summary": "Solve Longest Consecutive Sequence using the standard optimized interview approach.",
+  "hint": "Look for the Hash Set structure that reduces repeated work.",
+  "quickAnswer": {
+    "pattern": "Hash Set",
+    "idea": [
+      "Put all numbers in a set.",
+      "Only start counting at sequence starts.",
+      "Expand forward to measure each streak once."
+    ],
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n)"
+    }
+  },
+  "approach": [
+    "Identify the state or invariant needed for Longest Consecutive Sequence.",
+    "Use Hash Set to process the input efficiently.",
+    "Update the result while preserving the invariant.",
+    "Return the final value after all relevant input is processed."
+  ],
+  "pseudocode": [
+    "values = set of nums",
+    "best = 0",
+    "",
+    "for each value in values:",
+    "    if value - 1 exists:",
+    "        continue",
+    "",
+    "    length = 1",
+    "    while value + length exists:",
+    "        length += 1",
+    "    best = max(best, length)",
+    "",
+    "return best"
+  ],
+  "complexity": {
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "edgeCases": [
+    "Empty or smallest valid input.",
+    "Duplicate or repeated values.",
+    "Result is not found.",
+    "Large input near expected limits."
+  ],
+  "solutions": {
+    "javascript": {
+      "desktop": [
+        "function longestConsecutive(nums) { const set = new Set(nums); let best = 0; for (const num of set) if (!set.has(num - 1)) { let cur = num; while (set.has(cur)) cur += 1; best = Math.max(best, cur - num); } return best; }"
+      ],
+      "g2": [
+        "function longestConsecutive(nums) {",
+        "  const set = new Set(nums);",
+        "  let best = 0;",
+        "  for (const num of set) {",
+        "    if (!set.has(num - 1)) {",
+        "    }",
+        "    let cur = num;",
+        "    while (set.has(cur)) {",
+        "      cur += 1;",
+        "    }",
+        "    best = Math.max(best, cur - num);",
+        "  }",
+        "  return best;",
+        "}"
+      ]
+    },
+    "python": {
+      "desktop": [
+        "class Solution:",
+        "    def longestConsecutive(self, nums):",
+        "        seen = set(nums); best = 0",
+        "        for num in seen:",
+        "            if num - 1 not in seen:",
+        "                cur = num",
+        "                while cur in seen: cur += 1",
+        "                best = max(best, cur - num)",
+        "        return best"
+      ],
+      "g2": [
+        "class Solution:",
+        "    def longestConsecutive(self, nums):",
+        "        seen = set(nums)",
+        "        best = 0",
+        "        for num in seen:",
+        "            if num - 1 not in seen:",
+        "                cur = num",
+        "                while cur in seen:",
+        "                    cur += 1",
+        "                best = max(best, cur - num)",
+        "        return best"
+      ]
+    },
+    "java": {
+      "desktop": [
+        "class Solution { public int longestConsecutive(int[] nums) { Set<Integer> set = new HashSet<>(); for (int n : nums) set.add(n); int best = 0; for (int n : set) if (!set.contains(n - 1)) { int cur = n; while (set.contains(cur)) cur++; best = Math.max(best, cur - n); } return best; } }"
+      ],
+      "g2": [
+        "class Solution {",
+        "  public int longestConsecutive(int[] nums) {",
+        "    Set<Integer> set = new HashSet<>();",
+        "    for (int n : nums) {",
+        "      set.add(n);",
+        "    }",
+        "    int best = 0;",
+        "    for (int n : set) {",
+        "      if (!set.contains(n - 1)) {",
+        "      }",
+        "      int cur = n;",
+        "      while (set.contains(cur)) {",
+        "        cur++;",
+        "      }",
+        "      best = Math.max(best, cur - n);",
+        "    }",
+        "    return best;",
+        "  }",
+        "}"
+      ]
+    },
+    "cpp": {
+      "desktop": [
+        "class Solution { public: int longestConsecutive(vector<int>& nums) { unordered_set<int> s(nums.begin(), nums.end()); int best = 0; for (int n : s) if (!s.count(n - 1)) { int cur = n; while (s.count(cur)) cur++; best = max(best, cur - n); } return best; } };"
+      ],
+      "g2": [
+        "class Solution {",
+        "public:",
+        "  int longestConsecutive(vector<int>& nums) {",
+        "    unordered_set<int> s(nums.begin(),",
+        "      nums.end());",
+        "    int best = 0;",
+        "    for (int n : s) {",
+        "      if (!s.count(n - 1)) {",
+        "      }",
+        "      int cur = n;",
+        "      while (s.count(cur)) {",
+        "        cur++;",
+        "      }",
+        "      best = max(best, cur - n);",
+        "    }",
+        "    return best;",
+        "  }",
+        "};"
+      ]
+    }
+  }
+}
