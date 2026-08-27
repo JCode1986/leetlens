@@ -1,8 +1,8 @@
 import { getProblemById } from '../services/problemService'
 import type { NavigationState, StudyChoice } from '../types/navigation'
-import { truncateLine } from '../utils/text'
+import { wrapParagraph } from '../utils/text'
 import { getVisibleWindow } from '../utils/visibleWindow'
-import { createTextObjects } from './g2Layout'
+import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
 
 function getCorrectChoice(choices: StudyChoice[]): StudyChoice | undefined {
   return choices.find((choice) => choice.isCorrect)
@@ -26,11 +26,19 @@ export function createStudyFeedbackTextObjects(state: NavigationState) {
   const answerLabel = state.studyCorrect
     ? correctChoice?.label ?? 'Answer unavailable'
     : `Correct: ${correctChoice?.label ?? 'Unavailable'}`
-  const actionStartY = 116
+  const problemLines = wrapParagraph(problemLabel, G2_TEXT_LAYOUT.proseCharsPerLine).slice(0, 2)
+  const answerLines = wrapParagraph(answerLabel, G2_TEXT_LAYOUT.proseCharsPerLine).slice(0, 2)
+  const actionStartY = 136
   const visibleActions = getVisibleWindow(actions, selectedIndex, 4)
+  const actionGeometry = getCenteredTextGeometry(
+    actions.map((action) => `> ${action}`),
+    160,
+    G2_TEXT_LAYOUT.listItemWidth,
+  )
 
   return createTextObjects([
     {
+      ...getCenteredTextGeometry(state.studyCorrect ? 'CORRECT' : 'NOT QUITE'),
       y: 14,
       height: 24,
       name: 'study-feedback-title',
@@ -38,17 +46,19 @@ export function createStudyFeedbackTextObjects(state: NavigationState) {
       textColor: 4,
     },
     {
+      ...getCenteredTextGeometry(problemLines),
       y: 42,
-      height: 24,
+      height: 48,
       name: 'study-feedback-problem',
-      content: truncateLine(problemLabel, 31),
+      content: problemLines.join('\n'),
       textColor: 3,
     },
     {
-      y: 76,
-      height: 24,
+      ...getCenteredTextGeometry(answerLines),
+      y: 78,
+      height: 48,
       name: 'study-feedback-answer',
-      content: truncateLine(answerLabel, 31),
+      content: answerLines.join('\n'),
       textColor: 4,
     },
     ...visibleActions.items.map((action, index) => {
@@ -56,14 +66,13 @@ export function createStudyFeedbackTextObjects(state: NavigationState) {
       const selected = actionIndex === selectedIndex
 
       return {
-        x: 50,
+        x: actionGeometry.x,
         y: actionStartY + index * 34,
-        width: 470,
+        width: actionGeometry.width,
         height: 26,
         name: `study-feedback-action-${actionIndex}`,
         content: `${selected ? '>' : ' '} ${action}`,
         textColor: selected ? 4 : 3,
-        isEventCapture: selected,
       }
     }),
   ])

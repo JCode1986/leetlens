@@ -1,16 +1,25 @@
 import { getProblemById } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
-import { truncateLine, wrapText } from '../utils/text'
-import { createTextObjects } from './g2Layout'
+import { wrapHeader, wrapParagraph } from '../utils/text'
+import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
 
 const EXACT_MENU_ITEMS = ['Open', 'Search Again'] as const
 
 export function createVoiceMatchTextObjects(state: NavigationState) {
-  const transcriptLines = wrapText(`"${state.voiceTranscript}"`, 31).slice(0, 1)
+  const transcriptLines = wrapParagraph(
+    `"${state.voiceTranscript}"`,
+    G2_TEXT_LAYOUT.proseCharsPerLine,
+  ).slice(0, 1)
 
   if (state.voiceResultMode === 'none') {
+    const helpLines = wrapParagraph(
+      'Try saying the problem name again.',
+      G2_TEXT_LAYOUT.proseCharsPerLine,
+    ).slice(0, 2)
+
     return createTextObjects([
       {
+        ...getCenteredTextGeometry('NO MATCH'),
         y: 18,
         height: 30,
         name: 'voice-no-match-title',
@@ -18,31 +27,28 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
         textColor: 4,
       },
       {
+        ...getCenteredTextGeometry('HEARD'),
         y: 58,
         name: 'voice-no-match-heard',
         content: 'HEARD',
         textColor: 3,
       },
       ...transcriptLines.map((line, index) => ({
+        ...getCenteredTextGeometry(line),
         y: 88 + index * 26,
         name: `voice-no-match-transcript-${index}`,
         content: line,
         textColor: 4,
       })),
-      {
-        y: 128,
-        name: 'voice-no-match-help-1',
-        content: 'Try saying the',
+      ...helpLines.map((line, index) => ({
+        ...getCenteredTextGeometry(line),
+        y: 128 + index * 26,
+        name: `voice-no-match-help-${index}`,
+        content: line,
         textColor: 3,
-      },
+      })),
       {
-        y: 154,
-        name: 'voice-no-match-help-2',
-        content: 'problem name again.',
-        textColor: 3,
-      },
-      {
-        x: 50,
+        ...getCenteredTextGeometry('> Search Again', 160, G2_TEXT_LAYOUT.listItemWidth),
         y: 204,
         name: 'voice-no-match-retry',
         content: '> Search Again',
@@ -57,12 +63,14 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
   if (!problem) {
     return createTextObjects([
       {
+        ...getCenteredTextGeometry('MATCH FOUND'),
         y: 22,
         name: 'voice-match-missing-title',
         content: 'MATCH FOUND',
         textColor: 4,
       },
       {
+        ...getCenteredTextGeometry('Problem unavailable.'),
         y: 74,
         name: 'voice-match-missing-message',
         content: 'Problem unavailable.',
@@ -71,11 +79,22 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
     ])
   }
 
-  const heardLine = truncateLine(`HEARD ${transcriptLines[0] ?? ''}`, 31)
+  const heardLine = `HEARD ${transcriptLines[0] ?? ''}`
+  const problemTitleLines = wrapHeader(
+    `#${problem.id} ${problem.title.toUpperCase()}`,
+    G2_TEXT_LAYOUT.defaultCharsPerLine,
+  ).slice(0, 2)
+  const metaY = 78 + problemTitleLines.length * 26 + 8
   const menuY = 186
+  const menuGeometry = getCenteredTextGeometry(
+    EXACT_MENU_ITEMS.map((item) => `> ${item}`),
+    160,
+    G2_TEXT_LAYOUT.listItemWidth,
+  )
 
   return createTextObjects([
     {
+      ...getCenteredTextGeometry('MATCH FOUND'),
       y: 12,
       height: 28,
       name: 'voice-match-title',
@@ -83,6 +102,7 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
       textColor: 4,
     },
     {
+      ...getCenteredTextGeometry(heardLine),
       y: 44,
       height: 22,
       name: 'voice-match-heard',
@@ -90,28 +110,30 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
       textColor: 3,
     },
     {
+      ...getCenteredTextGeometry(problemTitleLines),
       y: 78,
-      height: 26,
+      height: problemTitleLines.length * 26,
       name: 'voice-match-problem',
-      content: truncateLine(`#${problem.id} ${problem.title.toUpperCase()}`, 31),
+      content: problemTitleLines.join('\n'),
       textColor: 4,
     },
     {
-      y: 112,
+      ...getCenteredTextGeometry(`${problem.difficulty}  ${problem.patterns[0] ?? ''}`),
+      y: metaY,
       name: 'voice-match-meta',
-      content: truncateLine(`${problem.difficulty}  ${problem.patterns[0] ?? ''}`, 31),
+      content: `${problem.difficulty}  ${problem.patterns[0] ?? ''}`,
       textColor: 3,
     },
     ...EXACT_MENU_ITEMS.map((item, index) => {
       const selected = index === selectedIndex
 
       return {
-        x: 50,
+        x: menuGeometry.x,
         y: menuY + index * 30,
+        width: menuGeometry.width,
         name: `voice-match-${index}`,
         content: `${selected ? '>' : ' '} ${item}`,
         textColor: selected ? 4 : 3,
-        isEventCapture: selected,
       }
     }),
   ])

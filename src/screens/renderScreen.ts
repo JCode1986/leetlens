@@ -5,7 +5,7 @@ import { createCategoriesTextObjects } from './categories'
 import { createEdgeCasesTextObjects, getEdgeCasesPageCount } from './edgeCases'
 import { createDifficultyListTextObjects } from './difficultyList'
 import { createFindTextObjects } from './find'
-import { createTextObjects } from './g2Layout'
+import { createTextObjects, getCenteredTextGeometry } from './g2Layout'
 import { createHintTextObjects, getHintPageCount } from './hint'
 import { createHomeTextObjects } from './home'
 import { createLanguageTextObjects } from './language'
@@ -120,13 +120,14 @@ export function createScreenTextObjects(state: NavigationState): TextContainerPr
 
   return createTextObjects([
     {
+      ...getCenteredTextGeometry('LEETLENS'),
       y: 24,
       name: 'unimplemented-title',
       content: 'LEETLENS',
       textColor: 4,
-      isEventCapture: true,
     },
     {
+      ...getCenteredTextGeometry('Screen not ready.'),
       y: 72,
       name: 'unimplemented-message',
       content: 'Screen not ready.',

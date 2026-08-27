@@ -2,7 +2,12 @@ import { getProblemById } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
 import { clampPageIndex, paginateLines } from '../utils/pagination'
 import { wrapText } from '../utils/text'
-import { createTextObjects, G2_TEXT_LAYOUT, MAX_TEXT_CONTAINERS } from './g2Layout'
+import {
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredTextGeometry,
+  MAX_TEXT_CONTAINERS,
+} from './g2Layout'
 
 const PSEUDOCODE_TITLE_Y = 14
 const PSEUDOCODE_LINE_HEIGHT = 26
@@ -40,9 +45,21 @@ export function createPseudocodeTextObjects(state: NavigationState) {
     titleLines.length * PSEUDOCODE_LINE_HEIGHT +
     PSEUDOCODE_META_GAP
   const bodyY = metaY + PSEUDOCODE_LINE_HEIGHT + PSEUDOCODE_BODY_GAP
+  const bodyContent = pageLines.length > 0 ? pageLines.join('\n') : ' '
+  const metaText = `PSEUDOCODE              ${pageIndex + 1}/${totalPages}`
 
   return createTextObjects([
+    {
+      x: G2_TEXT_LAYOUT.listItemX,
+      y: bodyY,
+      width: G2_TEXT_LAYOUT.listItemWidth,
+      height: Math.max(26, pageLines.length * 31),
+      name: `pseudocode-body-${pageIndex}`,
+      content: bodyContent,
+      textColor: 4,
+    },
     ...titleLines.map((line, index) => ({
+      ...getCenteredTextGeometry(line),
       y: PSEUDOCODE_TITLE_Y + index * PSEUDOCODE_LINE_HEIGHT,
       height: PSEUDOCODE_LINE_HEIGHT,
       name: `pseudocode-title-${index}`,
@@ -50,22 +67,13 @@ export function createPseudocodeTextObjects(state: NavigationState) {
       textColor: 4,
     })),
     {
+      ...getCenteredTextGeometry(metaText),
       y: metaY,
       height: 24,
       name: 'pseudocode-meta',
-      content: `PSEUDOCODE              ${pageIndex + 1}/${totalPages}`,
+      content: metaText,
       textColor: 3,
     },
-    ...pageLines.map((line, index) => ({
-      x: 30,
-      y: bodyY + index * 31,
-      width: 516,
-      height: 26,
-      name: `pseudocode-line-${index}`,
-      content: line,
-      textColor: 4,
-      isEventCapture: index === 0,
-    })),
   ])
 }
 

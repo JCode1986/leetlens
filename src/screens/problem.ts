@@ -2,12 +2,13 @@ import { getProblemById } from '../services/problemService'
 import { isFavorite } from '../services/preferencesService'
 import { PROBLEM_MENU_ITEM_COUNT, PROBLEM_TABS } from '../types/navigation'
 import type { NavigationState } from '../types/navigation'
-import { truncateLine } from '../utils/text'
 import { getVisibleWindow } from '../utils/visibleWindow'
-import { createTextObjects } from './g2Layout'
+import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
 
 const PROBLEM_HEADER_Y = 14
 const PROBLEM_MENU_ROW_HEIGHT = 28
+const PROBLEM_MENU_Y = 110
+const PROBLEM_MENU_VISIBLE_ROWS = 5
 
 export function createProblemTextObjects(state: NavigationState) {
   const problem = state.selectedProblemId === undefined
@@ -21,7 +22,6 @@ export function createProblemTextObjects(state: NavigationState) {
         name: 'missing-problem-title',
         content: 'PROBLEM',
         textColor: 4,
-        isEventCapture: true,
       },
       {
         y: 72,
@@ -35,62 +35,53 @@ export function createProblemTextObjects(state: NavigationState) {
   const selectedIndex = Math.max(0, Math.min(PROBLEM_MENU_ITEM_COUNT - 1, state.selectedMenuIndex))
   const favoriteLabel = isFavorite(problem.id) ? 'Remove Favorite' : 'Add Favorite'
   const menuItems = [
-    ...PROBLEM_TABS.map((tab) => ({
-      label: tab.label,
-      name: `problem-tab-${tab.screen}`,
-    })),
+    ...PROBLEM_TABS,
     {
       label: favoriteLabel,
-      name: 'problem-favorite-toggle',
     },
   ]
-  const menuStartY = 110
-  const availableMenuRows = 5
   const visibleWindow = getVisibleWindow(
     menuItems,
     selectedIndex,
-    availableMenuRows,
+    PROBLEM_MENU_VISIBLE_ROWS,
   )
+
+  const menuContent = visibleWindow.items.map((item, index) => {
+    const itemIndex = visibleWindow.startIndex + index
+    const selected = itemIndex === selectedIndex
+
+    return `${selected ? '>' : ' '} ${item.label}`
+  }).join('\n')
+  const headerContent = [
+    `#${problem.id} ${problem.title.toUpperCase()}`,
+    `${problem.difficulty}  ${problem.patterns.join(', ')}`,
+    `Time: ${problem.complexity.time}  Space: ${problem.complexity.space}`,
+  ].join('\n')
+  const menuGeometry = getCenteredTextGeometry(
+    menuItems.map((item) => `> ${item.label}`),
+    140,
+    G2_TEXT_LAYOUT.listItemWidth,
+  )
+  const headerGeometry = getCenteredTextGeometry(headerContent, 180, G2_TEXT_LAYOUT.listItemWidth)
 
   return createTextObjects([
     {
-      y: PROBLEM_HEADER_Y,
-      height: 26,
-      name: 'problem-title',
-      content: truncateLine(`#${problem.id} ${problem.title.toUpperCase()}`, 31),
+      x: menuGeometry.x,
+      y: PROBLEM_MENU_Y,
+      width: menuGeometry.width,
+      height: PROBLEM_MENU_VISIBLE_ROWS * PROBLEM_MENU_ROW_HEIGHT,
+      name: `problem-menu-${selectedIndex}`,
+      content: menuContent,
       textColor: 4,
     },
     {
-      y: 44,
-      height: 24,
-      name: 'problem-meta',
-      content: truncateLine(`${problem.difficulty}  ${problem.patterns.join(', ')}`, 31),
-      textColor: 3,
+      x: headerGeometry.x,
+      y: PROBLEM_HEADER_Y,
+      width: headerGeometry.width,
+      height: 80,
+      name: 'problem-detail-header',
+      content: headerContent,
+      textColor: 4,
     },
-    {
-      y: 72,
-      height: 24,
-      name: 'problem-complexity',
-      content: truncateLine(
-        `Time: ${problem.complexity.time}  Space: ${problem.complexity.space}`,
-        31,
-      ),
-      textColor: 3,
-    },
-    ...visibleWindow.items.map((item, index) => {
-      const itemIndex = visibleWindow.startIndex + index
-      const selected = itemIndex === selectedIndex
-
-      return {
-        x: 50,
-        y: menuStartY + index * PROBLEM_MENU_ROW_HEIGHT,
-        width: 340,
-        height: 24,
-        name: item.name,
-        content: `${selected ? '>' : ' '} ${item.label}`,
-        textColor: selected ? 4 : 3,
-        isEventCapture: selected,
-      }
-    }),
   ])
 }

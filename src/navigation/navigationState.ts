@@ -96,6 +96,18 @@ function movePage(state: NavigationState, delta: number, pageCount: number): Nav
   }
 }
 
+function setProblemMenuIndex(state: NavigationState, index: number): NavigationState {
+  const nextIndex = clampIndex(index, PROBLEM_MENU_ITEM_COUNT)
+
+  return {
+    ...state,
+    selectedMenuIndex: nextIndex,
+    selectedProblemTab: nextIndex === PROBLEM_FAVORITE_MENU_INDEX
+      ? state.selectedProblemTab
+      : problemTabFromIndex(nextIndex),
+  }
+}
+
 function problemTabFromIndex(index: number): ProblemTab {
   return PROBLEM_TABS[clampIndex(index, PROBLEM_TABS.length)].screen
 }
@@ -921,15 +933,7 @@ export function transitionNavigation(
   }
 
   if (state.currentScreen === 'problem') {
-    const nextIndex = clampIndex(state.selectedMenuIndex + delta, PROBLEM_MENU_ITEM_COUNT)
-
-    return {
-      ...state,
-      selectedMenuIndex: nextIndex,
-      selectedProblemTab: nextIndex === PROBLEM_FAVORITE_MENU_INDEX
-        ? state.selectedProblemTab
-        : problemTabFromIndex(nextIndex),
-    }
+    return setProblemMenuIndex(state, state.selectedMenuIndex + delta)
   }
 
   if (state.currentScreen === 'studyQuestion') {
@@ -958,6 +962,88 @@ export function transitionNavigation(
     state.currentScreen === 'edgeCases'
   ) {
     return movePage(state, delta, context.pageCount)
+  }
+
+  return state
+}
+
+export function transitionNavigationToIndex(
+  state: NavigationState,
+  targetIndex: number,
+  context: NavigationContext,
+): NavigationState {
+  if (state.currentScreen === 'home') {
+    return setSelectedMenuIndex(state, targetIndex, HOME_MENU_ITEMS.length)
+  }
+
+  if (state.currentScreen === 'categories') {
+    return setSelectedMenuIndex(state, targetIndex, context.categories.length)
+  }
+
+  if (state.currentScreen === 'find') {
+    return setSelectedMenuIndex(state, targetIndex, FIND_MENU_ITEMS.length)
+  }
+
+  if (state.currentScreen === 'study') {
+    return setSelectedMenuIndex(state, targetIndex, STUDY_MENU_ITEMS.length)
+  }
+
+  if (state.currentScreen === 'studyPattern') {
+    return setSelectedMenuIndex(state, targetIndex, context.patterns.length)
+  }
+
+  if (state.currentScreen === 'patterns') {
+    return setSelectedMenuIndex(state, targetIndex, context.patterns.length)
+  }
+
+  if (state.currentScreen === 'collections') {
+    return setSelectedMenuIndex(state, targetIndex, context.collections.length)
+  }
+
+  if (state.currentScreen === 'settings') {
+    return setSelectedMenuIndex(state, targetIndex, SETTINGS_MENU_ITEMS.length)
+  }
+
+  if (state.currentScreen === 'language') {
+    return setSelectedMenuIndex(state, targetIndex, SELECTABLE_PROGRAMMING_LANGUAGES.length)
+  }
+
+  if (state.currentScreen === 'difficultyList') {
+    return setSelectedMenuIndex(state, targetIndex, DIFFICULTIES.length)
+  }
+
+  if (state.currentScreen === 'problemList') {
+    return setSelectedMenuIndex(state, targetIndex, context.problemListProblems.length)
+  }
+
+  if (state.currentScreen === 'voiceMatch') {
+    return setSelectedMenuIndex(
+      state,
+      targetIndex,
+      state.voiceResultMode === 'exact' ? 2 : 1,
+    )
+  }
+
+  if (state.currentScreen === 'voiceResults') {
+    return setSelectedMenuIndex(state, targetIndex, context.voiceResultProblems.length)
+  }
+
+  if (state.currentScreen === 'problem') {
+    return setProblemMenuIndex(state, targetIndex)
+  }
+
+  if (state.currentScreen === 'studyQuestion') {
+    return {
+      ...state,
+      studySelectedIndex: clampIndex(targetIndex, state.studyChoices.length),
+    }
+  }
+
+  if (state.currentScreen === 'studyFeedback') {
+    return {
+      ...state,
+      studySelectedIndex: clampIndex(targetIndex, getStudyFeedbackActionCount(state)),
+    }
   }
 
   return state

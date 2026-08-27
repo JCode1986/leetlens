@@ -3,7 +3,12 @@ import type { NavigationState } from '../types/navigation'
 import { LANGUAGE_LABELS } from '../utils/language'
 import { clampPageIndex, paginateLines } from '../utils/pagination'
 import { wrapText } from '../utils/text'
-import { createTextObjects, G2_TEXT_LAYOUT, MAX_TEXT_CONTAINERS } from './g2Layout'
+import {
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredTextGeometry,
+  MAX_TEXT_CONTAINERS,
+} from './g2Layout'
 
 const SOLUTION_TITLE_Y = 14
 const SOLUTION_LINE_HEIGHT = 26
@@ -53,9 +58,21 @@ export function createSolutionTextObjects(state: NavigationState) {
   const languageLabel = LANGUAGE_LABELS[state.selectedLanguage].compactName
   const metaY = SOLUTION_TITLE_Y + titleLines.length * SOLUTION_LINE_HEIGHT + SOLUTION_META_GAP
   const bodyY = metaY + SOLUTION_LINE_HEIGHT + SOLUTION_BODY_GAP
+  const bodyContent = pageLines.length > 0 ? pageLines.join('\n') : ' '
+  const metaText = `${languageLabel}                 ${pageIndex + 1}/${totalPages}`
 
   return createTextObjects([
+    {
+      x: G2_TEXT_LAYOUT.listItemX,
+      y: bodyY,
+      width: G2_TEXT_LAYOUT.listItemWidth,
+      height: Math.max(26, pageLines.length * 31),
+      name: `solution-body-${pageIndex}`,
+      content: bodyContent,
+      textColor: 4,
+    },
     ...titleLines.map((line, index) => ({
+      ...getCenteredTextGeometry(line),
       y: SOLUTION_TITLE_Y + index * SOLUTION_LINE_HEIGHT,
       height: SOLUTION_LINE_HEIGHT,
       name: `solution-title-${index}`,
@@ -63,22 +80,13 @@ export function createSolutionTextObjects(state: NavigationState) {
       textColor: 4,
     })),
     {
+      ...getCenteredTextGeometry(metaText),
       y: metaY,
       height: 24,
       name: 'solution-meta',
-      content: `${languageLabel}                 ${pageIndex + 1}/${totalPages}`,
+      content: metaText,
       textColor: 3,
     },
-    ...pageLines.map((line, index) => ({
-      x: 30,
-      y: bodyY + index * 31,
-      width: 516,
-      height: 26,
-      name: `solution-line-${index}`,
-      content: line,
-      textColor: 4,
-      isEventCapture: index === 0,
-    })),
   ])
 }
 

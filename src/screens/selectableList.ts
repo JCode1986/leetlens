@@ -1,10 +1,7 @@
-import { truncateLine } from '../utils/text'
 import { getVisibleWindow } from '../utils/visibleWindow'
-import { createTextObjects } from './g2Layout'
+import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
 
 const DEFAULT_MAX_VISIBLE_ITEMS = 7
-const DEFAULT_MAX_TITLE_LENGTH = 31
-const DEFAULT_MAX_ITEM_LENGTH = 31
 const TITLE_Y = 22
 const SUBTITLE_Y = 50
 const ROW_START_Y = 72
@@ -20,8 +17,6 @@ interface SelectableListOptions<T> {
   emptyMessage?: string
   emptyLines?: string[]
   maxVisibleItems?: number
-  maxTitleLength?: number
-  maxItemLength?: number
 }
 
 export function createSelectableListTextObjects<T>({
@@ -34,15 +29,15 @@ export function createSelectableListTextObjects<T>({
   emptyMessage = 'NO ITEMS FOUND',
   emptyLines,
   maxVisibleItems = DEFAULT_MAX_VISIBLE_ITEMS,
-  maxTitleLength = DEFAULT_MAX_TITLE_LENGTH,
-  maxItemLength = DEFAULT_MAX_ITEM_LENGTH,
 }: SelectableListOptions<T>) {
   const clampedIndex = Math.max(0, Math.min(items.length - 1, selectedIndex))
+  const titleGeometry = getCenteredTextGeometry(title.toUpperCase())
   const subtitleSpecs = subtitleLines.slice(0, 2).map((line, index) => ({
+    ...getCenteredTextGeometry(line),
     y: SUBTITLE_Y + index * 24,
     height: 22,
     name: `${itemNamePrefix}-subtitle-${index}`,
-    content: truncateLine(line, maxTitleLength),
+    content: line,
     textColor: 3,
   }))
   const rowStartY = ROW_START_Y + subtitleSpecs.length * 24
@@ -53,23 +48,30 @@ export function createSelectableListTextObjects<T>({
     Math.min(maxVisibleItems, maxRowsForContainers),
   )
   const emptyContent = emptyLines ?? [emptyMessage]
+  const rowGeometry = getCenteredTextGeometry(
+    items.map((item) => `> ${formatItem(item)}`),
+    140,
+    G2_TEXT_LAYOUT.listItemWidth,
+  )
+  const emptyGeometry = getCenteredTextGeometry(emptyContent, 140, G2_TEXT_LAYOUT.listItemWidth)
 
   return createTextObjects([
     {
+      ...titleGeometry,
       y: TITLE_Y,
       height: 32,
       name: `${itemNamePrefix}-title`,
-      content: truncateLine(title.toUpperCase(), maxTitleLength),
+      content: title.toUpperCase(),
       textColor: 4,
-      isEventCapture: items.length === 0,
     },
     ...subtitleSpecs,
     ...(items.length === 0
       ? emptyContent.map((line, index) => ({
+          ...emptyGeometry,
           y: rowStartY + index * 28,
           height: 24,
           name: `${itemNamePrefix}-empty-${index}`,
-          content: truncateLine(line, maxItemLength),
+          content: line,
           textColor: 3,
         }))
       : visibleWindow.items.map((item, index) => {
@@ -77,14 +79,13 @@ export function createSelectableListTextObjects<T>({
           const selected = itemIndex === clampedIndex
 
           return {
-            x: 50,
+            x: rowGeometry.x,
             y: rowStartY + index * ROW_HEIGHT,
-            width: 470,
+            width: rowGeometry.width,
             height: 24,
             name: `${itemNamePrefix}-${itemIndex}`,
-            content: `${selected ? '>' : ' '} ${truncateLine(formatItem(item), maxItemLength)}`,
+            content: `${selected ? '>' : ' '} ${formatItem(item)}`,
             textColor: selected ? 4 : 3,
-            isEventCapture: selected,
           }
         })),
   ])

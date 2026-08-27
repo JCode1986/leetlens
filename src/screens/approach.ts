@@ -1,19 +1,20 @@
 import { getProblemById } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
-import { wrapPrefixedText } from '../utils/text'
+import { wrapNumberedItem } from '../utils/text'
 import { createDetailTextObjects, getDetailPageCount } from './detailLayout'
+import { G2_TEXT_LAYOUT } from './g2Layout'
 
-function getApproachLines(state: NavigationState): string[] {
+function getApproachLineGroups(state: NavigationState): string[][] {
   const problem = state.selectedProblemId === undefined
     ? undefined
     : getProblemById(state.selectedProblemId)
 
   if (!problem) {
-    return ['Problem unavailable.']
+    return [['Problem unavailable.']]
   }
 
-  return problem.approach.flatMap((step, index) =>
-    wrapPrefixedText(`${index + 1}. `, step, 31),
+  return problem.approach.map((step, index) =>
+    wrapNumberedItem(index + 1, step, G2_TEXT_LAYOUT.proseCharsPerLine),
   )
 }
 
@@ -26,7 +27,7 @@ export function createApproachTextObjects(state: NavigationState) {
     state,
     problem?.title ?? 'Problem',
     'Approach',
-    getApproachLines(state),
+    getApproachLineGroups(state),
   )
 }
 
@@ -35,5 +36,5 @@ export function getApproachPageCount(state: NavigationState): number {
     ? undefined
     : getProblemById(state.selectedProblemId)
 
-  return getDetailPageCount(problem?.title ?? 'Problem', getApproachLines(state))
+  return getDetailPageCount(problem?.title ?? 'Problem', getApproachLineGroups(state))
 }

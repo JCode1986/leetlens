@@ -1,18 +1,21 @@
 import { getProblemById } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
-import { wrapPrefixedText } from '../utils/text'
+import { wrapBulletItem } from '../utils/text'
 import { createDetailTextObjects, getDetailPageCount } from './detailLayout'
+import { G2_TEXT_LAYOUT } from './g2Layout'
 
-function getEdgeCaseLines(state: NavigationState): string[] {
+function getEdgeCaseLineGroups(state: NavigationState): string[][] {
   const problem = state.selectedProblemId === undefined
     ? undefined
     : getProblemById(state.selectedProblemId)
 
   if (!problem) {
-    return ['Problem unavailable.']
+    return [['Problem unavailable.']]
   }
 
-  return problem.edgeCases.flatMap((edgeCase) => wrapPrefixedText('- ', edgeCase, 31))
+  return problem.edgeCases.map((edgeCase) =>
+    wrapBulletItem(edgeCase, G2_TEXT_LAYOUT.proseCharsPerLine),
+  )
 }
 
 export function createEdgeCasesTextObjects(state: NavigationState) {
@@ -24,7 +27,7 @@ export function createEdgeCasesTextObjects(state: NavigationState) {
     state,
     problem?.title ?? 'Problem',
     'Edge Cases',
-    getEdgeCaseLines(state),
+    getEdgeCaseLineGroups(state),
   )
 }
 
@@ -33,5 +36,5 @@ export function getEdgeCasesPageCount(state: NavigationState): number {
     ? undefined
     : getProblemById(state.selectedProblemId)
 
-  return getDetailPageCount(problem?.title ?? 'Problem', getEdgeCaseLines(state))
+  return getDetailPageCount(problem?.title ?? 'Problem', getEdgeCaseLineGroups(state))
 }

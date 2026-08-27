@@ -1,14 +1,17 @@
 import { getProblemById } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
-import { wrapText } from '../utils/text'
+import { wrapParagraph } from '../utils/text'
 import { createDetailTextObjects, getDetailPageCount } from './detailLayout'
+import { G2_TEXT_LAYOUT } from './g2Layout'
 
-function getHintLines(state: NavigationState): string[] {
+function getHintLineGroups(state: NavigationState): string[][] {
   const problem = state.selectedProblemId === undefined
     ? undefined
     : getProblemById(state.selectedProblemId)
 
-  return problem ? wrapText(problem.hint, 31) : ['Problem unavailable.']
+  return problem
+    ? [wrapParagraph(problem.hint, G2_TEXT_LAYOUT.proseCharsPerLine)]
+    : [['Problem unavailable.']]
 }
 
 export function createHintTextObjects(state: NavigationState) {
@@ -20,7 +23,7 @@ export function createHintTextObjects(state: NavigationState) {
     state,
     problem?.title ?? 'Problem',
     'Hint',
-    getHintLines(state),
+    getHintLineGroups(state),
   )
 }
 
@@ -29,5 +32,5 @@ export function getHintPageCount(state: NavigationState): number {
     ? undefined
     : getProblemById(state.selectedProblemId)
 
-  return getDetailPageCount(problem?.title ?? 'Problem', getHintLines(state))
+  return getDetailPageCount(problem?.title ?? 'Problem', getHintLineGroups(state))
 }
