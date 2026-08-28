@@ -1,25 +1,39 @@
 import type { NavigationState } from '../types/navigation'
 import { clampPageIndex, paginateLineGroups } from '../utils/pagination'
 import { wrapHeader } from '../utils/text'
-import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
+import {
+  createPageEventCaptureSpec,
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredLineGeometry,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+} from './g2Layout'
 
-const DETAIL_TITLE_Y = 16
-const DETAIL_LINE_HEIGHT = 24
-const DETAIL_BODY_LINE_HEIGHT = 29
-const DETAIL_SECTION_GAP = 6
+const DETAIL_TITLE_Y = 8
+const DETAIL_LINE_HEIGHT = 29
+const DETAIL_BODY_LINE_HEIGHT = 28
+const DETAIL_SECTION_GAP = 2
 const DETAIL_BODY_GAP = 12
-const DETAIL_FOOTER_Y = 258
+const DETAIL_FOOTER_Y = 250
 
-function getDetailTitleLines(title: string): string[] {
-  return wrapHeader(title.toUpperCase(), G2_TEXT_LAYOUT.defaultCharsPerLine)
+interface DetailTextOptions {
+  centeredLeadLines?: string[]
 }
 
-function getDetailLinesPerPage(title: string): number {
+function getDetailTitleLines(title: string): string[] {
+  return wrapHeader(title.toUpperCase(), G2_TEXT_LAYOUT.titleCharsPerLine)
+}
+
+function getDetailLinesPerPage(title: string, leadLineCount = 0): number {
   const titleLines = getDetailTitleLines(title)
   const sectionY = DETAIL_TITLE_Y + titleLines.length * DETAIL_LINE_HEIGHT + DETAIL_SECTION_GAP
-  const bodyY = sectionY + DETAIL_LINE_HEIGHT + DETAIL_BODY_GAP
+  const bodyY = sectionY
+    + DETAIL_LINE_HEIGHT
+    + DETAIL_BODY_GAP
+    + leadLineCount * DETAIL_BODY_LINE_HEIGHT
 
-  return Math.max(1, Math.floor((DETAIL_FOOTER_Y - bodyY) / DETAIL_BODY_LINE_HEIGHT))
+  return Math.max(1, Math.floor((DETAIL_FOOTER_Y - bodyY - DETAIL_BODY_GAP) / DETAIL_BODY_LINE_HEIGHT))
 }
 
 export function createDetailTextObjects(
@@ -27,54 +41,86 @@ export function createDetailTextObjects(
   title: string,
   sectionName: string,
   lineGroups: string[][],
+  options: DetailTextOptions = {},
 ) {
+  const centeredLeadLines = options.centeredLeadLines ?? []
   const titleLines = getDetailTitleLines(title)
-  const linesPerPage = getDetailLinesPerPage(title)
+  const linesPerPage = getDetailLinesPerPage(title, centeredLeadLines.length)
   const pages = paginateLineGroups(lineGroups, linesPerPage)
   const pageIndex = clampPageIndex(state.codePageIndex, pages.length)
   const pageLines = pages[pageIndex] ?? []
   const totalPages = Math.max(1, pages.length)
   const sectionY = DETAIL_TITLE_Y + titleLines.length * DETAIL_LINE_HEIGHT + DETAIL_SECTION_GAP
-  const bodyY = sectionY + DETAIL_LINE_HEIGHT + DETAIL_BODY_GAP
+  const leadY = sectionY + DETAIL_LINE_HEIGHT + DETAIL_BODY_GAP
+  const bodyY = leadY + centeredLeadLines.length * DETAIL_BODY_LINE_HEIGHT
+  const bodyHeight = Math.max(
+    DETAIL_BODY_LINE_HEIGHT,
+    DETAIL_FOOTER_Y - bodyY - DETAIL_BODY_GAP,
+  )
   const bodyContent = pageLines.length > 0 ? pageLines.join('\n') : ' '
+  const bodyGeometry = getCenteredLineGeometry(
+    bodyContent,
+    undefined,
+    G2_TEXT_LAYOUT.screenWidth,
+  )
   const sectionText = sectionName.toUpperCase()
   const footerText = `${pageIndex + 1}/${totalPages}`
   const footerSpec = {
-    ...getCenteredTextGeometry(footerText),
+    ...getCenteredTitleGeometry(footerText, G2_TEXT_LAYOUT.screenWidth),
     y: DETAIL_FOOTER_Y,
-    height: 22,
+    height: DETAIL_LINE_HEIGHT,
     name: 'detail-page',
     content: footerText,
     textColor: 3,
   }
 
   return createTextObjects([
-    {
+    createPageEventCaptureSpec(`detail-capture-${pageIndex}`, {
       y: bodyY,
-      height: Math.max(24, pageLines.length * DETAIL_BODY_LINE_HEIGHT),
-      name: `detail-body-${pageIndex}`,
-      content: bodyContent,
-      textColor: 4,
-    },
+      height: G2_TEXT_LAYOUT.screenHeight - bodyY,
+    }),
     ...titleLines.map((line, index) => ({
-      ...getCenteredTextGeometry(line),
+      ...getCenteredTitleGeometry(line, G2_TEXT_LAYOUT.screenWidth),
       y: DETAIL_TITLE_Y + index * DETAIL_LINE_HEIGHT,
       height: DETAIL_LINE_HEIGHT,
       name: `detail-title-${index}`,
+      content: getCenteredTitleContent(line),
+      textColor: 4,
+    })),
+    ...centeredLeadLines.map((line, index) => ({
+      ...getCenteredLineGeometry(line, undefined, G2_TEXT_LAYOUT.screenWidth),
+      y: leadY + index * DETAIL_BODY_LINE_HEIGHT,
+      height: DETAIL_BODY_LINE_HEIGHT,
+      name: `detail-lead-${index}`,
       content: line,
       textColor: 4,
     })),
     {
-      ...getCenteredTextGeometry(sectionText),
+      ...getCenteredTitleGeometry(sectionText, G2_TEXT_LAYOUT.screenWidth),
       y: sectionY,
       name: 'detail-section',
-      content: sectionText,
+      content: getCenteredTitleContent(sectionText),
       textColor: 3,
+    },
+    {
+      ...bodyGeometry,
+      y: bodyY,
+      height: bodyHeight,
+      name: `detail-body-${pageIndex}`,
+      content: bodyContent,
+      textColor: 4,
     },
     footerSpec,
   ])
 }
 
-export function getDetailPageCount(title: string, lineGroups: string[][]): number {
-  return paginateLineGroups(lineGroups, getDetailLinesPerPage(title)).length
+export function getDetailPageCount(
+  title: string,
+  lineGroups: string[][],
+  options: DetailTextOptions = {},
+): number {
+  return paginateLineGroups(
+    lineGroups,
+    getDetailLinesPerPage(title, options.centeredLeadLines?.length ?? 0),
+  ).length
 }

@@ -1,26 +1,35 @@
-import { getProblemById } from '../services/problemService'
 import { isFavorite } from '../services/preferencesService'
 import { PROBLEM_MENU_ITEM_COUNT, PROBLEM_TABS } from '../types/navigation'
 import type { NavigationState } from '../types/navigation'
+import { wrapHeader } from '../utils/text'
 import { getVisibleWindow } from '../utils/visibleWindow'
-import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
+import {
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredLineGeometry,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+  getCenteredTextGeometry,
+} from './g2Layout'
+import { getSelectedProblem } from './selectedProblem'
 
-const PROBLEM_HEADER_Y = 14
+const PROBLEM_HEADER_Y = 10
+const PROBLEM_HEADER_LINE_HEIGHT = 29
+const PROBLEM_HEADER_GAP = 6
 const PROBLEM_MENU_ROW_HEIGHT = 28
-const PROBLEM_MENU_Y = 110
+const PROBLEM_MENU_MIN_Y = 116
 const PROBLEM_MENU_VISIBLE_ROWS = 5
 
 export function createProblemTextObjects(state: NavigationState) {
-  const problem = state.selectedProblemId === undefined
-    ? undefined
-    : getProblemById(state.selectedProblemId)
+  const problem = getSelectedProblem(state)
 
   if (!problem) {
     return createTextObjects([
       {
+        ...getCenteredTitleGeometry('PROBLEM'),
         y: 24,
         name: 'missing-problem-title',
-        content: 'PROBLEM',
+        content: getCenteredTitleContent('PROBLEM'),
         textColor: 4,
       },
       {
@@ -52,36 +61,57 @@ export function createProblemTextObjects(state: NavigationState) {
 
     return `${selected ? '>' : ' '} ${item.label}`
   }).join('\n')
-  const headerContent = [
-    `#${problem.id} ${problem.title.toUpperCase()}`,
-    `${problem.difficulty}  ${problem.patterns.join(', ')}`,
-    `Time: ${problem.complexity.time}  Space: ${problem.complexity.space}`,
-  ].join('\n')
+  const titleContent = `#${problem.id} ${problem.title.toUpperCase()}`
+  const titleLines = wrapHeader(titleContent, G2_TEXT_LAYOUT.titleCharsPerLine)
+  const difficultyContent = `${problem.difficulty}  ${problem.patterns.join(', ')}`
+  const complexityContent = `Time: ${problem.complexity.time}  Space: ${problem.complexity.space}`
+  const difficultyLines = wrapHeader(difficultyContent, G2_TEXT_LAYOUT.maxCenteredContentCharsPerLine)
+  const complexityLines = wrapHeader(complexityContent, G2_TEXT_LAYOUT.maxCenteredContentCharsPerLine)
+  const metadataY = PROBLEM_HEADER_Y + titleLines.length * PROBLEM_HEADER_LINE_HEIGHT + PROBLEM_HEADER_GAP
+  const complexityY = metadataY + difficultyLines.length * PROBLEM_HEADER_LINE_HEIGHT
+  const menuY = Math.max(
+    PROBLEM_MENU_MIN_Y,
+    complexityY + complexityLines.length * PROBLEM_HEADER_LINE_HEIGHT + 14,
+  )
   const menuGeometry = getCenteredTextGeometry(
     menuItems.map((item) => `> ${item.label}`),
     140,
     G2_TEXT_LAYOUT.listItemWidth,
   )
-  const headerGeometry = getCenteredTextGeometry(headerContent, 180, G2_TEXT_LAYOUT.listItemWidth)
 
   return createTextObjects([
     {
       x: menuGeometry.x,
-      y: PROBLEM_MENU_Y,
+      y: menuY,
       width: menuGeometry.width,
       height: PROBLEM_MENU_VISIBLE_ROWS * PROBLEM_MENU_ROW_HEIGHT,
       name: `problem-menu-${selectedIndex}`,
       content: menuContent,
       textColor: 4,
     },
-    {
-      x: headerGeometry.x,
-      y: PROBLEM_HEADER_Y,
-      width: headerGeometry.width,
-      height: 80,
-      name: 'problem-detail-header',
-      content: headerContent,
+    ...titleLines.map((line, index) => ({
+      ...getCenteredTitleGeometry(line),
+      y: PROBLEM_HEADER_Y + index * PROBLEM_HEADER_LINE_HEIGHT,
+      height: PROBLEM_HEADER_LINE_HEIGHT,
+      name: `problem-detail-title-${index}`,
+      content: getCenteredTitleContent(line),
       textColor: 4,
-    },
+    })),
+    ...difficultyLines.map((line, index) => ({
+      ...getCenteredLineGeometry(line),
+      y: metadataY + index * PROBLEM_HEADER_LINE_HEIGHT,
+      height: PROBLEM_HEADER_LINE_HEIGHT,
+      name: `problem-detail-difficulty-${index}`,
+      content: getCenteredTitleContent(line),
+      textColor: 4,
+    })),
+    ...complexityLines.map((line, index) => ({
+      ...getCenteredLineGeometry(line),
+      y: complexityY + index * PROBLEM_HEADER_LINE_HEIGHT,
+      height: PROBLEM_HEADER_LINE_HEIGHT,
+      name: `problem-detail-complexity-${index}`,
+      content: getCenteredTitleContent(line),
+      textColor: 4,
+    })),
   ])
 }

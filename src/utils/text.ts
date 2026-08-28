@@ -32,6 +32,10 @@ export function wrapText(value: string, maxLineLength: number): string[] {
   return wrapWords(value, maxLineLength)
 }
 
+export function removeBlankLines(lines: string[]): string[] {
+  return lines.filter((line) => line.trim().length > 0)
+}
+
 export function wrapHeader(value: string, maxLineLength: number): string[] {
   return wrapWords(value, maxLineLength)
 }
@@ -65,15 +69,4 @@ export function wrapNumberedItem(
 
 export function wrapBulletItem(value: string, maxLineLength: number): string[] {
   return wrapPrefixedText('\u2022 ', value, maxLineLength)
-}
-
-export function wrapLabelValue(
-  label: string,
-  value: string,
-  maxLineLength: number,
-): string[] {
-  return [
-    label,
-    ...wrapParagraph(value, maxLineLength),
-  ]
 }

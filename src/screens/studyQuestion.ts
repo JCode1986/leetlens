@@ -1,7 +1,13 @@
 import { getProblemById } from '../services/problemService'
 import type { NavigationState, StudyChoice } from '../types/navigation'
 import { wrapHeader } from '../utils/text'
-import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
+import {
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+  getCenteredTextGeometry,
+} from './g2Layout'
 
 function getCorrectChoice(choices: StudyChoice[]): StudyChoice | undefined {
   return choices.find((choice) => choice.isCorrect)
@@ -24,10 +30,10 @@ export function createStudyQuestionTextObjects(state: NavigationState) {
   if (!problem || choices.length === 0 || !getCorrectChoice(choices)) {
     return createTextObjects([
       {
-        ...getCenteredTextGeometry('STUDY'),
+        ...getCenteredTitleGeometry('STUDY'),
         y: 24,
         name: 'study-question-title',
-        content: 'STUDY',
+        content: getCenteredTitleContent('STUDY'),
         textColor: 4,
       },
       {
@@ -42,7 +48,7 @@ export function createStudyQuestionTextObjects(state: NavigationState) {
 
   const titleLines = wrapHeader(
     `#${problem.id} ${problem.title.toUpperCase()}`,
-    G2_TEXT_LAYOUT.defaultCharsPerLine,
+    G2_TEXT_LAYOUT.titleCharsPerLine,
   ).slice(0, 2)
   const labelY = 14 + titleLines.length * 26 + 10
   const choiceY = labelY + 44
@@ -55,11 +61,11 @@ export function createStudyQuestionTextObjects(state: NavigationState) {
 
   return createTextObjects([
     {
-      ...getCenteredTextGeometry(titleLines),
+      ...getCenteredTitleGeometry(titleLines),
       y: 14,
       height: titleLines.length * 26,
       name: 'study-question-title',
-      content: titleLines.join('\n'),
+      content: getCenteredTitleContent(titleLines),
       textColor: 4,
     },
     {

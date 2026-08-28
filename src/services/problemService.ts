@@ -36,6 +36,11 @@ const problems: Problem[] = jsonProblems.map((problem) => ({
   difficulty: parseDifficulty(problem.difficulty),
 }))
 
+const sortedProblems = [...problems].sort((a, b) => a.id - b.id)
+const categoryNames = Object.keys(categories).sort()
+const patternNames = Object.keys(patterns).sort()
+const collectionNames = Object.keys(collections).sort()
+
 const problemsById = new Map<ProblemId, Problem>(
   problems.map((problem) => [problem.id, problem]),
 )
@@ -106,7 +111,7 @@ function resolveProblemIds(problemIds: ProblemId[]): Problem[] {
 }
 
 export function getAllProblems(): Problem[] {
-  return [...problems].sort((a, b) => a.id - b.id)
+  return [...sortedProblems]
 }
 
 export function getProblemById(id: ProblemId): Problem | undefined {
@@ -122,7 +127,7 @@ export function getProblemsByPattern(pattern: string): Problem[] {
 }
 
 export function getProblemsByDifficulty(difficulty: Difficulty): Problem[] {
-  return getAllProblems().filter((problem) => problem.difficulty === difficulty)
+  return sortedProblems.filter((problem) => problem.difficulty === difficulty)
 }
 
 export function getCollection(name: string): Problem[] {
@@ -130,13 +135,13 @@ export function getCollection(name: string): Problem[] {
 }
 
 export function getCategories(): string[] {
-  return Object.keys(categories).sort()
+  return [...categoryNames]
 }
 
 export function getPatterns(): string[] {
-  return Object.keys(patterns).sort()
+  return [...patternNames]
 }
 
 export function getCollections(): string[] {
-  return Object.keys(collections).sort()
+  return [...collectionNames]
 }

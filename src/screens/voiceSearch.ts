@@ -1,6 +1,12 @@
 import type { NavigationState } from '../types/navigation'
 import { wrapParagraph } from '../utils/text'
-import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
+import {
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+  getCenteredTextGeometry,
+} from './g2Layout'
 
 function createErrorLines(message: string): string[] {
   return wrapParagraph(message, G2_TEXT_LAYOUT.proseCharsPerLine).slice(0, 2)
@@ -14,19 +20,19 @@ export function createVoiceSearchTextObjects(state: NavigationState) {
 
     return createTextObjects([
       {
-        ...getCenteredTextGeometry('VOICE SEARCH'),
+        ...getCenteredTitleGeometry('VOICE SEARCH'),
         y: 22,
         height: 32,
         name: 'voice-search-title',
-        content: 'VOICE SEARCH',
+        content: getCenteredTitleContent('VOICE SEARCH'),
         textColor: 4,
       },
       {
-        ...getCenteredTextGeometry('LISTENING'),
+        ...getCenteredTitleGeometry('LISTENING'),
         y: 82,
         height: 28,
         name: 'voice-search-listening',
-        content: 'LISTENING',
+        content: getCenteredTitleContent('LISTENING'),
         textColor: 4,
       },
       {
@@ -49,19 +55,19 @@ export function createVoiceSearchTextObjects(state: NavigationState) {
   if (state.voiceSearchStatus === 'processing') {
     return createTextObjects([
       {
-        ...getCenteredTextGeometry('VOICE SEARCH'),
+        ...getCenteredTitleGeometry('VOICE SEARCH'),
         y: 22,
         height: 32,
         name: 'voice-search-title',
-        content: 'VOICE SEARCH',
+        content: getCenteredTitleContent('VOICE SEARCH'),
         textColor: 4,
       },
       {
-        ...getCenteredTextGeometry('PROCESSING'),
+        ...getCenteredTitleGeometry('PROCESSING'),
         y: 82,
         height: 28,
         name: 'voice-search-processing',
-        content: 'PROCESSING',
+        content: getCenteredTitleContent('PROCESSING'),
         textColor: 4,
       },
     ])
@@ -81,19 +87,19 @@ export function createVoiceSearchTextObjects(state: NavigationState) {
 
     return createTextObjects([
       {
-        ...getCenteredTextGeometry('VOICE SEARCH'),
+        ...getCenteredTitleGeometry('VOICE SEARCH'),
         y: 22,
         height: 32,
         name: 'voice-search-title',
-        content: 'VOICE SEARCH',
+        content: getCenteredTitleContent('VOICE SEARCH'),
         textColor: 4,
       },
       {
-        ...getCenteredTextGeometry(title),
+        ...getCenteredTitleGeometry(title),
         y: 74,
         height: 24,
         name: 'voice-search-error',
-        content: title,
+        content: getCenteredTitleContent(title),
         textColor: 4,
       },
       ...lines.map((line, index) => ({
@@ -115,11 +121,11 @@ export function createVoiceSearchTextObjects(state: NavigationState) {
 
   return createTextObjects([
     {
-      ...getCenteredTextGeometry('VOICE SEARCH'),
+      ...getCenteredTitleGeometry('VOICE SEARCH'),
       y: 22,
       height: 32,
       name: 'voice-search-title',
-      content: 'VOICE SEARCH',
+      content: getCenteredTitleContent('VOICE SEARCH'),
       textColor: 4,
     },
     {

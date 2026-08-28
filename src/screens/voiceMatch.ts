@@ -1,7 +1,13 @@
 import { getProblemById } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
 import { wrapHeader, wrapParagraph } from '../utils/text'
-import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
+import {
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+  getCenteredTextGeometry,
+} from './g2Layout'
 
 const EXACT_MENU_ITEMS = ['Open', 'Search Again'] as const
 
@@ -19,11 +25,11 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
 
     return createTextObjects([
       {
-        ...getCenteredTextGeometry('NO MATCH'),
+        ...getCenteredTitleGeometry('NO MATCH'),
         y: 18,
         height: 30,
         name: 'voice-no-match-title',
-        content: 'NO MATCH',
+        content: getCenteredTitleContent('NO MATCH'),
         textColor: 4,
       },
       {
@@ -63,10 +69,10 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
   if (!problem) {
     return createTextObjects([
       {
-        ...getCenteredTextGeometry('MATCH FOUND'),
+        ...getCenteredTitleGeometry('MATCH FOUND'),
         y: 22,
         name: 'voice-match-missing-title',
-        content: 'MATCH FOUND',
+        content: getCenteredTitleContent('MATCH FOUND'),
         textColor: 4,
       },
       {
@@ -82,7 +88,7 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
   const heardLine = `HEARD ${transcriptLines[0] ?? ''}`
   const problemTitleLines = wrapHeader(
     `#${problem.id} ${problem.title.toUpperCase()}`,
-    G2_TEXT_LAYOUT.defaultCharsPerLine,
+    G2_TEXT_LAYOUT.titleCharsPerLine,
   ).slice(0, 2)
   const metaY = 78 + problemTitleLines.length * 26 + 8
   const menuY = 186
@@ -94,11 +100,11 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
 
   return createTextObjects([
     {
-      ...getCenteredTextGeometry('MATCH FOUND'),
+      ...getCenteredTitleGeometry('MATCH FOUND'),
       y: 12,
       height: 28,
       name: 'voice-match-title',
-      content: 'MATCH FOUND',
+      content: getCenteredTitleContent('MATCH FOUND'),
       textColor: 4,
     },
     {
@@ -110,11 +116,11 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
       textColor: 3,
     },
     {
-      ...getCenteredTextGeometry(problemTitleLines),
+      ...getCenteredTitleGeometry(problemTitleLines),
       y: 78,
       height: problemTitleLines.length * 26,
       name: 'voice-match-problem',
-      content: problemTitleLines.join('\n'),
+      content: getCenteredTitleContent(problemTitleLines),
       textColor: 4,
     },
     {

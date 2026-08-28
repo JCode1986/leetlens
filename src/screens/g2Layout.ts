@@ -6,14 +6,25 @@ import {
 
 export const MAX_TEXT_CONTAINERS = 8
 const G2_SCREEN_WIDTH = 576
+const G2_SCREEN_HEIGHT = 288
 const G2_SCREEN_PADDING_X = 12
 const DEFAULT_TEXT_X = G2_SCREEN_PADDING_X
 const DEFAULT_TEXT_WIDTH = G2_SCREEN_WIDTH - G2_SCREEN_PADDING_X * 2
-const ESTIMATED_CHARACTER_WIDTH = 12
+const ESTIMATED_CHARACTER_WIDTH = 9
+const ESTIMATED_TITLE_CHARACTER_WIDTH = 12
 const CENTERED_TEXT_PADDING = 16
+const MAX_CENTERED_CONTENT_WIDTH = Math.floor(G2_SCREEN_WIDTH * 0.97)
+const MAX_CENTERED_CONTENT_CHARS = Math.floor(
+  (MAX_CENTERED_CONTENT_WIDTH - CENTERED_TEXT_PADDING) / ESTIMATED_CHARACTER_WIDTH,
+)
+const TITLE_CHARS_PER_LINE = Math.floor(DEFAULT_TEXT_WIDTH / ESTIMATED_TITLE_CHARACTER_WIDTH)
 
 export const G2_TEXT_LAYOUT = {
   screenWidth: G2_SCREEN_WIDTH,
+  screenHeight: G2_SCREEN_HEIGHT,
+  maxCenteredContentWidth: MAX_CENTERED_CONTENT_WIDTH,
+  maxCenteredContentCharsPerLine: MAX_CENTERED_CONTENT_CHARS,
+  titleCharsPerLine: TITLE_CHARS_PER_LINE,
   defaultCharsPerLine: 36,
   proseCharsPerLine: 28,
   listItemX: G2_SCREEN_PADDING_X,
@@ -28,6 +39,22 @@ export interface TextSpec {
   content: string
   name: string
   textColor?: number
+}
+
+export function createPageEventCaptureSpec(
+  name: string,
+  geometry: Partial<Pick<TextSpec, 'x' | 'y' | 'width' | 'height'>> = {},
+): TextSpec {
+  return {
+    x: 0,
+    y: 0,
+    width: G2_SCREEN_WIDTH,
+    height: G2_SCREEN_HEIGHT,
+    ...geometry,
+    name,
+    content: ' ',
+    textColor: 0,
+  }
 }
 
 function getLongestLineLength(content: string | string[]): number {
@@ -57,6 +84,37 @@ export function getCenteredTextGeometry(
   }
 }
 
+export function getCenteredLineGeometry(
+  content: string | string[],
+  characterWidth = ESTIMATED_CHARACTER_WIDTH,
+  padding = CENTERED_TEXT_PADDING * 2,
+) {
+  const textWidth = clampWidth(
+    getLongestLineLength(content) * characterWidth,
+    1,
+    G2_SCREEN_WIDTH,
+  )
+  const x = Math.round((G2_SCREEN_WIDTH - textWidth) / 2)
+
+  return {
+    x,
+    width: Math.min(G2_SCREEN_WIDTH - x, textWidth + padding),
+  }
+}
+
+export function getCenteredTitleGeometry(
+  content: string | string[],
+  padding = CENTERED_TEXT_PADDING * 2,
+) {
+  return getCenteredLineGeometry(content, ESTIMATED_TITLE_CHARACTER_WIDTH, padding)
+}
+
+export function getCenteredTitleContent(content: string | string[]): string {
+  const lines = Array.isArray(content) ? content : content.split('\n')
+
+  return lines.map((line) => line.trim()).join('\n')
+}
+
 export function createTextObjects(specs: TextSpec[]): TextContainerProperty[] {
   const visibleSpecs = specs.slice(0, MAX_TEXT_CONTAINERS)
 
@@ -67,6 +125,10 @@ export function createTextObjects(specs: TextSpec[]): TextContainerProperty[] {
         yPosition: spec.y,
         width: spec.width ?? DEFAULT_TEXT_WIDTH,
         height: spec.height ?? 24,
+        borderWidth: 0,
+        borderColor: 0,
+        borderRadius: 0,
+        paddingLength: 0,
         containerID: 1000 + index,
         containerName: spec.name,
         zOrderIndex: index + 1,

@@ -1,11 +1,13 @@
 import { clampHomeMenuIndex } from '../navigation/navigationState'
 import { HOME_MENU_ITEMS } from '../types/navigation'
 import type { NavigationState } from '../types/navigation'
-import { createTextObjects } from './g2Layout'
+import {
+  createTextObjects,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+} from './g2Layout'
 
-const HOME_TITLE_X = 178
 const HOME_TITLE_Y = 18
-const HOME_TITLE_WIDTH = 220
 const HOME_MENU_X = 214
 const HOME_MENU_Y = 50
 const HOME_MENU_WIDTH = 148
@@ -19,12 +21,11 @@ export function createHomeTextObjects(navigationState: NavigationState) {
 
   return createTextObjects([
     {
-      x: HOME_TITLE_X,
+      ...getCenteredTitleGeometry('------ LEETLENS ------'),
       y: HOME_TITLE_Y,
-      width: HOME_TITLE_WIDTH,
       height: 30,
       name: 'home-title',
-      content: '------ LEETLENS ------',
+      content: getCenteredTitleContent('------ LEETLENS ------'),
       textColor: 4,
     },
     {

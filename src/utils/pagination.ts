@@ -19,7 +19,6 @@ export function paginateLines(lines: string[], linesPerPage: number): string[][]
 export function paginateLineGroups(
   lineGroups: string[][],
   linesPerPage: number,
-  separatorLine = '',
 ): string[][] {
   if (linesPerPage <= 0) {
     return [lineGroups.flat()]
@@ -45,26 +44,12 @@ export function paginateLineGroups(
 
   for (const group of groups) {
     if (group.length <= linesPerPage) {
-      const separatorCost = currentPage.length > 0 ? 1 : 0
-
-      if (currentPage.length + separatorCost + group.length > linesPerPage) {
+      if (currentPage.length > 0 && currentPage.length + group.length > linesPerPage) {
         pushPage()
-      }
-
-      if (currentPage.length > 0) {
-        currentPage.push(separatorLine)
       }
 
       currentPage.push(...group)
       continue
-    }
-
-    if (currentPage.length > 0) {
-      if (currentPage.length + 1 >= linesPerPage) {
-        pushPage()
-      } else {
-        currentPage.push(separatorLine)
-      }
     }
 
     let remainingLines = [...group]

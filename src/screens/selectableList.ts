@@ -1,5 +1,11 @@
 import { getVisibleWindow } from '../utils/visibleWindow'
-import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
+import {
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+  getCenteredTextGeometry,
+} from './g2Layout'
 
 const DEFAULT_MAX_VISIBLE_ITEMS = 7
 const TITLE_Y = 22
@@ -31,7 +37,7 @@ export function createSelectableListTextObjects<T>({
   maxVisibleItems = DEFAULT_MAX_VISIBLE_ITEMS,
 }: SelectableListOptions<T>) {
   const clampedIndex = Math.max(0, Math.min(items.length - 1, selectedIndex))
-  const titleGeometry = getCenteredTextGeometry(title.toUpperCase())
+  const titleText = title.toUpperCase()
   const subtitleSpecs = subtitleLines.slice(0, 2).map((line, index) => ({
     ...getCenteredTextGeometry(line),
     y: SUBTITLE_Y + index * 24,
@@ -57,11 +63,11 @@ export function createSelectableListTextObjects<T>({
 
   return createTextObjects([
     {
-      ...titleGeometry,
+      ...getCenteredTitleGeometry(titleText),
       y: TITLE_Y,
       height: 32,
       name: `${itemNamePrefix}-title`,
-      content: title.toUpperCase(),
+      content: getCenteredTitleContent(titleText),
       textColor: 4,
     },
     ...subtitleSpecs,

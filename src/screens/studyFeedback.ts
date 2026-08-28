@@ -2,7 +2,13 @@ import { getProblemById } from '../services/problemService'
 import type { NavigationState, StudyChoice } from '../types/navigation'
 import { wrapParagraph } from '../utils/text'
 import { getVisibleWindow } from '../utils/visibleWindow'
-import { createTextObjects, G2_TEXT_LAYOUT, getCenteredTextGeometry } from './g2Layout'
+import {
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+  getCenteredTextGeometry,
+} from './g2Layout'
 
 function getCorrectChoice(choices: StudyChoice[]): StudyChoice | undefined {
   return choices.find((choice) => choice.isCorrect)
@@ -38,11 +44,11 @@ export function createStudyFeedbackTextObjects(state: NavigationState) {
 
   return createTextObjects([
     {
-      ...getCenteredTextGeometry(state.studyCorrect ? 'CORRECT' : 'NOT QUITE'),
+      ...getCenteredTitleGeometry(state.studyCorrect ? 'CORRECT' : 'NOT QUITE'),
       y: 14,
       height: 24,
       name: 'study-feedback-title',
-      content: state.studyCorrect ? 'CORRECT' : 'NOT QUITE',
+      content: getCenteredTitleContent(state.studyCorrect ? 'CORRECT' : 'NOT QUITE'),
       textColor: 4,
     },
     {
