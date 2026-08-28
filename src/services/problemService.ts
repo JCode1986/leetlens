@@ -49,6 +49,25 @@ const problemsBySlug = new Map<string, Problem>(
   problems.map((problem) => [problem.slug, problem]),
 )
 
+function cloneProblems(problems: Problem[]): Problem[] {
+  return [...problems]
+}
+
+function createResolvedIndexMap(index: ProblemReferenceIndex): Map<string, Problem[]> {
+  return new Map(
+    Object.entries(index).map(([name, problemIds]) => [name, resolveProblemIds(problemIds)]),
+  )
+}
+
+function createDifficultyMap(): Map<Difficulty, Problem[]> {
+  return new Map(
+    DIFFICULTIES.map((difficulty) => [
+      difficulty,
+      sortedProblems.filter((problem) => problem.difficulty === difficulty),
+    ]),
+  )
+}
+
 function assertUniqueProblems(): void {
   if (problemsById.size !== problems.length) {
     throw new Error('Problem data contains duplicate IDs.')
@@ -98,6 +117,11 @@ function validateProblemData(): void {
 
 validateProblemData()
 
+const categoryProblemsByName = createResolvedIndexMap(categories)
+const patternProblemsByName = createResolvedIndexMap(patterns)
+const collectionProblemsByName = createResolvedIndexMap(collections)
+const problemsByDifficulty = createDifficultyMap()
+
 function resolveProblemIds(problemIds: ProblemId[]): Problem[] {
   return problemIds.map((problemId) => {
     const problem = problemsById.get(problemId)
@@ -111,7 +135,7 @@ function resolveProblemIds(problemIds: ProblemId[]): Problem[] {
 }
 
 export function getAllProblems(): Problem[] {
-  return [...sortedProblems]
+  return cloneProblems(sortedProblems)
 }
 
 export function getProblemById(id: ProblemId): Problem | undefined {
@@ -119,19 +143,25 @@ export function getProblemById(id: ProblemId): Problem | undefined {
 }
 
 export function getProblemsByCategory(category: string): Problem[] {
-  return resolveProblemIds(categories[category] ?? [])
+  return cloneProblems(categoryProblemsByName.get(category) ?? [])
 }
 
 export function getProblemsByPattern(pattern: string): Problem[] {
-  return resolveProblemIds(patterns[pattern] ?? [])
+  return cloneProblems(patternProblemsByName.get(pattern) ?? [])
 }
 
 export function getProblemsByDifficulty(difficulty: Difficulty): Problem[] {
-  return sortedProblems.filter((problem) => problem.difficulty === difficulty)
+  return cloneProblems(problemsByDifficulty.get(difficulty) ?? [])
 }
 
 export function getCollection(name: string): Problem[] {
-  return resolveProblemIds(collections[name] ?? [])
+  return cloneProblems(collectionProblemsByName.get(name) ?? [])
+}
+
+export function getExistingProblemsById(problemIds: ProblemId[]): Problem[] {
+  return problemIds
+    .map((problemId) => problemsById.get(problemId))
+    .filter((problem): problem is Problem => problem !== undefined)
 }
 
 export function getCategories(): string[] {

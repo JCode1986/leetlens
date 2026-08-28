@@ -11,7 +11,6 @@ export const NAVIGATION_SCREENS = [
   'studyPattern',
   'studyQuestion',
   'studyFeedback',
-  'search',
   'favorites',
   'recent',
   'settings',

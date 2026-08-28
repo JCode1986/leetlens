@@ -18,6 +18,28 @@ interface RankedProblemMatch {
   matchedFields: string[]
 }
 
+interface SearchProblemIndex {
+  problem: Problem
+  title: string
+  slug: string
+  aliases: string[]
+  keywords: string[]
+  categories: string[]
+  patterns: string[]
+  titleTokens: Set<string>
+  aliasTokenSets: Set<string>[]
+  keywordTokenSets: Set<string>[]
+  categoryTokenSets: Set<string>[]
+  patternTokenSets: Set<string>[]
+  metadataValues: string[]
+}
+
+interface SearchQueryIndex {
+  normalized: string
+  tokens: string[]
+  spokenId: number | undefined
+}
+
 export type SearchDecision =
   | { kind: 'empty'; query: string; matches: [] }
   | { kind: 'exact'; query: string; matches: [RankedProblemMatch, ...RankedProblemMatch[]] }
@@ -60,17 +82,44 @@ function normalizeText(value: string): string {
     .trim()
 }
 
-function tokenize(value: string): string[] {
-  return normalizeText(value).split(' ').filter(Boolean)
+function tokenizeNormalized(value: string): string[] {
+  return value.split(' ').filter(Boolean)
 }
+
+function createNormalizedTokenSet(value: string): Set<string> {
+  return new Set(tokenizeNormalized(value))
+}
+
+function createSearchProblemIndex(problem: Problem): SearchProblemIndex {
+  const aliases = (problem.aliases ?? []).map(normalizeText)
+  const keywords = (problem.keywords ?? []).map(normalizeText)
+  const categories = problem.categories.map(normalizeText)
+  const patterns = problem.patterns.map(normalizeText)
+
+  return {
+    problem,
+    title: normalizeText(problem.title),
+    slug: normalizeText(problem.slug),
+    aliases,
+    keywords,
+    categories,
+    patterns,
+    titleTokens: createNormalizedTokenSet(normalizeText(problem.title)),
+    aliasTokenSets: aliases.map(createNormalizedTokenSet),
+    keywordTokenSets: keywords.map(createNormalizedTokenSet),
+    categoryTokenSets: categories.map(createNormalizedTokenSet),
+    patternTokenSets: patterns.map(createNormalizedTokenSet),
+    metadataValues: [...categories, ...patterns, ...keywords],
+  }
+}
+
+const SEARCH_INDEX = getAllProblems().map(createSearchProblemIndex)
 
 function uniqueValues(values: string[]): string[] {
   return [...new Set(values.filter((value) => value.length > 0))]
 }
 
-function parseSpokenId(query: string): number | undefined {
-  const normalized = normalizeText(query)
-
+function parseNormalizedSpokenId(normalized: string): number | undefined {
   if (normalized.length === 0) {
     return undefined
   }
@@ -91,11 +140,41 @@ function parseSpokenId(query: string): number | undefined {
   return undefined
 }
 
-function tokenOverlapScore(queryTokens: string[], field: string, pointsPerToken: number): number {
-  const fieldTokens = new Set(tokenize(field))
+function createSearchQueryIndex(query: string): SearchQueryIndex {
+  const normalized = normalizeText(query)
+
+  return {
+    normalized,
+    tokens: tokenizeNormalized(normalized),
+    spokenId: parseNormalizedSpokenId(normalized),
+  }
+}
+
+function tokenOverlapScore(
+  queryTokens: string[],
+  fieldTokens: Set<string>,
+  pointsPerToken: number,
+): number {
   const overlap = queryTokens.filter((token) => fieldTokens.has(token)).length
 
   return overlap * pointsPerToken
+}
+
+function metadataScore(
+  values: string[],
+  tokenSets: Set<string>[],
+  query: string,
+  queryTokens: string[],
+  exactOrPartialPoints: number,
+  tokenPoints: number,
+): number {
+  return values.reduce((total, value, index) => {
+    if (value === query || value.includes(query) || query.includes(value)) {
+      return total + exactOrPartialPoints
+    }
+
+    return total + tokenOverlapScore(queryTokens, tokenSets[index], tokenPoints)
+  }, 0)
 }
 
 function addFieldScore(
@@ -110,16 +189,11 @@ function addFieldScore(
   return score
 }
 
-function scoreProblem(problem: Problem, rawQuery: string): RankedProblemMatch | undefined {
-  const query = normalizeText(rawQuery)
-  const queryTokens = tokenize(rawQuery)
-  const queryId = parseSpokenId(rawQuery)
-  const title = normalizeText(problem.title)
-  const slug = normalizeText(problem.slug)
-  const aliases = (problem.aliases ?? []).map(normalizeText)
-  const keywords = (problem.keywords ?? []).map(normalizeText)
-  const categories = problem.categories.map(normalizeText)
-  const patterns = problem.patterns.map(normalizeText)
+function scoreProblem(index: SearchProblemIndex, queryIndex: SearchQueryIndex): RankedProblemMatch | undefined {
+  const { problem } = index
+  const query = queryIndex.normalized
+  const queryTokens = queryIndex.tokens
+  const queryId = queryIndex.spokenId
   const matchedFields: string[] = []
   let score = 0
   let matchType: ProblemMatchType = 'related'
@@ -129,63 +203,45 @@ function scoreProblem(problem: Problem, rawQuery: string): RankedProblemMatch | 
     matchType = 'exact'
   }
 
-  if (query === title) {
+  if (query === index.title) {
     score += addFieldScore(matchedFields, 'title', 900)
     matchType = 'exact'
-  } else if (title.startsWith(query)) {
+  } else if (index.title.startsWith(query)) {
     score += addFieldScore(matchedFields, 'title-prefix', 760)
     matchType = 'strong'
-  } else if (title.includes(query)) {
+  } else if (index.title.includes(query)) {
     score += addFieldScore(matchedFields, 'title-contains', 700)
     matchType = 'strong'
   }
 
-  if (aliases.includes(query)) {
+  if (index.aliases.includes(query)) {
     score += addFieldScore(matchedFields, 'alias', 860)
     matchType = 'exact'
-  } else if (aliases.some((alias) => alias.includes(query) || query.includes(alias))) {
+  } else if (index.aliases.some((alias) => alias.includes(query) || query.includes(alias))) {
     score += addFieldScore(matchedFields, 'alias-partial', 620)
     matchType = matchType === 'exact' ? matchType : 'strong'
   }
 
-  if (slug.includes(query)) {
+  if (index.slug.includes(query)) {
     score += addFieldScore(matchedFields, 'slug', 560)
     matchType = matchType === 'exact' ? matchType : 'strong'
   }
 
-  score += addFieldScore(matchedFields, 'title-tokens', tokenOverlapScore(queryTokens, problem.title, 95))
+  score += addFieldScore(matchedFields, 'title-tokens', tokenOverlapScore(queryTokens, index.titleTokens, 95))
 
   const aliasTokenScore = Math.max(
     0,
-    ...aliases.map((alias) => tokenOverlapScore(queryTokens, alias, 85)),
+    ...index.aliasTokenSets.map((tokens) => tokenOverlapScore(queryTokens, tokens, 85)),
   )
   score += addFieldScore(matchedFields, 'alias-tokens', aliasTokenScore)
 
-  const keywordScore = keywords.reduce((total, keyword) => {
-    if (keyword === query || keyword.includes(query) || query.includes(keyword)) {
-      return total + 120
-    }
-
-    return total + tokenOverlapScore(queryTokens, keyword, 55)
-  }, 0)
+  const keywordScore = metadataScore(index.keywords, index.keywordTokenSets, query, queryTokens, 120, 55)
   score += addFieldScore(matchedFields, 'keywords', keywordScore)
 
-  const categoryScore = categories.reduce((total, category) => {
-    if (category === query || category.includes(query) || query.includes(category)) {
-      return total + 110
-    }
-
-    return total + tokenOverlapScore(queryTokens, category, 45)
-  }, 0)
+  const categoryScore = metadataScore(index.categories, index.categoryTokenSets, query, queryTokens, 110, 45)
   score += addFieldScore(matchedFields, 'categories', categoryScore)
 
-  const patternScore = patterns.reduce((total, pattern) => {
-    if (pattern === query || pattern.includes(query) || query.includes(pattern)) {
-      return total + 125
-    }
-
-    return total + tokenOverlapScore(queryTokens, pattern, 50)
-  }, 0)
+  const patternScore = metadataScore(index.patterns, index.patternTokenSets, query, queryTokens, 125, 50)
   score += addFieldScore(matchedFields, 'patterns', patternScore)
 
   if (score <= 0) {
@@ -204,33 +260,23 @@ function scoreProblem(problem: Problem, rawQuery: string): RankedProblemMatch | 
   }
 }
 
-function isBroadMetadataQuery(query: string, problems: Problem[]): boolean {
-  const normalized = normalizeText(query)
-
-  if (normalized.length === 0) {
+function isBroadMetadataQuery(normalizedQuery: string): boolean {
+  if (normalizedQuery.length === 0) {
     return false
   }
 
-  return problems.some((problem) => {
-    const metadata = [
-      ...problem.categories,
-      ...problem.patterns,
-      ...(problem.keywords ?? []),
-    ].map(normalizeText)
-
-    return metadata.some((value) => value === normalized)
-  })
+  return SEARCH_INDEX.some((problemIndex) =>
+    problemIndex.metadataValues.some((value) => value === normalizedQuery),
+  )
 }
 
-function searchProblems(query: string, problems: Problem[]): RankedProblemMatch[] {
-  const normalized = normalizeText(query)
-
-  if (normalized.length === 0) {
+function searchProblems(queryIndex: SearchQueryIndex): RankedProblemMatch[] {
+  if (queryIndex.normalized.length === 0) {
     return []
   }
 
-  return problems
-    .map((problem) => scoreProblem(problem, query))
+  return SEARCH_INDEX
+    .map((problem) => scoreProblem(problem, queryIndex))
     .filter((match): match is RankedProblemMatch => match !== undefined)
     .filter((match) => match.score >= MATCH_THRESHOLDS.related)
     .sort((a, b) => {
@@ -243,9 +289,9 @@ function searchProblems(query: string, problems: Problem[]): RankedProblemMatch[
 }
 
 export function decideSearchResult(query: string): SearchDecision {
-  const normalized = normalizeText(query)
+  const queryIndex = createSearchQueryIndex(query)
 
-  if (normalized.length === 0) {
+  if (queryIndex.normalized.length === 0) {
     return {
       kind: 'empty',
       query,
@@ -253,8 +299,7 @@ export function decideSearchResult(query: string): SearchDecision {
     }
   }
 
-  const problems = getAllProblems()
-  const matches = searchProblems(query, problems)
+  const matches = searchProblems(queryIndex)
   const top = matches[0]
 
   if (!top) {
@@ -267,7 +312,7 @@ export function decideSearchResult(query: string): SearchDecision {
 
   const next = matches[1]
   const clearLead = !next || top.score - next.score >= MATCH_THRESHOLDS.clearLeadMargin
-  const broadMetadataQuery = isBroadMetadataQuery(query, problems)
+  const broadMetadataQuery = isBroadMetadataQuery(queryIndex.normalized)
   const highConfidence = top.matchType === 'exact' ||
     (top.score >= MATCH_THRESHOLDS.highConfidence && clearLead && !broadMetadataQuery)
 
