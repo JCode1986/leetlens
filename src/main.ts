@@ -13,6 +13,7 @@ import {
   setVoiceProcessing,
   setVoiceTranscript,
   transitionNavigation,
+  transitionNavigationToIndex,
 } from './navigation/navigationState'
 import type { NavigationContext, NavigationInput } from './navigation/navigationState'
 import {
@@ -68,7 +69,7 @@ function hasEvenHubHostBridge(): boolean {
   return typeof hostWindow.flutter_inappwebview?.callHandler === 'function'
 }
 
-function normalizeEventType(rawEventType: OsEventTypeList | undefined): OsEventTypeList | undefined {
+function normalizeEventType(rawEventType: unknown): OsEventTypeList | undefined {
   if (rawEventType === undefined) {
     return undefined
   }
@@ -93,6 +94,17 @@ function getCurrentSelectableIndex(state: NavigationState): number {
     return state.studySelectedIndex
   }
 
+  if (
+    state.currentScreen === 'quickAnswer' ||
+    state.currentScreen === 'hint' ||
+    state.currentScreen === 'approach' ||
+    state.currentScreen === 'pseudocode' ||
+    state.currentScreen === 'solution' ||
+    state.currentScreen === 'edgeCases'
+  ) {
+    return state.codePageIndex
+  }
+
   return state.selectedMenuIndex
 }
 
@@ -106,19 +118,40 @@ function getTargetContainerIndex(containerName: string | undefined): number | un
   return Number.parseInt(match[1], 10)
 }
 
-function getTargetIndexInput(event: EvenHubEvent, state: NavigationState): NavigationInput | undefined {
-  const eventTypes = [
+function getTargetIndex(event: EvenHubEvent): number | undefined {
+  const targetIndex = event.listEvent?.currentSelectItemIndex ??
+    getTargetContainerIndex(event.textEvent?.containerName ?? event.listEvent?.containerName)
+
+  return targetIndex
+}
+
+function getEventTypes(event: EvenHubEvent): Array<OsEventTypeList | undefined> {
+  return [
     normalizeEventType(event.listEvent?.eventType),
     normalizeEventType(event.textEvent?.eventType),
     normalizeEventType(event.sysEvent?.eventType),
   ]
+}
 
-  if (eventTypes.some((eventType) => eventType !== undefined)) {
+function hasExplicitEventType(event: EvenHubEvent): boolean {
+  return getEventTypes(event).some((eventType) => eventType !== undefined)
+}
+
+function isIndexSyncEvent(event: EvenHubEvent): boolean {
+  const hasSelectableContainerEvent =
+    event.listEvent !== undefined || event.textEvent !== undefined
+
+  return hasSelectableContainerEvent &&
+    event.sysEvent === undefined &&
+    !hasExplicitEventType(event)
+}
+
+function getTargetIndexInput(event: EvenHubEvent, state: NavigationState): NavigationInput | undefined {
+  if (!isIndexSyncEvent(event)) {
     return undefined
   }
 
-  const targetIndex = event.listEvent?.currentSelectItemIndex ??
-    getTargetContainerIndex(event.textEvent?.containerName ?? event.listEvent?.containerName)
+  const targetIndex = getTargetIndex(event)
 
   if (targetIndex === undefined) {
     return undefined
@@ -137,18 +170,34 @@ function getTargetIndexInput(event: EvenHubEvent, state: NavigationState): Navig
   return undefined
 }
 
-function getExplicitScrollInput(event: EvenHubEvent): NavigationInput | undefined {
-  const eventTypes = [
+function eventTypesInclude(event: EvenHubEvent, expectedEventType: OsEventTypeList): boolean {
+  return getEventTypes(event).some((eventType) => eventType === expectedEventType)
+}
+
+function containerEventTypesInclude(
+  event: EvenHubEvent,
+  expectedEventType: OsEventTypeList,
+): boolean {
+  return [
     normalizeEventType(event.listEvent?.eventType),
     normalizeEventType(event.textEvent?.eventType),
-    normalizeEventType(event.sysEvent?.eventType),
-  ]
+  ].some((eventType) => eventType === expectedEventType)
+}
 
-  if (eventTypes.some((eventType) => eventType === OsEventTypeList.SCROLL_TOP_EVENT)) {
+function getExplicitScrollInput(event: EvenHubEvent): NavigationInput | undefined {
+  if (eventTypesInclude(event, OsEventTypeList.SCROLL_TOP_EVENT)) {
     return 'up'
   }
 
-  if (eventTypes.some((eventType) => eventType === OsEventTypeList.SCROLL_BOTTOM_EVENT)) {
+  if (eventTypesInclude(event, OsEventTypeList.SCROLL_BOTTOM_EVENT)) {
+    return 'down'
+  }
+
+  if (containerEventTypesInclude(event, OsEventTypeList.FOREGROUND_EXIT_EVENT)) {
+    return 'up'
+  }
+
+  if (containerEventTypesInclude(event, OsEventTypeList.FOREGROUND_ENTER_EVENT)) {
     return 'down'
   }
 
@@ -156,28 +205,28 @@ function getExplicitScrollInput(event: EvenHubEvent): NavigationInput | undefine
 }
 
 function normalizeGesture(event: EvenHubEvent): GestureInput | undefined {
-  const entries = [
+  const eventTypes = [
     normalizeEventType(event.listEvent?.eventType),
     normalizeEventType(event.textEvent?.eventType),
     normalizeEventType(event.sysEvent?.eventType),
   ]
 
-  if (entries.some((eventType) => eventType === OsEventTypeList.DOUBLE_CLICK_EVENT)) {
+  if (eventTypes.some((eventType) => eventType === OsEventTypeList.DOUBLE_CLICK_EVENT)) {
     return 'doubleClick'
   }
 
-  if (entries.some((eventType) => eventType === OsEventTypeList.LONG_PRESS_EVENT)) {
+  if (eventTypes.some((eventType) => eventType === OsEventTypeList.LONG_PRESS_EVENT)) {
     return 'longPress'
   }
 
-  if (entries.some((eventType) => eventType === OsEventTypeList.CLICK_EVENT)) {
+  if (eventTypes.some((eventType) => eventType === OsEventTypeList.CLICK_EVENT)) {
     return 'click'
   }
 
   const hasInputEnvelope = event.listEvent !== undefined ||
     event.textEvent !== undefined ||
     isGestureSysEvent(event)
-  const hasEventType = entries.some((eventType) => eventType !== undefined)
+  const hasEventType = eventTypes.some((eventType) => eventType !== undefined)
 
   if (hasInputEnvelope && !hasEventType) {
     return 'click'
@@ -194,6 +243,12 @@ function isLongPressReleaseEvent(event: EvenHubEvent): boolean {
   ]
 
   return eventTypes.some((eventType) => eventType === OsEventTypeList.LONG_PRESS_RELEASE_EVENT)
+}
+
+function waitForNativeActivation(): Promise<void> {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, 50)
+  })
 }
 
 async function startLeetLens(): Promise<void> {
@@ -304,7 +359,14 @@ async function startLeetLens(): Promise<void> {
 
     if (bridge) {
       const stateSnapshot = navigationState
-      nativeRenderQueue = nativeRenderQueue.then(() => renderNative(bridge, stateSnapshot))
+      nativeRenderQueue = nativeRenderQueue.then(async () => {
+        await renderNative(bridge, stateSnapshot)
+        await waitForNativeActivation()
+
+        if (navigationState === stateSnapshot) {
+          await renderNative(bridge, stateSnapshot)
+        }
+      })
     }
   }
 
@@ -427,6 +489,32 @@ async function startLeetLens(): Promise<void> {
     applyNavigationState(nextState, bridge)
   }
 
+  function applyTargetedSelect(targetIndex: number, bridge?: EvenAppBridge): void {
+    const indexedState = transitionNavigationToIndex(
+      navigationState,
+      targetIndex,
+      getNavigationContext(navigationState),
+    )
+
+    if (
+      indexedState.currentScreen === 'problem' &&
+      indexedState.selectedMenuIndex === PROBLEM_FAVORITE_MENU_INDEX &&
+      indexedState.selectedProblemId !== undefined
+    ) {
+      toggleFavorite(indexedState.selectedProblemId)
+      applyNavigationState({ ...indexedState }, bridge)
+      return
+    }
+
+    const nextState = transitionNavigation(
+      indexedState,
+      'select',
+      getNavigationContext(indexedState),
+    )
+
+    applyNavigationState(nextState, bridge)
+  }
+
   function returnHome(bridge?: EvenAppBridge): void {
     if (navigationState.currentScreen === 'home') {
       return
@@ -470,10 +558,16 @@ async function startLeetLens(): Promise<void> {
       return
     }
 
+    const targetIndex = getTargetIndex(event)
     const gesture = normalizeGesture(event)
 
     if (gesture) {
       if (gesture === 'click') {
+        if (targetIndex !== undefined) {
+          applyTargetedSelect(targetIndex, bridge)
+          return
+        }
+
         applyInput('select', bridge)
         return
       }

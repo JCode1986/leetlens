@@ -1,8 +1,9 @@
 import { getProblemById } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
 import type { Problem } from '../types/problem'
-import { wrapText } from '../utils/text'
+import { wrapParagraph } from '../utils/text'
 import { createSelectableListTextObjects } from './selectableList'
+import { G2_TEXT_LAYOUT } from './g2Layout'
 
 function getVoiceResultProblems(state: NavigationState): Problem[] {
   return state.voiceResultProblemIds
@@ -18,7 +19,10 @@ export function createVoiceResultsTextObjects(state: NavigationState) {
 
   return createSelectableListTextObjects({
     title,
-    subtitleLines: wrapText(`HEARD "${state.voiceTranscript}"`, 31).slice(0, 2),
+    subtitleLines: wrapParagraph(
+      `HEARD "${state.voiceTranscript}"`,
+      G2_TEXT_LAYOUT.proseCharsPerLine,
+    ).slice(0, 2),
     items: problems,
     selectedIndex: state.selectedMenuIndex,
     itemNamePrefix: 'voice-result',

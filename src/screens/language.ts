@@ -1,19 +1,33 @@
 import type { NavigationState } from '../types/navigation'
 import { LANGUAGE_LABELS, SELECTABLE_PROGRAMMING_LANGUAGES } from '../utils/language'
-import { createTextObjects } from './g2Layout'
+import {
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+  getCenteredTextGeometry,
+} from './g2Layout'
 
 export function createLanguageTextObjects(state: NavigationState) {
   const selectedIndex = Math.max(
     0,
     Math.min(SELECTABLE_PROGRAMMING_LANGUAGES.length - 1, state.selectedMenuIndex),
   )
+  const rowGeometry = getCenteredTextGeometry(
+    SELECTABLE_PROGRAMMING_LANGUAGES.map((language) =>
+      `> ${LANGUAGE_LABELS[language].displayName} *`,
+    ),
+    140,
+    G2_TEXT_LAYOUT.listItemWidth,
+  )
 
   return createTextObjects([
     {
+      ...getCenteredTitleGeometry('LANGUAGE'),
       y: 22,
       height: 32,
       name: 'language-title',
-      content: 'LANGUAGE',
+      content: getCenteredTitleContent('LANGUAGE'),
       textColor: 4,
     },
     ...SELECTABLE_PROGRAMMING_LANGUAGES.map((language, index) => {
@@ -22,14 +36,13 @@ export function createLanguageTextObjects(state: NavigationState) {
       const label = LANGUAGE_LABELS[language].displayName
 
       return {
-        x: 50,
+        x: rowGeometry.x,
         y: 70 + index * 32,
-        width: 410,
+        width: rowGeometry.width,
         height: 26,
         name: `language-${language}`,
         content: `${selected ? '>' : ' '} ${label}${active ? ' *' : ''}`,
         textColor: selected ? 4 : 3,
-        isEventCapture: selected,
       }
     }),
   ])

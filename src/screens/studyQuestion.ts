@@ -1,7 +1,13 @@
 import { getProblemById } from '../services/problemService'
 import type { NavigationState, StudyChoice } from '../types/navigation'
-import { truncateLine } from '../utils/text'
-import { createTextObjects } from './g2Layout'
+import { wrapHeader } from '../utils/text'
+import {
+  createTextObjects,
+  G2_TEXT_LAYOUT,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+  getCenteredTextGeometry,
+} from './g2Layout'
 
 function getCorrectChoice(choices: StudyChoice[]): StudyChoice | undefined {
   return choices.find((choice) => choice.isCorrect)
@@ -24,13 +30,14 @@ export function createStudyQuestionTextObjects(state: NavigationState) {
   if (!problem || choices.length === 0 || !getCorrectChoice(choices)) {
     return createTextObjects([
       {
+        ...getCenteredTitleGeometry('STUDY'),
         y: 24,
         name: 'study-question-title',
-        content: 'STUDY',
+        content: getCenteredTitleContent('STUDY'),
         textColor: 4,
-        isEventCapture: true,
       },
       {
+        ...getCenteredTextGeometry('No question available.'),
         y: 74,
         name: 'study-question-empty',
         content: 'No question available.',
@@ -39,35 +46,47 @@ export function createStudyQuestionTextObjects(state: NavigationState) {
     ])
   }
 
-  const choiceY = 104
+  const titleLines = wrapHeader(
+    `#${problem.id} ${problem.title.toUpperCase()}`,
+    G2_TEXT_LAYOUT.titleCharsPerLine,
+  ).slice(0, 2)
+  const labelY = 14 + titleLines.length * 26 + 10
+  const choiceY = labelY + 44
+  const questionLabel = getQuestionLabel(state)
+  const choiceGeometry = getCenteredTextGeometry(
+    choices.map((choice) => `> ${choice.label}`),
+    160,
+    G2_TEXT_LAYOUT.listItemWidth,
+  )
 
   return createTextObjects([
     {
+      ...getCenteredTitleGeometry(titleLines),
       y: 14,
-      height: 26,
+      height: titleLines.length * 26,
       name: 'study-question-title',
-      content: truncateLine(`#${problem.id} ${problem.title.toUpperCase()}`, 31),
+      content: getCenteredTitleContent(titleLines),
       textColor: 4,
     },
     {
-      y: 60,
+      ...getCenteredTextGeometry(questionLabel),
+      y: labelY,
       height: 24,
       name: 'study-question-label',
-      content: getQuestionLabel(state),
+      content: questionLabel,
       textColor: 3,
     },
     ...choices.map((choice, index) => {
       const selected = index === selectedIndex
 
       return {
-        x: 50,
+        x: choiceGeometry.x,
         y: choiceY + index * 34,
-        width: 470,
+        width: choiceGeometry.width,
         height: 26,
         name: `study-choice-${index}`,
-        content: `${selected ? '>' : ' '} ${truncateLine(choice.label, 31)}`,
+        content: `${selected ? '>' : ' '} ${choice.label}`,
         textColor: selected ? 4 : 3,
-        isEventCapture: selected,
       }
     }),
   ])

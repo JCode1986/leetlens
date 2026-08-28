@@ -10,6 +10,5 @@ export function createStudyPatternTextObjects(state: NavigationState) {
     itemNamePrefix: 'study-pattern',
     formatItem: (pattern) => pattern,
     emptyMessage: 'NO PATTERNS FOUND',
-    maxTitleLength: 31,
   })
 }

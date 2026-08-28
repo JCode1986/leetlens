@@ -1,34 +1,14 @@
-export function truncateLine(value: string, maxLength: number): string {
-  if (value.length <= maxLength) {
-    return value
-  }
-
-  return `${value.slice(0, Math.max(0, maxLength - 3))}...`
+function normalizeText(value: string): string {
+  return value.trim().replace(/\s+/g, ' ')
 }
 
-export function wrapText(value: string, maxLineLength: number): string[] {
+function wrapWords(value: string, maxLineLength: number): string[] {
   const safeLineLength = Math.max(1, maxLineLength)
-  const words = value.split(/\s+/).filter(Boolean)
+  const words = normalizeText(value).split(' ').filter(Boolean)
   const lines: string[] = []
   let currentLine = ''
 
-  function pushWordParts(word: string): void {
-    for (let index = 0; index < word.length; index += safeLineLength) {
-      lines.push(word.slice(index, index + safeLineLength))
-    }
-  }
-
   for (const word of words) {
-    if (word.length > safeLineLength) {
-      if (currentLine.length > 0) {
-        lines.push(currentLine)
-        currentLine = ''
-      }
-
-      pushWordParts(word)
-      continue
-    }
-
     if (currentLine.length === 0) {
       currentLine = word
       continue
@@ -45,11 +25,23 @@ export function wrapText(value: string, maxLineLength: number): string[] {
     currentLine = word
   }
 
-  if (currentLine.length > 0) {
-    lines.push(currentLine)
-  }
+  return currentLine.length > 0 ? [...lines, currentLine] : lines
+}
 
-  return lines
+export function wrapText(value: string, maxLineLength: number): string[] {
+  return wrapWords(value, maxLineLength)
+}
+
+export function removeBlankLines(lines: string[]): string[] {
+  return lines.filter((line) => line.trim().length > 0)
+}
+
+export function wrapHeader(value: string, maxLineLength: number): string[] {
+  return wrapWords(value, maxLineLength)
+}
+
+export function wrapParagraph(value: string, maxLineLength: number): string[] {
+  return wrapWords(value, maxLineLength)
 }
 
 export function wrapPrefixedText(
@@ -65,4 +57,16 @@ export function wrapPrefixedText(
   }
 
   return wrapped.map((line, index) => `${index === 0 ? prefix : continuationPrefix}${line}`)
+}
+
+export function wrapNumberedItem(
+  number: number,
+  value: string,
+  maxLineLength: number,
+): string[] {
+  return wrapPrefixedText(`${number}. `, value, maxLineLength)
+}
+
+export function wrapBulletItem(value: string, maxLineLength: number): string[] {
+  return wrapPrefixedText('\u2022 ', value, maxLineLength)
 }

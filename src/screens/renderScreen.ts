@@ -5,7 +5,12 @@ import { createCategoriesTextObjects } from './categories'
 import { createEdgeCasesTextObjects, getEdgeCasesPageCount } from './edgeCases'
 import { createDifficultyListTextObjects } from './difficultyList'
 import { createFindTextObjects } from './find'
-import { createTextObjects } from './g2Layout'
+import {
+  createTextObjects,
+  getCenteredTitleContent,
+  getCenteredTitleGeometry,
+  getCenteredTextGeometry,
+} from './g2Layout'
 import { createHintTextObjects, getHintPageCount } from './hint'
 import { createHomeTextObjects } from './home'
 import { createLanguageTextObjects } from './language'
@@ -25,108 +30,55 @@ import { createVoiceMatchTextObjects } from './voiceMatch'
 import { createVoiceResultsTextObjects } from './voiceResults'
 import { createVoiceSearchTextObjects } from './voiceSearch'
 
-export function createScreenTextObjects(state: NavigationState): TextContainerProperty[] {
-  if (state.currentScreen === 'home') {
-    return createHomeTextObjects(state)
-  }
+type ScreenRenderer = (state: NavigationState) => TextContainerProperty[]
+type PageCountGetter = (state: NavigationState) => number
 
-  if (state.currentScreen === 'categories') {
-    return createCategoriesTextObjects(state)
-  }
+const SCREEN_RENDERERS: Partial<Record<NavigationState['currentScreen'], ScreenRenderer>> = {
+  home: createHomeTextObjects,
+  categories: createCategoriesTextObjects,
+  patterns: createPatternsTextObjects,
+  collections: createCollectionsTextObjects,
+  find: createFindTextObjects,
+  study: createStudyTextObjects,
+  studyPattern: createStudyPatternTextObjects,
+  studyQuestion: createStudyQuestionTextObjects,
+  studyFeedback: createStudyFeedbackTextObjects,
+  voiceSearch: createVoiceSearchTextObjects,
+  voiceMatch: createVoiceMatchTextObjects,
+  voiceResults: createVoiceResultsTextObjects,
+  difficultyList: createDifficultyListTextObjects,
+  settings: createSettingsTextObjects,
+  language: createLanguageTextObjects,
+  problemList: createProblemListTextObjects,
+  problem: createProblemTextObjects,
+  quickAnswer: createQuickAnswerTextObjects,
+  hint: createHintTextObjects,
+  approach: createApproachTextObjects,
+  pseudocode: createPseudocodeTextObjects,
+  solution: createSolutionTextObjects,
+  edgeCases: createEdgeCasesTextObjects,
+}
 
-  if (state.currentScreen === 'patterns') {
-    return createPatternsTextObjects(state)
-  }
+const PAGE_COUNT_GETTERS: Partial<Record<NavigationState['currentScreen'], PageCountGetter>> = {
+  quickAnswer: getQuickAnswerPageCount,
+  hint: getHintPageCount,
+  approach: getApproachPageCount,
+  pseudocode: getPseudocodePageCount,
+  solution: getSolutionPageCount,
+  edgeCases: getEdgeCasesPageCount,
+}
 
-  if (state.currentScreen === 'collections') {
-    return createCollectionsTextObjects(state)
-  }
-
-  if (state.currentScreen === 'find') {
-    return createFindTextObjects(state)
-  }
-
-  if (state.currentScreen === 'study') {
-    return createStudyTextObjects(state)
-  }
-
-  if (state.currentScreen === 'studyPattern') {
-    return createStudyPatternTextObjects(state)
-  }
-
-  if (state.currentScreen === 'studyQuestion') {
-    return createStudyQuestionTextObjects(state)
-  }
-
-  if (state.currentScreen === 'studyFeedback') {
-    return createStudyFeedbackTextObjects(state)
-  }
-
-  if (state.currentScreen === 'voiceSearch') {
-    return createVoiceSearchTextObjects(state)
-  }
-
-  if (state.currentScreen === 'voiceMatch') {
-    return createVoiceMatchTextObjects(state)
-  }
-
-  if (state.currentScreen === 'voiceResults') {
-    return createVoiceResultsTextObjects(state)
-  }
-
-  if (state.currentScreen === 'difficultyList') {
-    return createDifficultyListTextObjects(state)
-  }
-
-  if (state.currentScreen === 'settings') {
-    return createSettingsTextObjects(state)
-  }
-
-  if (state.currentScreen === 'language') {
-    return createLanguageTextObjects(state)
-  }
-
-  if (state.currentScreen === 'problemList') {
-    return createProblemListTextObjects(state)
-  }
-
-  if (state.currentScreen === 'problem') {
-    return createProblemTextObjects(state)
-  }
-
-  if (state.currentScreen === 'quickAnswer') {
-    return createQuickAnswerTextObjects(state)
-  }
-
-  if (state.currentScreen === 'hint') {
-    return createHintTextObjects(state)
-  }
-
-  if (state.currentScreen === 'approach') {
-    return createApproachTextObjects(state)
-  }
-
-  if (state.currentScreen === 'pseudocode') {
-    return createPseudocodeTextObjects(state)
-  }
-
-  if (state.currentScreen === 'solution') {
-    return createSolutionTextObjects(state)
-  }
-
-  if (state.currentScreen === 'edgeCases') {
-    return createEdgeCasesTextObjects(state)
-  }
-
+function createFallbackTextObjects(): TextContainerProperty[] {
   return createTextObjects([
     {
+      ...getCenteredTitleGeometry('LEETLENS'),
       y: 24,
       name: 'unimplemented-title',
-      content: 'LEETLENS',
+      content: getCenteredTitleContent('LEETLENS'),
       textColor: 4,
-      isEventCapture: true,
     },
     {
+      ...getCenteredTextGeometry('Screen not ready.'),
       y: 72,
       name: 'unimplemented-message',
       content: 'Screen not ready.',
@@ -135,30 +87,10 @@ export function createScreenTextObjects(state: NavigationState): TextContainerPr
   ])
 }
 
+export function createScreenTextObjects(state: NavigationState): TextContainerProperty[] {
+  return SCREEN_RENDERERS[state.currentScreen]?.(state) ?? createFallbackTextObjects()
+}
+
 export function getCurrentScreenPageCount(state: NavigationState): number {
-  if (state.currentScreen === 'quickAnswer') {
-    return getQuickAnswerPageCount(state)
-  }
-
-  if (state.currentScreen === 'hint') {
-    return getHintPageCount(state)
-  }
-
-  if (state.currentScreen === 'approach') {
-    return getApproachPageCount(state)
-  }
-
-  if (state.currentScreen === 'pseudocode') {
-    return getPseudocodePageCount(state)
-  }
-
-  if (state.currentScreen === 'solution') {
-    return getSolutionPageCount(state)
-  }
-
-  if (state.currentScreen === 'edgeCases') {
-    return getEdgeCasesPageCount(state)
-  }
-
-  return 1
+  return PAGE_COUNT_GETTERS[state.currentScreen]?.(state) ?? 1
 }

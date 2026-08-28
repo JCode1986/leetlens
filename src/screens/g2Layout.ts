@@ -5,21 +5,30 @@ import {
 } from '@evenrealities/even_hub_sdk'
 
 export const MAX_TEXT_CONTAINERS = 8
-const DEFAULT_TEXT_WIDTH = 504
+const G2_SCREEN_WIDTH = 576
+const G2_SCREEN_HEIGHT = 288
+const G2_SCREEN_PADDING_X = 12
+const DEFAULT_TEXT_X = G2_SCREEN_PADDING_X
+const DEFAULT_TEXT_WIDTH = G2_SCREEN_WIDTH - G2_SCREEN_PADDING_X * 2
+const ESTIMATED_CHARACTER_WIDTH = 9
+const ESTIMATED_TITLE_CHARACTER_WIDTH = 12
+const CENTERED_TEXT_PADDING = 16
+const MAX_CENTERED_CONTENT_WIDTH = Math.floor(G2_SCREEN_WIDTH * 0.97)
+const MAX_CENTERED_CONTENT_CHARS = Math.floor(
+  (MAX_CENTERED_CONTENT_WIDTH - CENTERED_TEXT_PADDING) / ESTIMATED_CHARACTER_WIDTH,
+)
+const TITLE_CHARS_PER_LINE = Math.floor(DEFAULT_TEXT_WIDTH / ESTIMATED_TITLE_CHARACTER_WIDTH)
 
 export const G2_TEXT_LAYOUT = {
-  defaultCharsPerLine: 31,
-  listItemCharsPerLine: 31,
-  listTitleCharsPerLine: 31,
-  listTitleY: 22,
-  listTitleLineHeight: 26,
-  listTitleGap: 12,
-  listItemX: 50,
-  listItemWidth: 470,
-  listItemLineHeight: 24,
-  listItemSpacing: 8,
-  listViewportBottom: 278,
-  continuationIndent: '  ',
+  screenWidth: G2_SCREEN_WIDTH,
+  screenHeight: G2_SCREEN_HEIGHT,
+  maxCenteredContentWidth: MAX_CENTERED_CONTENT_WIDTH,
+  maxCenteredContentCharsPerLine: MAX_CENTERED_CONTENT_CHARS,
+  titleCharsPerLine: TITLE_CHARS_PER_LINE,
+  defaultCharsPerLine: 36,
+  proseCharsPerLine: 28,
+  listItemX: G2_SCREEN_PADDING_X,
+  listItemWidth: DEFAULT_TEXT_WIDTH,
 } as const
 
 export interface TextSpec {
@@ -30,7 +39,80 @@ export interface TextSpec {
   content: string
   name: string
   textColor?: number
-  isEventCapture?: boolean
+}
+
+export function createPageEventCaptureSpec(
+  name: string,
+  geometry: Partial<Pick<TextSpec, 'x' | 'y' | 'width' | 'height'>> = {},
+): TextSpec {
+  return {
+    x: 0,
+    y: 0,
+    width: G2_SCREEN_WIDTH,
+    height: G2_SCREEN_HEIGHT,
+    ...geometry,
+    name,
+    content: ' ',
+    textColor: 0,
+  }
+}
+
+function getLongestLineLength(content: string | string[]): number {
+  const lines = Array.isArray(content) ? content : content.split('\n')
+
+  return lines.reduce((longest, line) => Math.max(longest, line.length), 0)
+}
+
+function clampWidth(width: number, minWidth: number, maxWidth: number): number {
+  return Math.min(maxWidth, Math.max(minWidth, width))
+}
+
+export function getCenteredTextGeometry(
+  content: string | string[],
+  minWidth = 80,
+  maxWidth = DEFAULT_TEXT_WIDTH,
+) {
+  const width = clampWidth(
+    getLongestLineLength(content) * ESTIMATED_CHARACTER_WIDTH + CENTERED_TEXT_PADDING,
+    minWidth,
+    maxWidth,
+  )
+
+  return {
+    x: Math.round((G2_SCREEN_WIDTH - width) / 2),
+    width,
+  }
+}
+
+export function getCenteredLineGeometry(
+  content: string | string[],
+  characterWidth = ESTIMATED_CHARACTER_WIDTH,
+  padding = CENTERED_TEXT_PADDING * 2,
+) {
+  const textWidth = clampWidth(
+    getLongestLineLength(content) * characterWidth,
+    1,
+    G2_SCREEN_WIDTH,
+  )
+  const x = Math.round((G2_SCREEN_WIDTH - textWidth) / 2)
+
+  return {
+    x,
+    width: Math.min(G2_SCREEN_WIDTH - x, textWidth + padding),
+  }
+}
+
+export function getCenteredTitleGeometry(
+  content: string | string[],
+  padding = CENTERED_TEXT_PADDING * 2,
+) {
+  return getCenteredLineGeometry(content, ESTIMATED_TITLE_CHARACTER_WIDTH, padding)
+}
+
+export function getCenteredTitleContent(content: string | string[]): string {
+  const lines = Array.isArray(content) ? content : content.split('\n')
+
+  return lines.map((line) => line.trim()).join('\n')
 }
 
 export function createTextObjects(specs: TextSpec[]): TextContainerProperty[] {
@@ -39,10 +121,14 @@ export function createTextObjects(specs: TextSpec[]): TextContainerProperty[] {
   return visibleSpecs.map(
     (spec, index) =>
       new TextContainerProperty({
-        xPosition: spec.x ?? 36,
+        xPosition: spec.x ?? DEFAULT_TEXT_X,
         yPosition: spec.y,
         width: spec.width ?? DEFAULT_TEXT_WIDTH,
         height: spec.height ?? 24,
+        borderWidth: 0,
+        borderColor: 0,
+        borderRadius: 0,
+        paddingLength: 0,
         containerID: 1000 + index,
         containerName: spec.name,
         zOrderIndex: index + 1,

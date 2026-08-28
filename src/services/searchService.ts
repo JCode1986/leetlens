@@ -204,14 +204,14 @@ function scoreProblem(problem: Problem, rawQuery: string): RankedProblemMatch | 
   }
 }
 
-function isBroadMetadataQuery(query: string): boolean {
+function isBroadMetadataQuery(query: string, problems: Problem[]): boolean {
   const normalized = normalizeText(query)
 
   if (normalized.length === 0) {
     return false
   }
 
-  return getAllProblems().some((problem) => {
+  return problems.some((problem) => {
     const metadata = [
       ...problem.categories,
       ...problem.patterns,
@@ -222,14 +222,14 @@ function isBroadMetadataQuery(query: string): boolean {
   })
 }
 
-function searchProblems(query: string): RankedProblemMatch[] {
+function searchProblems(query: string, problems: Problem[]): RankedProblemMatch[] {
   const normalized = normalizeText(query)
 
   if (normalized.length === 0) {
     return []
   }
 
-  return getAllProblems()
+  return problems
     .map((problem) => scoreProblem(problem, query))
     .filter((match): match is RankedProblemMatch => match !== undefined)
     .filter((match) => match.score >= MATCH_THRESHOLDS.related)
@@ -253,7 +253,8 @@ export function decideSearchResult(query: string): SearchDecision {
     }
   }
 
-  const matches = searchProblems(query)
+  const problems = getAllProblems()
+  const matches = searchProblems(query, problems)
   const top = matches[0]
 
   if (!top) {
@@ -266,7 +267,7 @@ export function decideSearchResult(query: string): SearchDecision {
 
   const next = matches[1]
   const clearLead = !next || top.score - next.score >= MATCH_THRESHOLDS.clearLeadMargin
-  const broadMetadataQuery = isBroadMetadataQuery(query)
+  const broadMetadataQuery = isBroadMetadataQuery(query, problems)
   const highConfidence = top.matchType === 'exact' ||
     (top.score >= MATCH_THRESHOLDS.highConfidence && clearLead && !broadMetadataQuery)
 
