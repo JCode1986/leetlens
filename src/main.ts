@@ -18,23 +18,17 @@ import {
 import type { NavigationContext, NavigationInput } from './navigation/navigationState'
 import {
   addRecentProblem,
-  getFavoriteIds,
-  getRecentProblemIds,
   loadDefaultLanguagePreference,
   saveDefaultLanguagePreference,
   toggleFavorite,
 } from './services/preferencesService'
 import {
-  getAllProblems,
   getCategories,
-  getCollection,
   getCollections,
-  getProblemById,
+  getExistingProblemsById,
   getPatterns,
-  getProblemsByCategory,
-  getProblemsByDifficulty,
-  getProblemsByPattern,
 } from './services/problemService'
+import { getProblemListProblems } from './services/problemListService'
 import { decideSearchResult } from './services/searchService'
 import type { TranscriptUpdate } from './services/transcriptionService'
 import { VoiceService } from './services/voiceService'
@@ -47,7 +41,6 @@ import {
 import { createScreenTextObjects, getCurrentScreenPageCount } from './screens/renderScreen'
 import { PROBLEM_FAVORITE_MENU_INDEX } from './types/navigation'
 import type { NavigationState } from './types/navigation'
-import type { Problem, ProblemId } from './types/problem'
 
 type EvenHostWindow = Window & {
   flutter_inappwebview?: {
@@ -258,57 +251,13 @@ async function startLeetLens(): Promise<void> {
   let voiceRunId = 0
   let lastVoiceTranscriptRenderMs = 0
 
-  function getProblemListProblems(state: NavigationState): Problem[] {
-    if (state.problemListSource === 'pattern' && state.selectedPattern) {
-      return getProblemsByPattern(state.selectedPattern)
-    }
-
-    if (state.problemListSource === 'collection' && state.selectedCollection) {
-      return getCollection(state.selectedCollection)
-    }
-
-    if (state.problemListSource === 'all') {
-      return getAllProblems()
-    }
-
-    if (state.problemListSource === 'difficulty' && state.selectedDifficulty) {
-      return getProblemsByDifficulty(state.selectedDifficulty)
-    }
-
-    if (state.problemListSource === 'favorites') {
-      return resolveProblemIds(getFavoriteIds()).sort((a, b) => a.id - b.id)
-    }
-
-    if (state.problemListSource === 'recent') {
-      return resolveProblemIds(getRecentProblemIds())
-    }
-
-    if (state.selectedCategory) {
-      return getProblemsByCategory(state.selectedCategory)
-    }
-
-    return []
-  }
-
-  function getVoiceResultProblems(state: NavigationState): Problem[] {
-    return state.voiceResultProblemIds
-      .map((problemId) => getProblemById(problemId))
-      .filter((problem): problem is Problem => problem !== undefined)
-  }
-
-  function resolveProblemIds(problemIds: ProblemId[]): Problem[] {
-    return problemIds
-      .map((problemId) => getProblemById(problemId))
-      .filter((problem): problem is Problem => problem !== undefined)
-  }
-
   function getNavigationContext(state: NavigationState): NavigationContext {
     return {
       categories: getCategories(),
       patterns: getPatterns(),
       collections: getCollections(),
       problemListProblems: getProblemListProblems(state),
-      voiceResultProblems: getVoiceResultProblems(state),
+      voiceResultProblems: getExistingProblemsById(state.voiceResultProblemIds),
       pageCount: getCurrentScreenPageCount(state),
     }
   }

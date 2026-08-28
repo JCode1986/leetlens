@@ -5,11 +5,14 @@ import {
 } from '@evenrealities/even_hub_sdk'
 
 export const MAX_TEXT_CONTAINERS = 8
+export const MAX_VISIBLE_TEXT_CONTAINERS = MAX_TEXT_CONTAINERS - 1
 const G2_SCREEN_WIDTH = 576
 const G2_SCREEN_HEIGHT = 288
+const G2_EVENT_CAPTURE_WIDTH = 1
 const G2_SCREEN_PADDING_X = 12
 const DEFAULT_TEXT_X = G2_SCREEN_PADDING_X
 const DEFAULT_TEXT_WIDTH = G2_SCREEN_WIDTH - G2_SCREEN_PADDING_X * 2
+const MIN_TEXT_LINE_HEIGHT = 28
 const ESTIMATED_CHARACTER_WIDTH = 9
 const ESTIMATED_TITLE_CHARACTER_WIDTH = 12
 const CENTERED_TEXT_PADDING = 16
@@ -39,6 +42,7 @@ export interface TextSpec {
   content: string
   name: string
   textColor?: number
+  eventCapture?: boolean
 }
 
 export function createPageEventCaptureSpec(
@@ -48,12 +52,13 @@ export function createPageEventCaptureSpec(
   return {
     x: 0,
     y: 0,
-    width: G2_SCREEN_WIDTH,
-    height: G2_SCREEN_HEIGHT,
     ...geometry,
+    width: G2_EVENT_CAPTURE_WIDTH,
+    height: G2_SCREEN_HEIGHT,
     name,
     content: ' ',
     textColor: 0,
+    eventCapture: true,
   }
 }
 
@@ -115,16 +120,39 @@ export function getCenteredTitleContent(content: string | string[]): string {
   return lines.map((line) => line.trim()).join('\n')
 }
 
-export function createTextObjects(specs: TextSpec[]): TextContainerProperty[] {
-  const visibleSpecs = specs.slice(0, MAX_TEXT_CONTAINERS)
+function getLineCount(content: string): number {
+  return Math.max(1, content.split('\n').length)
+}
 
-  return visibleSpecs.map(
+function getSafeTextHeight(spec: TextSpec): number {
+  if (spec.eventCapture) {
+    return spec.height ?? MIN_TEXT_LINE_HEIGHT
+  }
+
+  const requestedHeight = spec.height ?? MIN_TEXT_LINE_HEIGHT
+  const minimumHeight = getLineCount(spec.content) * MIN_TEXT_LINE_HEIGHT
+
+  return Math.max(requestedHeight, minimumHeight)
+}
+
+function createDefaultEventCaptureSpec(specs: TextSpec[]): TextSpec {
+  return createPageEventCaptureSpec(`${specs[0]?.name.split('-')[0] ?? 'screen'}-capture`)
+}
+
+export function createTextObjects(specs: TextSpec[]): TextContainerProperty[] {
+  const captureSpec = specs.find((spec) => spec.eventCapture) ?? createDefaultEventCaptureSpec(specs)
+  const passiveSpecs = specs
+    .filter((spec) => !spec.eventCapture)
+    .slice(0, MAX_VISIBLE_TEXT_CONTAINERS)
+  const textSpecs = [captureSpec, ...passiveSpecs]
+
+  return textSpecs.map(
     (spec, index) =>
       new TextContainerProperty({
         xPosition: spec.x ?? DEFAULT_TEXT_X,
         yPosition: spec.y,
         width: spec.width ?? DEFAULT_TEXT_WIDTH,
-        height: spec.height ?? 24,
+        height: getSafeTextHeight(spec),
         borderWidth: 0,
         borderColor: 0,
         borderRadius: 0,
@@ -134,7 +162,7 @@ export function createTextObjects(specs: TextSpec[]): TextContainerProperty[] {
         zOrderIndex: index + 1,
         content: spec.content.length > 0 ? spec.content : ' ',
         textColor: spec.textColor ?? 4,
-        isEventCapture: index === 0 ? 1 : 0,
+        isEventCapture: spec.eventCapture ? 1 : 0,
       }),
   )
 }

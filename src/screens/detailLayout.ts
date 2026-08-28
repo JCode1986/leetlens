@@ -75,10 +75,7 @@ export function createDetailTextObjects(
   }
 
   return createTextObjects([
-    createPageEventCaptureSpec(`detail-capture-${pageIndex}`, {
-      y: bodyY,
-      height: G2_TEXT_LAYOUT.screenHeight - bodyY,
-    }),
+    createPageEventCaptureSpec(`detail-capture-${pageIndex}`),
     ...titleLines.map((line, index) => ({
       ...getCenteredTitleGeometry(line, G2_TEXT_LAYOUT.screenWidth),
       y: DETAIL_TITLE_Y + index * DETAIL_LINE_HEIGHT,

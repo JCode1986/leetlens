@@ -25,6 +25,10 @@ const COMMON_COMPLEXITIES = [
   'O(2^n)',
 ]
 
+const ALL_STUDY_PROBLEMS = getAllProblems()
+const BLIND_75_PROBLEMS = getCollection(STUDY_CONFIG.blind75CollectionName)
+const ALL_PATTERN_NAMES = getPatterns()
+
 export interface StudyQuestion {
   problem: Problem
   questionType: StudyQuestionType
@@ -37,7 +41,7 @@ interface CreateStudyQuestionOptions {
   recentProblemIds: ProblemId[]
 }
 
-function shuffle<T>(items: T[]): T[] {
+function shuffle<T>(items: readonly T[]): T[] {
   const shuffled = [...items]
 
   for (let index = shuffled.length - 1; index > 0; index -= 1) {
@@ -54,7 +58,7 @@ function unique(items: string[]): string[] {
   return [...new Set(items.filter((item) => item.trim().length > 0))]
 }
 
-function chooseRandom<T>(items: T[]): T | undefined {
+function chooseRandom<T>(items: readonly T[]): T | undefined {
   if (items.length === 0) {
     return undefined
   }
@@ -68,10 +72,10 @@ function getCandidateProblems(source: StudySource, pattern?: string): Problem[] 
   }
 
   if (source === 'blind75') {
-    return getCollection(STUDY_CONFIG.blind75CollectionName)
+    return BLIND_75_PROBLEMS
   }
 
-  return getAllProblems()
+  return ALL_STUDY_PROBLEMS
 }
 
 function chooseProblem(candidates: Problem[], recentProblemIds: ProblemId[]): Problem | undefined {
@@ -91,18 +95,17 @@ function getPrimaryPattern(problem: Problem): string {
 
 function getPatternDistractors(problem: Problem, correctPattern: string): string[] {
   const categorySet = new Set(problem.categories)
-  const sameCategoryPatterns = getAllProblems()
+  const sameCategoryPatterns = ALL_STUDY_PROBLEMS
     .filter((candidate) =>
       candidate.id !== problem.id &&
       candidate.categories.some((category) => categorySet.has(category)),
     )
     .flatMap((candidate) => candidate.patterns)
-  const allPatterns = getPatterns()
 
   return unique([
     ...sameCategoryPatterns,
     ...problem.patterns,
-    ...allPatterns,
+    ...ALL_PATTERN_NAMES,
   ]).filter((pattern) => pattern !== correctPattern)
 }
 
@@ -147,7 +150,7 @@ export function createStudyQuestion({
     return undefined
   }
 
-  const questionType = chooseRandom([...STUDY_CONFIG.questionTypes]) ?? 'pattern'
+  const questionType = chooseRandom(STUDY_CONFIG.questionTypes) ?? 'pattern'
 
   return questionType === 'time'
     ? createTimeQuestion(problem)

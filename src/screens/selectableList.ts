@@ -2,12 +2,13 @@ import { getVisibleWindow } from '../utils/visibleWindow'
 import {
   createTextObjects,
   G2_TEXT_LAYOUT,
+  MAX_VISIBLE_TEXT_CONTAINERS,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
   getCenteredTextGeometry,
 } from './g2Layout'
 
-const DEFAULT_MAX_VISIBLE_ITEMS = 7
+const DEFAULT_MAX_VISIBLE_ITEMS = 6
 const TITLE_Y = 22
 const SUBTITLE_Y = 50
 const ROW_START_Y = 72
@@ -47,7 +48,7 @@ export function createSelectableListTextObjects<T>({
     textColor: 3,
   }))
   const rowStartY = ROW_START_Y + subtitleSpecs.length * 24
-  const maxRowsForContainers = Math.max(1, 8 - 1 - subtitleSpecs.length)
+  const maxRowsForContainers = Math.max(1, MAX_VISIBLE_TEXT_CONTAINERS - 1 - subtitleSpecs.length)
   const visibleWindow = getVisibleWindow(
     items,
     clampedIndex,

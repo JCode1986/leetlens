@@ -1,21 +1,14 @@
-import { getProblemById } from '../services/problemService'
+import { getExistingProblemsById } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
-import type { Problem } from '../types/problem'
 import { wrapParagraph } from '../utils/text'
 import { createSelectableListTextObjects } from './selectableList'
 import { G2_TEXT_LAYOUT } from './g2Layout'
-
-function getVoiceResultProblems(state: NavigationState): Problem[] {
-  return state.voiceResultProblemIds
-    .map((problemId) => getProblemById(problemId))
-    .filter((problem): problem is Problem => problem !== undefined)
-}
 
 export function createVoiceResultsTextObjects(state: NavigationState) {
   const title = state.voiceResultMode === 'related'
     ? 'RELATED PROBLEMS'
     : 'POSSIBLE MATCHES'
-  const problems = getVoiceResultProblems(state)
+  const problems = getExistingProblemsById(state.voiceResultProblemIds)
 
   return createSelectableListTextObjects({
     title,
