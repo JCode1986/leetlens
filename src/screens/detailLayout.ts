@@ -5,6 +5,7 @@ import {
   createPageEventCaptureSpec,
   createTextObjects,
   G2_TEXT_LAYOUT,
+  getCenteredContentBlockGeometry,
   getCenteredLineGeometry,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
@@ -58,11 +59,6 @@ export function createDetailTextObjects(
     DETAIL_FOOTER_Y - bodyY - DETAIL_BODY_GAP,
   )
   const bodyContent = pageLines.length > 0 ? pageLines.join('\n') : ' '
-  const bodyGeometry = getCenteredLineGeometry(
-    bodyContent,
-    undefined,
-    G2_TEXT_LAYOUT.screenWidth,
-  )
   const sectionText = sectionName.toUpperCase()
   const footerText = `${pageIndex + 1}/${totalPages}`
   const footerSpec = {
@@ -100,7 +96,7 @@ export function createDetailTextObjects(
       textColor: 3,
     },
     {
-      ...bodyGeometry,
+      ...getCenteredContentBlockGeometry(bodyContent),
       y: bodyY,
       height: bodyHeight,
       name: `detail-body-${pageIndex}`,

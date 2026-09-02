@@ -10,12 +10,16 @@ const G2_SCREEN_WIDTH = 576
 const G2_SCREEN_HEIGHT = 288
 const G2_EVENT_CAPTURE_WIDTH = 1
 const G2_SCREEN_PADDING_X = 12
+const G2_CONTENT_PADDING_X = 8
 const DEFAULT_TEXT_X = G2_SCREEN_PADDING_X
 const DEFAULT_TEXT_WIDTH = G2_SCREEN_WIDTH - G2_SCREEN_PADDING_X * 2
+const CONTENT_TEXT_X = G2_CONTENT_PADDING_X
+const CONTENT_TEXT_WIDTH = G2_SCREEN_WIDTH - G2_CONTENT_PADDING_X * 2
 const MIN_TEXT_LINE_HEIGHT = 28
 const ESTIMATED_CHARACTER_WIDTH = 9
 const ESTIMATED_TITLE_CHARACTER_WIDTH = 12
 const CENTERED_TEXT_PADDING = 16
+const NAVIGABLE_TEXT_PADDING = 44
 const MAX_CENTERED_CONTENT_WIDTH = Math.floor(G2_SCREEN_WIDTH * 0.97)
 const MAX_CENTERED_CONTENT_CHARS = Math.floor(
   (MAX_CENTERED_CONTENT_WIDTH - CENTERED_TEXT_PADDING) / ESTIMATED_CHARACTER_WIDTH,
@@ -28,8 +32,11 @@ export const G2_TEXT_LAYOUT = {
   screenPaddingX: G2_SCREEN_PADDING_X,
   defaultTextX: DEFAULT_TEXT_X,
   defaultTextWidth: DEFAULT_TEXT_WIDTH,
+  contentTextX: CONTENT_TEXT_X,
+  contentTextWidth: CONTENT_TEXT_WIDTH,
   maxCenteredContentWidth: MAX_CENTERED_CONTENT_WIDTH,
   maxCenteredContentCharsPerLine: MAX_CENTERED_CONTENT_CHARS,
+  contentCharsPerLine: Math.floor(CONTENT_TEXT_WIDTH / ESTIMATED_CHARACTER_WIDTH),
   titleCharsPerLine: TITLE_CHARS_PER_LINE,
   defaultCharsPerLine: 36,
   proseCharsPerLine: 28,
@@ -92,6 +99,23 @@ export function getCenteredTextGeometry(
   }
 }
 
+export function getNavigableTextGeometry(
+  content: string | string[],
+  minWidth = 140,
+  maxWidth = DEFAULT_TEXT_WIDTH,
+) {
+  const width = clampWidth(
+    getLongestLineLength(content) * ESTIMATED_CHARACTER_WIDTH + NAVIGABLE_TEXT_PADDING,
+    minWidth,
+    maxWidth,
+  )
+
+  return {
+    x: Math.round((G2_SCREEN_WIDTH - width) / 2),
+    width,
+  }
+}
+
 export function getPaddedScreenTextGeometry() {
   return {
     x: DEFAULT_TEXT_X,
@@ -99,18 +123,23 @@ export function getPaddedScreenTextGeometry() {
   }
 }
 
-function getIndentForX(x: number, characterWidth: number): string {
-  return ' '.repeat(Math.max(0, Math.round((x - DEFAULT_TEXT_X) / characterWidth)))
+export function getCenteredContentTextGeometry() {
+  return {
+    x: CONTENT_TEXT_X,
+    width: CONTENT_TEXT_WIDTH,
+  }
 }
 
-export function alignContentToX(
-  content: string,
-  x: number,
-  characterWidth = ESTIMATED_CHARACTER_WIDTH,
-): string {
-  const indent = getIndentForX(x, characterWidth)
+export function getCenteredContentBlockGeometry(content: string | string[]) {
+  return getCenteredLineGeometry(
+    content,
+    ESTIMATED_CHARACTER_WIDTH,
+    CENTERED_TEXT_PADDING * 2,
+  )
+}
 
-  return content.split('\n').map((line) => `${indent}${line}`).join('\n')
+function getIndentForX(x: number, characterWidth: number): string {
+  return ' '.repeat(Math.max(0, Math.round((x - DEFAULT_TEXT_X) / characterWidth)))
 }
 
 export function centerContentInPaddedScreen(

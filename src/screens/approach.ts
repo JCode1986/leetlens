@@ -10,7 +10,7 @@ function getApproachLineGroups(problem: Problem | undefined): string[][] {
     return [['Problem unavailable.']]
   }
 
-  const wideLineLength = G2_TEXT_LAYOUT.maxCenteredContentCharsPerLine
+  const wideLineLength = G2_TEXT_LAYOUT.contentCharsPerLine
 
   return problem.approach.map((step, index) =>
     wrapNumberedItem(index + 1, step, wideLineLength),

@@ -6,7 +6,7 @@ import {
   createPageEventCaptureSpec,
   createTextObjects,
   G2_TEXT_LAYOUT,
-  getCenteredLineGeometry,
+  getCenteredContentBlockGeometry,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
 } from './g2Layout'
@@ -27,7 +27,7 @@ function getQuickAnswerBulletGroups(problem: Problem | undefined): string[][] {
   }
 
   return problem.quickAnswer.idea.map((idea) =>
-    wrapBulletItem(idea, G2_TEXT_LAYOUT.titleCharsPerLine),
+    wrapBulletItem(idea, G2_TEXT_LAYOUT.contentCharsPerLine),
   )
 }
 
@@ -95,6 +95,7 @@ export function createQuickAnswerTextObjects(state: NavigationState) {
   const patternY = sectionY + QUICK_ANSWER_LINE_HEIGHT + QUICK_ANSWER_PATTERN_GAP
   const bodyY = getQuickAnswerBodyY(titleLines.length, patternLines.length)
   const bodyHeight = getQuickAnswerBodyHeight(bodyY)
+  const bodyContent = pageLines.length > 0 ? pageLines.join('\n') : ' '
   const footerText = `${pageIndex + 1}/${totalPages}`
   const spaciousTitlePadding = G2_TEXT_LAYOUT.screenWidth
 
@@ -125,15 +126,11 @@ export function createQuickAnswerTextObjects(state: NavigationState) {
       textColor: 4,
     })),
     {
-      ...getCenteredLineGeometry(
-        pageLines.length > 0 ? pageLines : [' '],
-        undefined,
-        spaciousTitlePadding,
-      ),
+      ...getCenteredContentBlockGeometry(bodyContent),
       y: bodyY,
       height: bodyHeight,
       name: `quick-answer-body-${pageIndex}`,
-      content: pageLines.length > 0 ? pageLines.join('\n') : ' ',
+      content: bodyContent,
       textColor: 4,
     },
     ...complexityLines.map((line, index) => ({

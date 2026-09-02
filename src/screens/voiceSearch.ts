@@ -1,13 +1,12 @@
 import type { NavigationState } from '../types/navigation'
 import { wrapParagraph } from '../utils/text'
 import {
-  alignContentToX,
   createTextObjects,
   G2_TEXT_LAYOUT,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
   getCenteredTextGeometry,
-  getPaddedScreenTextGeometry,
+  getNavigableTextGeometry,
 } from './g2Layout'
 
 function createErrorLines(message: string): string[] {
@@ -77,7 +76,7 @@ export function createVoiceSearchTextObjects(state: NavigationState) {
 
   if (state.voiceSearchStatus === 'error') {
     const lines = createErrorLines(state.voiceError ?? 'Voice search unavailable.')
-    const retryGeometry = getCenteredTextGeometry(
+    const retryGeometry = getNavigableTextGeometry(
       '> Click to retry',
       160,
       G2_TEXT_LAYOUT.listItemWidth,
@@ -117,10 +116,11 @@ export function createVoiceSearchTextObjects(state: NavigationState) {
         textColor: 3,
       })),
       {
-        ...getPaddedScreenTextGeometry(),
+        x: retryGeometry.x,
         y: 196,
+        width: retryGeometry.width,
         name: 'voice-search-retry',
-        content: alignContentToX('> Click to retry', retryGeometry.x),
+        content: '> Click to retry',
         textColor: 4,
       },
     ])

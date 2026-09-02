@@ -2,13 +2,12 @@ import { getProblemById } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
 import { wrapHeader, wrapParagraph } from '../utils/text'
 import {
-  alignContentToX,
   createTextObjects,
   G2_TEXT_LAYOUT,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
   getCenteredTextGeometry,
-  getPaddedScreenTextGeometry,
+  getNavigableTextGeometry,
 } from './g2Layout'
 
 const EXACT_MENU_ITEMS = ['Open', 'Search Again'] as const
@@ -24,7 +23,7 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
       'Try saying the problem name again.',
       G2_TEXT_LAYOUT.proseCharsPerLine,
     ).slice(0, 2)
-    const retryGeometry = getCenteredTextGeometry(
+    const retryGeometry = getNavigableTextGeometry(
       '> Search Again',
       160,
       G2_TEXT_LAYOUT.listItemWidth,
@@ -61,10 +60,11 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
         textColor: 3,
       })),
       {
-        ...getPaddedScreenTextGeometry(),
+        x: retryGeometry.x,
         y: 204,
+        width: retryGeometry.width,
         name: 'voice-no-match-retry',
-        content: alignContentToX('> Search Again', retryGeometry.x),
+        content: '> Search Again',
         textColor: 4,
       },
     ])
@@ -99,7 +99,7 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
   ).slice(0, 2)
   const metaY = 78 + problemTitleLines.length * 26 + 8
   const menuY = 186
-  const menuGeometry = getCenteredTextGeometry(
+  const menuGeometry = getNavigableTextGeometry(
     EXACT_MENU_ITEMS.map((item) => `> ${item}`),
     160,
     G2_TEXT_LAYOUT.listItemWidth,
@@ -141,10 +141,11 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
       const selected = index === selectedIndex
 
       return {
-        ...getPaddedScreenTextGeometry(),
+        x: menuGeometry.x,
         y: menuY + index * 30,
+        width: menuGeometry.width,
         name: `voice-match-${index}`,
-        content: alignContentToX(`${selected ? '>' : ' '} ${item}`, menuGeometry.x),
+        content: `${selected ? '>' : ' '} ${item}`,
         textColor: selected ? 4 : 3,
       }
     }),

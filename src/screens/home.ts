@@ -2,15 +2,13 @@ import { clampHomeMenuIndex } from '../navigation/navigationState'
 import { HOME_MENU_ITEMS } from '../types/navigation'
 import type { NavigationState } from '../types/navigation'
 import {
-  alignContentToX,
   createTextObjects,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
-  getPaddedScreenTextGeometry,
+  getNavigableTextGeometry,
 } from './g2Layout'
 
 const HOME_TITLE_Y = 18
-const HOME_MENU_X = 214
 const HOME_MENU_Y = 50
 const HOME_MENU_LINE_HEIGHT = 28
 
@@ -19,6 +17,10 @@ export function createHomeTextObjects(navigationState: NavigationState) {
   const menuContent = HOME_MENU_ITEMS.map((item, index) =>
     `${index === selectedMenuIndex ? '>' : ' '} ${item.label}`,
   ).join('\n')
+  const menuGeometry = getNavigableTextGeometry(
+    HOME_MENU_ITEMS.map((item) => `> ${item.label}`),
+    148,
+  )
 
   return createTextObjects([
     {
@@ -30,11 +32,12 @@ export function createHomeTextObjects(navigationState: NavigationState) {
       textColor: 4,
     },
     {
-      ...getPaddedScreenTextGeometry(),
+      x: menuGeometry.x,
       y: HOME_MENU_Y,
+      width: menuGeometry.width,
       height: HOME_MENU_ITEMS.length * HOME_MENU_LINE_HEIGHT,
       name: `home-${selectedMenuIndex}`,
-      content: alignContentToX(menuContent, HOME_MENU_X),
+      content: menuContent,
       textColor: 4,
     },
   ])

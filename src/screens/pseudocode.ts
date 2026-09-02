@@ -6,7 +6,7 @@ import {
   createPageEventCaptureSpec,
   createTextObjects,
   G2_TEXT_LAYOUT,
-  getCenteredLineGeometry,
+  getCenteredContentBlockGeometry,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
 } from './g2Layout'
@@ -74,11 +74,7 @@ export function createPseudocodeTextObjects(state: NavigationState) {
       textColor: 3,
     },
     {
-      ...getCenteredLineGeometry(
-        pageLines.length > 0 ? pageLines : [' '],
-        undefined,
-        G2_TEXT_LAYOUT.screenWidth,
-      ),
+      ...getCenteredContentBlockGeometry(bodyContent),
       y: bodyY,
       height: bodyHeight,
       name: `pseudocode-body-${pageIndex}`,

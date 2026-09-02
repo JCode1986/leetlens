@@ -213,13 +213,33 @@ function assertProblemLayoutPreserved(
   })
 }
 
-function assertVisibleTextUsesPaddedScreenGeometry(
+function isStudyNavigableContainer(container: TextContainerProperty): boolean {
+  return container.containerName?.startsWith('study-choice-') === true ||
+    container.containerName?.startsWith('study-feedback-action-') === true
+}
+
+function assertStudyTextUsesExpectedGeometry(
   textObject: TextContainerProperty[],
   label: string,
 ): void {
   textObject
     .filter((container) => container.isEventCapture !== 1)
     .forEach((container) => {
+      if (isStudyNavigableContainer(container)) {
+        const width = container.width ?? 0
+
+        assert(
+          width > 0 && width < G2_TEXT_LAYOUT.defaultTextWidth,
+          `${label} ${container.containerName ?? 'container'} should use centered max-width width`,
+        )
+        assertEqual(
+          container.xPosition,
+          Math.round((G2_TEXT_LAYOUT.screenWidth - width) / 2),
+          `${label} ${container.containerName ?? 'container'} should be centered`,
+        )
+        return
+      }
+
       assertEqual(
         container.xPosition,
         G2_TEXT_LAYOUT.defaultTextX,
@@ -231,6 +251,55 @@ function assertVisibleTextUsesPaddedScreenGeometry(
         `${label} ${container.containerName ?? 'container'} should use padded screen width`,
       )
     })
+}
+
+function assertProblemContentBodyUsesMaxWidth(
+  textObject: TextContainerProperty[],
+  screen: ProblemTab,
+): void {
+  const bodyContainer = textObject.find((container) =>
+    container.containerName?.startsWith('quick-answer-body-') ||
+    container.containerName?.startsWith('detail-body-') ||
+    container.containerName?.startsWith('pseudocode-body-') ||
+    container.containerName?.startsWith('solution-body-')
+  )
+
+  assert(bodyContainer, `${screen} should render a body container`)
+  assertEqual(
+    bodyContainer.xPosition,
+    G2_TEXT_LAYOUT.contentTextX,
+    `${screen} body should use centered max-width x`,
+  )
+  assertEqual(
+    bodyContainer.width,
+    G2_TEXT_LAYOUT.contentTextWidth,
+    `${screen} body should use centered max-width width`,
+  )
+}
+
+function getRequiredContainer(
+  textObject: TextContainerProperty[],
+  containerName: string,
+): TextContainerProperty {
+  const container = textObject.find((item) => item.containerName === containerName)
+
+  assert(container, `${containerName} should render`)
+
+  return container
+}
+
+function assertContainerBefore(
+  first: TextContainerProperty,
+  second: TextContainerProperty,
+  label: string,
+): void {
+  const firstBottom = (first.yPosition ?? 0) + (first.height ?? 0)
+  const secondTop = second.yPosition ?? 0
+
+  assert(
+    firstBottom <= secondTop,
+    `${label} should not overlap: ${first.containerName ?? 'first'} ends at ${firstBottom}, ${second.containerName ?? 'second'} starts at ${secondTop}`,
+  )
 }
 
 function assertLogicalMappingMatches(
@@ -369,6 +438,7 @@ function runProblemDetailSubtreeSequence(
     )
     const contentLogicalTextObject = createScreenTextObjects(contentState)
 
+    assertProblemContentBodyUsesMaxWidth(contentLogicalTextObject, tab.screen)
     assertLogicalMappingMatches(contentTextObject, contentLogicalTextObject, 0, tab.screen)
     assertEqual(
       getTargetContainerIndex(
@@ -900,7 +970,7 @@ function runStudyNativeIdentityFlow(): void {
   )
 
   assertEqual(randomQuestionState.currentScreen, 'studyQuestion', 'Study -> Random Problem should reach studyQuestion')
-  assertVisibleTextUsesPaddedScreenGeometry(
+  assertStudyTextUsesExpectedGeometry(
     createScreenTextObjects(randomQuestionState),
     'study question',
   )
@@ -912,10 +982,27 @@ function runStudyNativeIdentityFlow(): void {
   )
 
   assertEqual(randomFeedbackState.currentScreen, 'studyFeedback', 'Study question answer should reach studyFeedback')
-  assertVisibleTextUsesPaddedScreenGeometry(
+  assertStudyTextUsesExpectedGeometry(
     createScreenTextObjects(randomFeedbackState),
     'study feedback',
   )
+
+  const longTitleFeedbackTextObject = createScreenTextObjects({
+    ...randomFeedbackState,
+    selectedProblemId: 105,
+    studyProblemId: 105,
+    studyCorrect: false,
+    studyChoices: [
+      { label: 'Depth First Search', isCorrect: true },
+      { label: 'Binary Search', isCorrect: false },
+    ],
+  })
+  const longTitleProblem = getRequiredContainer(longTitleFeedbackTextObject, 'study-feedback-problem')
+  const longTitleAnswer = getRequiredContainer(longTitleFeedbackTextObject, 'study-feedback-answer')
+
+  assertEqual(longTitleProblem.xPosition, G2_TEXT_LAYOUT.defaultTextX, 'long title should use full padded x')
+  assertEqual(longTitleProblem.width, G2_TEXT_LAYOUT.defaultTextWidth, 'long title should use full padded width')
+  assertContainerBefore(longTitleProblem, longTitleAnswer, 'long study feedback title and answer')
 
   const [backToStudyState, backToStudyTextObject] = prepareAndAssertRealTransition(
     randomQuestionState,

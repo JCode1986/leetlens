@@ -10,7 +10,7 @@ function getEdgeCaseLineGroups(problem: Problem | undefined): string[][] {
     return [['Problem unavailable.']]
   }
 
-  const wideLineLength = G2_TEXT_LAYOUT.maxCenteredContentCharsPerLine
+  const wideLineLength = G2_TEXT_LAYOUT.contentCharsPerLine
 
   return problem.edgeCases.map((edgeCase) =>
     wrapBulletItem(edgeCase, wideLineLength),

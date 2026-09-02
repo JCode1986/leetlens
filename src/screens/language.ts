@@ -1,13 +1,11 @@
 import type { NavigationState } from '../types/navigation'
 import { LANGUAGE_LABELS, SELECTABLE_PROGRAMMING_LANGUAGES } from '../utils/language'
 import {
-  alignContentToX,
   createTextObjects,
   G2_TEXT_LAYOUT,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
-  getCenteredTextGeometry,
-  getPaddedScreenTextGeometry,
+  getNavigableTextGeometry,
 } from './g2Layout'
 
 export function createLanguageTextObjects(state: NavigationState) {
@@ -15,7 +13,7 @@ export function createLanguageTextObjects(state: NavigationState) {
     0,
     Math.min(SELECTABLE_PROGRAMMING_LANGUAGES.length - 1, state.selectedMenuIndex),
   )
-  const rowGeometry = getCenteredTextGeometry(
+  const rowGeometry = getNavigableTextGeometry(
     SELECTABLE_PROGRAMMING_LANGUAGES.map((language) =>
       `> ${LANGUAGE_LABELS[language].displayName} *`,
     ),
@@ -38,14 +36,12 @@ export function createLanguageTextObjects(state: NavigationState) {
       const label = LANGUAGE_LABELS[language].displayName
 
       return {
-        ...getPaddedScreenTextGeometry(),
+        x: rowGeometry.x,
         y: 70 + index * 32,
+        width: rowGeometry.width,
         height: 26,
         name: `language-${language}`,
-        content: alignContentToX(
-          `${selected ? '>' : ' '} ${label}${active ? ' *' : ''}`,
-          rowGeometry.x,
-        ),
+        content: `${selected ? '>' : ' '} ${label}${active ? ' *' : ''}`,
         textColor: selected ? 4 : 3,
       }
     }),

@@ -7,7 +7,7 @@ import { getSelectedProblem } from './selectedProblem'
 
 function getHintLineGroups(problem: Problem | undefined): string[][] {
   return problem
-    ? [wrapParagraph(problem.hint, G2_TEXT_LAYOUT.maxCenteredContentCharsPerLine)]
+    ? [wrapParagraph(problem.hint, G2_TEXT_LAYOUT.contentCharsPerLine)]
     : [['Problem unavailable.']]
 }
 

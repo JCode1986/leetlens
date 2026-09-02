@@ -1,13 +1,12 @@
 import { getVisibleWindow } from '../utils/visibleWindow'
 import {
-  alignContentToX,
   createTextObjects,
   G2_TEXT_LAYOUT,
   MAX_VISIBLE_TEXT_CONTAINERS,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
   getCenteredTextGeometry,
-  getPaddedScreenTextGeometry,
+  getNavigableTextGeometry,
 } from './g2Layout'
 
 const DEFAULT_MAX_VISIBLE_ITEMS = 6
@@ -57,7 +56,7 @@ export function createSelectableListTextObjects<T>({
     Math.min(maxVisibleItems, maxRowsForContainers),
   )
   const emptyContent = emptyLines ?? [emptyMessage]
-  const rowGeometry = getCenteredTextGeometry(
+  const rowGeometry = getNavigableTextGeometry(
     items.map((item) => `> ${formatItem(item)}`),
     140,
     G2_TEXT_LAYOUT.listItemWidth,
@@ -88,11 +87,12 @@ export function createSelectableListTextObjects<T>({
           const selected = itemIndex === clampedIndex
 
           return {
-            ...getPaddedScreenTextGeometry(),
+            x: rowGeometry.x,
             y: rowStartY + index * ROW_HEIGHT,
+            width: rowGeometry.width,
             height: 24,
             name: `${itemNamePrefix}-${itemIndex}`,
-            content: alignContentToX(`${selected ? '>' : ' '} ${formatItem(item)}`, rowGeometry.x),
+            content: `${selected ? '>' : ' '} ${formatItem(item)}`,
             textColor: selected ? 4 : 3,
           }
         })),

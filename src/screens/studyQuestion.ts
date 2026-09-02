@@ -2,12 +2,11 @@ import { getProblemById } from '../services/problemService'
 import type { NavigationState, StudyChoice } from '../types/navigation'
 import { wrapHeader } from '../utils/text'
 import {
-  alignContentToX,
   centerContentInPaddedScreen,
   centerTitleContentInPaddedScreen,
   createTextObjects,
   G2_TEXT_LAYOUT,
-  getCenteredTextGeometry,
+  getNavigableTextGeometry,
   getPaddedScreenTextGeometry,
 } from './g2Layout'
 
@@ -55,7 +54,7 @@ export function createStudyQuestionTextObjects(state: NavigationState) {
   const labelY = 14 + titleLines.length * 26 + 10
   const choiceY = labelY + 44
   const questionLabel = getQuestionLabel(state)
-  const choiceGeometry = getCenteredTextGeometry(
+  const choiceGeometry = getNavigableTextGeometry(
     choices.map((choice) => `> ${choice.label}`),
     160,
     G2_TEXT_LAYOUT.listItemWidth,
@@ -82,11 +81,12 @@ export function createStudyQuestionTextObjects(state: NavigationState) {
       const selected = index === selectedIndex
 
       return {
-        ...getPaddedScreenTextGeometry(),
+        x: choiceGeometry.x,
         y: choiceY + index * 34,
+        width: choiceGeometry.width,
         height: 26,
         name: `study-choice-${index}`,
-        content: alignContentToX(`${selected ? '>' : ' '} ${choice.label}`, choiceGeometry.x),
+        content: `${selected ? '>' : ' '} ${choice.label}`,
         textColor: selected ? 4 : 3,
       }
     }),
