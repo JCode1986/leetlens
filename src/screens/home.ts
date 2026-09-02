@@ -8,8 +8,8 @@ import {
   getNavigableTextGeometry,
 } from './g2Layout'
 
-const HOME_TITLE_Y = 18
-const HOME_MENU_Y = 50
+const HOME_TITLE_Y = 2
+const HOME_MENU_Y = 34
 const HOME_MENU_LINE_HEIGHT = 28
 
 export function createHomeTextObjects(navigationState: NavigationState) {

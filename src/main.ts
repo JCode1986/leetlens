@@ -45,6 +45,7 @@ import {
   recordAcceptedNativeTextObjects,
 } from './screens/nativeIdentity'
 import { createScreenTextObjects, getCurrentScreenPageCount } from './screens/renderScreen'
+import { isExitActionSelected } from './screens/exitConfirm'
 import { PROBLEM_FAVORITE_MENU_INDEX } from './types/navigation'
 import type { NavigationState } from './types/navigation'
 
@@ -417,6 +418,25 @@ async function startLeetLens(): Promise<void> {
     )
   }
 
+  async function requestAppExit(bridge?: EvenAppBridge): Promise<void> {
+    if (!bridge) {
+      console.info('Even Hub host bridge not found; exit request is only available on device.')
+      applyNavigationState({
+        ...navigationState,
+        currentScreen: 'home',
+        selectedMenuIndex: 0,
+        codePageIndex: 0,
+      })
+      return
+    }
+
+    const exited = await bridge.shutDownPageContainer(0)
+
+    if (!exited) {
+      console.error('Failed to exit LeetLens page container.')
+    }
+  }
+
   function applyInput(input: NavigationInput, bridge?: EvenAppBridge): void {
     if (
       input === 'back' &&
@@ -455,6 +475,11 @@ async function startLeetLens(): Promise<void> {
       return
     }
 
+    if (input === 'select' && isExitActionSelected(navigationState)) {
+      void requestAppExit(bridge)
+      return
+    }
+
     const previousContext = getNavigationContext(navigationState)
     const nextState = transitionNavigation(
       navigationState,
@@ -479,6 +504,11 @@ async function startLeetLens(): Promise<void> {
     ) {
       toggleFavorite(indexedState.selectedProblemId)
       applyNavigationState({ ...indexedState }, bridge)
+      return
+    }
+
+    if (isExitActionSelected(indexedState)) {
+      void requestAppExit(bridge)
       return
     }
 

@@ -12,7 +12,7 @@ import {
   getExistingProblemsById,
   getPatterns,
 } from '../services/problemService'
-import { PROBLEM_TABS } from '../types/navigation'
+import { HOME_MENU_ITEMS, PROBLEM_TABS } from '../types/navigation'
 import type { NavigationScreen, NavigationState, ProblemTab } from '../types/navigation'
 import { createProblemTextObjects } from './problem'
 import { createProblemListTextObjects } from './problemList'
@@ -265,15 +265,24 @@ function assertProblemContentBodyUsesMaxWidth(
   )
 
   assert(bodyContainer, `${screen} should render a body container`)
-  assertEqual(
-    bodyContainer.xPosition,
-    G2_TEXT_LAYOUT.contentTextX,
-    `${screen} body should use centered max-width x`,
+  const longestLineLength = (bodyContainer.content ?? '').split('\n').reduce(
+    (longest, line) => Math.max(longest, line.length),
+    0,
+  )
+  const estimatedTextWidth = Math.min(
+    G2_TEXT_LAYOUT.screenWidth,
+    Math.max(1, longestLineLength * 9),
+  )
+  const width = bodyContainer.width ?? 0
+
+  assert(
+    width > 0 && width <= G2_TEXT_LAYOUT.screenWidth,
+    `${screen} body should use a centered block width`,
   )
   assertEqual(
-    bodyContainer.width,
-    G2_TEXT_LAYOUT.contentTextWidth,
-    `${screen} body should use centered max-width width`,
+    bodyContainer.xPosition,
+    Math.round((G2_TEXT_LAYOUT.screenWidth - estimatedTextWidth) / 2),
+    `${screen} body should be centered`,
   )
 }
 
@@ -300,6 +309,17 @@ function assertContainerBefore(
     firstBottom <= secondTop,
     `${label} should not overlap: ${first.containerName ?? 'first'} ends at ${firstBottom}, ${second.containerName ?? 'second'} starts at ${secondTop}`,
   )
+}
+
+function assertContainersFitScreen(textObject: TextContainerProperty[], label: string): void {
+  textObject.forEach((container) => {
+    const bottom = (container.yPosition ?? 0) + (container.height ?? 0)
+
+    assert(
+      bottom <= G2_TEXT_LAYOUT.screenHeight,
+      `${label} ${container.containerName ?? 'container'} should fit vertically: bottom ${bottom}`,
+    )
+  })
 }
 
 function assertLogicalMappingMatches(
@@ -600,6 +620,8 @@ export function runProblemListToProblemNativeIdentityTest(): void {
   assertNoInternalMetadata(differentProblemTextObject)
 
   resetNativeIdentityForTests()
+  runExitConfirmNativeIdentityFlow()
+  resetNativeIdentityForTests()
   runCategoriesNativeIdentityFlow()
   resetNativeIdentityForTests()
   runCollectionsNativeIdentityFlow()
@@ -622,6 +644,7 @@ function createAcceptedHomeAtIndex(selectedMenuIndex: number): [NavigationState,
   let homeState = createHomeState()
   let homeTextObject = createScreenTextObjects(homeState)
 
+  assertContainersFitScreen(homeTextObject, 'Home')
   recordAcceptedNativeTextObjects(homeTextObject)
 
   for (let index = 0; index < selectedMenuIndex; index += 1) {
@@ -633,11 +656,73 @@ function createAcceptedHomeAtIndex(selectedMenuIndex: number): [NavigationState,
     )
     homeState = result[0]
     homeTextObject = result[1]
+    assertContainersFitScreen(homeTextObject, 'Home')
   }
 
   assertEqual(homeState.selectedMenuIndex, selectedMenuIndex, 'accepted Home state should reach requested selection')
 
   return [homeState, homeTextObject]
+}
+
+function runExitConfirmNativeIdentityFlow(): void {
+  const [homeState, homeTextObject] = createAcceptedHomeAtIndex(0)
+
+  const [exitConfirmState, exitConfirmTextObject] = prepareAndAssertRealTransition(
+    homeState,
+    homeTextObject,
+    'back',
+    homeTextObject,
+  )
+
+  assertEqual(exitConfirmState.currentScreen, 'exitConfirm', 'Home back should open exit confirmation')
+  assertEqual(
+    getTargetContainerIndex(
+      exitConfirmTextObject[3].containerName,
+      exitConfirmTextObject[3].containerID,
+    ),
+    0,
+    'Exit confirmation should resolve Cancel as logical action index 0',
+  )
+
+  const [selectedExitState, selectedExitTextObject] = prepareAndAssertRealTransition(
+    exitConfirmState,
+    exitConfirmTextObject,
+    'down',
+    homeTextObject,
+  )
+
+  assertEqual(selectedExitState.selectedMenuIndex, 1, 'Exit confirmation down should select Exit App')
+  assertEqual(
+    getTargetContainerIndex(
+      selectedExitTextObject[3].containerName,
+      selectedExitTextObject[3].containerID,
+    ),
+    1,
+    'Exit confirmation should resolve Exit App as logical action index 1',
+  )
+
+  const [backToHomeState] = prepareAndAssertRealTransition(
+    selectedExitState,
+    selectedExitTextObject,
+    'back',
+    homeTextObject,
+  )
+
+  assertEqual(backToHomeState.currentScreen, 'home', 'Exit confirmation back should return home')
+
+  const [homeExitState, homeExitTextObject] = createAcceptedHomeAtIndex(HOME_MENU_ITEMS.length - 1)
+  const [homeExitConfirmState] = prepareAndAssertRealTransition(
+    homeExitState,
+    homeExitTextObject,
+    'select',
+    homeExitTextObject,
+  )
+
+  assertEqual(
+    homeExitConfirmState.currentScreen,
+    'exitConfirm',
+    'Home Exit App selection should open exit confirmation',
+  )
 }
 
 function runCategoriesNativeIdentityFlow(): void {

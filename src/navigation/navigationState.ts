@@ -154,6 +154,8 @@ function getStudyFeedbackActionCount(state: NavigationState): number {
   return state.studyCorrect ? 4 : 3
 }
 
+const EXIT_CONFIRM_ACTION_COUNT = 2
+
 function beginStudyQuestion(
   state: NavigationState,
   source: StudySource,
@@ -270,7 +272,8 @@ function selectCurrentItem(
       selectedItem.screen !== 'study' &&
       selectedItem.screen !== 'favorites' &&
       selectedItem.screen !== 'recent' &&
-      selectedItem.screen !== 'settings'
+      selectedItem.screen !== 'settings' &&
+      selectedItem.screen !== 'exitConfirm'
     ) {
       return state
     }
@@ -301,6 +304,19 @@ function selectCurrentItem(
             : 0,
       codePageIndex: 0,
     }
+  }
+
+  if (state.currentScreen === 'exitConfirm') {
+    if (clampIndex(state.selectedMenuIndex, EXIT_CONFIRM_ACTION_COUNT) === 0) {
+      return {
+        ...state,
+        currentScreen: 'home',
+        selectedMenuIndex: 0,
+        codePageIndex: 0,
+      }
+    }
+
+    return state
   }
 
   if (state.currentScreen === 'study') {
@@ -660,6 +676,24 @@ function selectCurrentItem(
 }
 
 function goBack(state: NavigationState, context: NavigationContext): NavigationState {
+  if (state.currentScreen === 'home') {
+    return {
+      ...state,
+      currentScreen: 'exitConfirm',
+      selectedMenuIndex: 0,
+      codePageIndex: 0,
+    }
+  }
+
+  if (state.currentScreen === 'exitConfirm') {
+    return {
+      ...state,
+      currentScreen: 'home',
+      selectedMenuIndex: 0,
+      codePageIndex: 0,
+    }
+  }
+
   if (state.currentScreen === 'categories') {
     return {
       ...state,
@@ -884,6 +918,10 @@ export function transitionNavigation(
     return moveSelectedMenu(state, delta, HOME_MENU_ITEMS.length)
   }
 
+  if (state.currentScreen === 'exitConfirm') {
+    return moveSelectedMenu(state, delta, EXIT_CONFIRM_ACTION_COUNT)
+  }
+
   if (state.currentScreen === 'categories') {
     return moveSelectedMenu(state, delta, context.categories.length)
   }
@@ -974,6 +1012,10 @@ export function transitionNavigationToIndex(
 ): NavigationState {
   if (state.currentScreen === 'home') {
     return setSelectedMenuIndex(state, targetIndex, HOME_MENU_ITEMS.length)
+  }
+
+  if (state.currentScreen === 'exitConfirm') {
+    return setSelectedMenuIndex(state, targetIndex, EXIT_CONFIRM_ACTION_COUNT)
   }
 
   if (state.currentScreen === 'categories') {

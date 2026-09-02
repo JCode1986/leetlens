@@ -49,6 +49,7 @@ let lastNativeIdentityTransitionDiagnostic: NativeIdentityTransitionDiagnostic |
 
 const PRESERVED_NATIVE_IDENTITY_SCREENS = new Set<NavigationScreen>([
   'home',
+  'exitConfirm',
   'categories',
   'collections',
   'find',

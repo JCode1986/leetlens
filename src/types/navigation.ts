@@ -3,6 +3,7 @@ import type { Difficulty } from './problem'
 
 export const NAVIGATION_SCREENS = [
   'home',
+  'exitConfirm',
   'categories',
   'patterns',
   'collections',
@@ -54,6 +55,7 @@ export const HOME_MENU_ITEMS = [
   { label: 'Favorites', screen: 'favorites' },
   { label: 'Recent', screen: 'recent' },
   { label: 'Settings', screen: 'settings' },
+  { label: 'Exit App', screen: 'exitConfirm' },
 ] as const
 
 export const SETTINGS_MENU_ITEMS = [

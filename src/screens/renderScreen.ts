@@ -3,6 +3,7 @@ import type { NavigationState } from '../types/navigation'
 import { createApproachTextObjects, getApproachPageCount } from './approach'
 import { createCategoriesTextObjects } from './categories'
 import { createEdgeCasesTextObjects, getEdgeCasesPageCount } from './edgeCases'
+import { createExitConfirmTextObjects } from './exitConfirm'
 import { createDifficultyListTextObjects } from './difficultyList'
 import { createFindTextObjects } from './find'
 import {
@@ -35,6 +36,7 @@ type PageCountGetter = (state: NavigationState) => number
 
 const SCREEN_RENDERERS: Partial<Record<NavigationState['currentScreen'], ScreenRenderer>> = {
   home: createHomeTextObjects,
+  exitConfirm: createExitConfirmTextObjects,
   categories: createCategoriesTextObjects,
   patterns: createPatternsTextObjects,
   collections: createCollectionsTextObjects,
