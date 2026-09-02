@@ -4,12 +4,14 @@ import type { NavigationState } from '../types/navigation'
 import { wrapHeader } from '../utils/text'
 import { getVisibleWindow } from '../utils/visibleWindow'
 import {
+  alignContentToX,
   createTextObjects,
   G2_TEXT_LAYOUT,
   getCenteredLineGeometry,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
   getCenteredTextGeometry,
+  getPaddedScreenTextGeometry,
 } from './g2Layout'
 import { getSelectedProblem } from './selectedProblem'
 
@@ -81,12 +83,11 @@ export function createProblemTextObjects(state: NavigationState) {
 
   return createTextObjects([
     {
-      x: menuGeometry.x,
+      ...getPaddedScreenTextGeometry(),
       y: menuY,
-      width: menuGeometry.width,
       height: PROBLEM_MENU_VISIBLE_ROWS * PROBLEM_MENU_ROW_HEIGHT,
       name: `problem-menu-${selectedIndex}`,
-      content: menuContent,
+      content: alignContentToX(menuContent, menuGeometry.x),
       textColor: 4,
     },
     ...titleLines.map((line, index) => ({

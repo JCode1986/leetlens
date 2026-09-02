@@ -3,11 +3,13 @@ import type { NavigationState, StudyChoice } from '../types/navigation'
 import { wrapParagraph } from '../utils/text'
 import { getVisibleWindow } from '../utils/visibleWindow'
 import {
+  alignContentToX,
+  centerContentInPaddedScreen,
+  centerTitleContentInPaddedScreen,
   createTextObjects,
   G2_TEXT_LAYOUT,
-  getCenteredTitleContent,
-  getCenteredTitleGeometry,
   getCenteredTextGeometry,
+  getPaddedScreenTextGeometry,
 } from './g2Layout'
 
 function getCorrectChoice(choices: StudyChoice[]): StudyChoice | undefined {
@@ -44,27 +46,27 @@ export function createStudyFeedbackTextObjects(state: NavigationState) {
 
   return createTextObjects([
     {
-      ...getCenteredTitleGeometry(state.studyCorrect ? 'CORRECT' : 'NOT QUITE'),
+      ...getPaddedScreenTextGeometry(),
       y: 14,
       height: 24,
       name: 'study-feedback-title',
-      content: getCenteredTitleContent(state.studyCorrect ? 'CORRECT' : 'NOT QUITE'),
+      content: centerTitleContentInPaddedScreen(state.studyCorrect ? 'CORRECT' : 'NOT QUITE'),
       textColor: 4,
     },
     {
-      ...getCenteredTextGeometry(problemLines),
+      ...getPaddedScreenTextGeometry(),
       y: 42,
       height: 48,
       name: 'study-feedback-problem',
-      content: problemLines.join('\n'),
+      content: centerContentInPaddedScreen(problemLines),
       textColor: 3,
     },
     {
-      ...getCenteredTextGeometry(answerLines),
+      ...getPaddedScreenTextGeometry(),
       y: 78,
       height: 48,
       name: 'study-feedback-answer',
-      content: answerLines.join('\n'),
+      content: centerContentInPaddedScreen(answerLines),
       textColor: 4,
     },
     ...visibleActions.items.map((action, index) => {
@@ -72,12 +74,11 @@ export function createStudyFeedbackTextObjects(state: NavigationState) {
       const selected = actionIndex === selectedIndex
 
       return {
-        x: actionGeometry.x,
+        ...getPaddedScreenTextGeometry(),
         y: actionStartY + index * 34,
-        width: actionGeometry.width,
         height: 26,
         name: `study-feedback-action-${actionIndex}`,
-        content: `${selected ? '>' : ' '} ${action}`,
+        content: alignContentToX(`${selected ? '>' : ' '} ${action}`, actionGeometry.x),
         textColor: selected ? 4 : 3,
       }
     }),

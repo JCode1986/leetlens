@@ -25,6 +25,9 @@ const TITLE_CHARS_PER_LINE = Math.floor(DEFAULT_TEXT_WIDTH / ESTIMATED_TITLE_CHA
 export const G2_TEXT_LAYOUT = {
   screenWidth: G2_SCREEN_WIDTH,
   screenHeight: G2_SCREEN_HEIGHT,
+  screenPaddingX: G2_SCREEN_PADDING_X,
+  defaultTextX: DEFAULT_TEXT_X,
+  defaultTextWidth: DEFAULT_TEXT_WIDTH,
   maxCenteredContentWidth: MAX_CENTERED_CONTENT_WIDTH,
   maxCenteredContentCharsPerLine: MAX_CENTERED_CONTENT_CHARS,
   titleCharsPerLine: TITLE_CHARS_PER_LINE,
@@ -87,6 +90,50 @@ export function getCenteredTextGeometry(
     x: Math.round((G2_SCREEN_WIDTH - width) / 2),
     width,
   }
+}
+
+export function getPaddedScreenTextGeometry() {
+  return {
+    x: DEFAULT_TEXT_X,
+    width: DEFAULT_TEXT_WIDTH,
+  }
+}
+
+function getIndentForX(x: number, characterWidth: number): string {
+  return ' '.repeat(Math.max(0, Math.round((x - DEFAULT_TEXT_X) / characterWidth)))
+}
+
+export function alignContentToX(
+  content: string,
+  x: number,
+  characterWidth = ESTIMATED_CHARACTER_WIDTH,
+): string {
+  const indent = getIndentForX(x, characterWidth)
+
+  return content.split('\n').map((line) => `${indent}${line}`).join('\n')
+}
+
+export function centerContentInPaddedScreen(
+  content: string | string[],
+  characterWidth = ESTIMATED_CHARACTER_WIDTH,
+): string {
+  const lines = Array.isArray(content) ? content : content.split('\n')
+
+  return lines.map((line) => {
+    const trimmedLine = line.trim()
+    const textWidth = clampWidth(
+      trimmedLine.length * characterWidth,
+      1,
+      DEFAULT_TEXT_WIDTH,
+    )
+    const x = Math.round((G2_SCREEN_WIDTH - textWidth) / 2)
+
+    return `${getIndentForX(x, characterWidth)}${trimmedLine}`
+  }).join('\n')
+}
+
+export function centerTitleContentInPaddedScreen(content: string | string[]): string {
+  return centerContentInPaddedScreen(content, ESTIMATED_TITLE_CHARACTER_WIDTH)
 }
 
 export function getCenteredLineGeometry(

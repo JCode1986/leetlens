@@ -1,11 +1,13 @@
 import type { NavigationState } from '../types/navigation'
 import { SETTINGS_MENU_ITEMS } from '../types/navigation'
 import {
+  alignContentToX,
   createTextObjects,
   G2_TEXT_LAYOUT,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
   getCenteredTextGeometry,
+  getPaddedScreenTextGeometry,
 } from './g2Layout'
 
 export function createSettingsTextObjects(state: NavigationState) {
@@ -32,12 +34,11 @@ export function createSettingsTextObjects(state: NavigationState) {
       const selected = index === selectedIndex
 
       return {
-        x: rowGeometry.x,
+        ...getPaddedScreenTextGeometry(),
         y: 82 + index * 30,
-        width: rowGeometry.width,
         height: 24,
         name: `settings-${item.screen}`,
-        content: `${selected ? '>' : ' '} ${item.label}`,
+        content: alignContentToX(`${selected ? '>' : ' '} ${item.label}`, rowGeometry.x),
         textColor: selected ? 4 : 3,
       }
     }),
