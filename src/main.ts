@@ -46,7 +46,7 @@ import {
 } from './screens/nativeIdentity'
 import { createScreenTextObjects, getCurrentScreenPageCount } from './screens/renderScreen'
 import { isExitActionSelected } from './screens/exitConfirm'
-import { PROBLEM_FAVORITE_MENU_INDEX } from './types/navigation'
+import { PROBLEM_FAVORITE_MENU_INDEX, isProblemContentScreen } from './types/navigation'
 import type { NavigationState } from './types/navigation'
 
 type EvenHostWindow = Window & {
@@ -94,14 +94,7 @@ function getCurrentSelectableIndex(state: NavigationState): number {
     return state.studySelectedIndex
   }
 
-  if (
-    state.currentScreen === 'quickAnswer' ||
-    state.currentScreen === 'hint' ||
-    state.currentScreen === 'approach' ||
-    state.currentScreen === 'pseudocode' ||
-    state.currentScreen === 'solution' ||
-    state.currentScreen === 'edgeCases'
-  ) {
+  if (isProblemContentScreen(state.currentScreen)) {
     return state.codePageIndex
   }
 
@@ -252,12 +245,15 @@ async function startLeetLens(): Promise<void> {
   let lastVoiceTranscriptRenderMs = 0
   let lastNativeRenderState: NavigationState | undefined
   let lastNativeTextObject: ReturnType<typeof createScreenTextObjects> | undefined
+  const staticNavigationContext = {
+    categories: getCategories(),
+    patterns: getPatterns(),
+    collections: getCollections(),
+  }
 
   function getNavigationContext(state: NavigationState): NavigationContext {
     return {
-      categories: getCategories(),
-      patterns: getPatterns(),
-      collections: getCollections(),
+      ...staticNavigationContext,
       problemListProblems: getProblemListProblems(state),
       voiceResultProblems: getExistingProblemsById(state.voiceResultProblemIds),
       pageCount: getCurrentScreenPageCount(state),

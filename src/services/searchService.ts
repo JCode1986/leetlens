@@ -91,6 +91,8 @@ function createNormalizedTokenSet(value: string): Set<string> {
 }
 
 function createSearchProblemIndex(problem: Problem): SearchProblemIndex {
+  const title = normalizeText(problem.title)
+  const slug = normalizeText(problem.slug)
   const aliases = (problem.aliases ?? []).map(normalizeText)
   const keywords = (problem.keywords ?? []).map(normalizeText)
   const categories = problem.categories.map(normalizeText)
@@ -98,13 +100,13 @@ function createSearchProblemIndex(problem: Problem): SearchProblemIndex {
 
   return {
     problem,
-    title: normalizeText(problem.title),
-    slug: normalizeText(problem.slug),
+    title,
+    slug,
     aliases,
     keywords,
     categories,
     patterns,
-    titleTokens: createNormalizedTokenSet(normalizeText(problem.title)),
+    titleTokens: createNormalizedTokenSet(title),
     aliasTokenSets: aliases.map(createNormalizedTokenSet),
     keywordTokenSets: keywords.map(createNormalizedTokenSet),
     categoryTokenSets: categories.map(createNormalizedTokenSet),
@@ -114,6 +116,9 @@ function createSearchProblemIndex(problem: Problem): SearchProblemIndex {
 }
 
 const SEARCH_INDEX = getAllProblems().map(createSearchProblemIndex)
+const BROAD_METADATA_VALUES = new Set(SEARCH_INDEX.flatMap((problemIndex) =>
+  problemIndex.metadataValues,
+))
 
 function uniqueValues(values: string[]): string[] {
   return [...new Set(values.filter((value) => value.length > 0))]
@@ -155,9 +160,29 @@ function tokenOverlapScore(
   fieldTokens: Set<string>,
   pointsPerToken: number,
 ): number {
-  const overlap = queryTokens.filter((token) => fieldTokens.has(token)).length
+  let overlap = 0
+
+  for (const token of queryTokens) {
+    if (fieldTokens.has(token)) {
+      overlap += 1
+    }
+  }
 
   return overlap * pointsPerToken
+}
+
+function maxTokenOverlapScore(
+  queryTokens: string[],
+  fieldTokenSets: Set<string>[],
+  pointsPerToken: number,
+): number {
+  let maxScore = 0
+
+  for (const fieldTokens of fieldTokenSets) {
+    maxScore = Math.max(maxScore, tokenOverlapScore(queryTokens, fieldTokens, pointsPerToken))
+  }
+
+  return maxScore
 }
 
 function metadataScore(
@@ -229,10 +254,7 @@ function scoreProblem(index: SearchProblemIndex, queryIndex: SearchQueryIndex): 
 
   score += addFieldScore(matchedFields, 'title-tokens', tokenOverlapScore(queryTokens, index.titleTokens, 95))
 
-  const aliasTokenScore = Math.max(
-    0,
-    ...index.aliasTokenSets.map((tokens) => tokenOverlapScore(queryTokens, tokens, 85)),
-  )
+  const aliasTokenScore = maxTokenOverlapScore(queryTokens, index.aliasTokenSets, 85)
   score += addFieldScore(matchedFields, 'alias-tokens', aliasTokenScore)
 
   const keywordScore = metadataScore(index.keywords, index.keywordTokenSets, query, queryTokens, 120, 55)
@@ -265,9 +287,7 @@ function isBroadMetadataQuery(normalizedQuery: string): boolean {
     return false
   }
 
-  return SEARCH_INDEX.some((problemIndex) =>
-    problemIndex.metadataValues.some((value) => value === normalizedQuery),
-  )
+  return BROAD_METADATA_VALUES.has(normalizedQuery)
 }
 
 function searchProblems(queryIndex: SearchQueryIndex): RankedProblemMatch[] {

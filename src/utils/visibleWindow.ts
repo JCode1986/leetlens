@@ -4,7 +4,7 @@ export interface VisibleWindow<T> {
 }
 
 export function getVisibleWindow<T>(
-  items: T[],
+  items: readonly T[],
   selectedIndex: number,
   maxVisibleItems: number,
 ): VisibleWindow<T> {

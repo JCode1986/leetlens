@@ -111,18 +111,22 @@ export function saveDefaultLanguagePreference(language: SelectableProgrammingLan
   }
 }
 
-export function getFavoriteIds(): ProblemId[] {
+function readFavoriteIds(): ProblemId[] {
   memoryFavoriteIds = readProblemIds(FAVORITES_STORAGE_KEY, memoryFavoriteIds)
 
-  return [...memoryFavoriteIds]
+  return memoryFavoriteIds
+}
+
+export function getFavoriteIds(): ProblemId[] {
+  return [...readFavoriteIds()]
 }
 
 export function isFavorite(problemId: ProblemId): boolean {
-  return getFavoriteIds().includes(problemId)
+  return readFavoriteIds().includes(problemId)
 }
 
 function addFavorite(problemId: ProblemId): ProblemId[] {
-  const favoriteIds = getFavoriteIds()
+  const favoriteIds = [...readFavoriteIds()]
 
   if (!favoriteIds.includes(problemId)) {
     favoriteIds.push(problemId)
@@ -138,7 +142,7 @@ function addFavorite(problemId: ProblemId): ProblemId[] {
 }
 
 function removeFavorite(problemId: ProblemId): ProblemId[] {
-  const favoriteIds = getFavoriteIds().filter((id) => id !== problemId)
+  const favoriteIds = readFavoriteIds().filter((id) => id !== problemId)
 
   writeProblemIds(FAVORITES_STORAGE_KEY, favoriteIds, (ids) => {
     memoryFavoriteIds = ids
@@ -153,16 +157,20 @@ export function toggleFavorite(problemId: ProblemId): ProblemId[] {
     : addFavorite(problemId)
 }
 
-export function getRecentProblemIds(): ProblemId[] {
+function readRecentProblemIds(): ProblemId[] {
   memoryRecentProblemIds = readProblemIds(RECENT_PROBLEMS_STORAGE_KEY, memoryRecentProblemIds)
 
-  return [...memoryRecentProblemIds]
+  return memoryRecentProblemIds
+}
+
+export function getRecentProblemIds(): ProblemId[] {
+  return [...readRecentProblemIds()]
 }
 
 export function addRecentProblem(problemId: ProblemId): ProblemId[] {
   const recentProblemIds = [
     problemId,
-    ...getRecentProblemIds().filter((id) => id !== problemId),
+    ...readRecentProblemIds().filter((id) => id !== problemId),
   ].slice(0, RECENT_PROBLEMS_LIMIT)
 
   writeProblemIds(RECENT_PROBLEMS_STORAGE_KEY, recentProblemIds, (ids) => {

@@ -1,4 +1,5 @@
 import {
+  EXIT_CONFIRM_ACTIONS,
   FIND_MENU_ITEMS,
   HOME_MENU_ITEMS,
   PROBLEM_FAVORITE_MENU_INDEX,
@@ -6,6 +7,7 @@ import {
   PROBLEM_TABS,
   SETTINGS_MENU_ITEMS,
   STUDY_MENU_ITEMS,
+  isProblemContentScreen,
 } from '../types/navigation'
 import type { NavigationState, ProblemListSource, ProblemTab, StudySource } from '../types/navigation'
 import { DIFFICULTIES } from '../types/problem'
@@ -153,8 +155,6 @@ function getProblemIndex(
 function getStudyFeedbackActionCount(state: NavigationState): number {
   return state.studyCorrect ? 4 : 3
 }
-
-const EXIT_CONFIRM_ACTION_COUNT = 2
 
 function beginStudyQuestion(
   state: NavigationState,
@@ -307,7 +307,7 @@ function selectCurrentItem(
   }
 
   if (state.currentScreen === 'exitConfirm') {
-    if (clampIndex(state.selectedMenuIndex, EXIT_CONFIRM_ACTION_COUNT) === 0) {
+    if (clampIndex(state.selectedMenuIndex, EXIT_CONFIRM_ACTIONS.length) === 0) {
       return {
         ...state,
         currentScreen: 'home',
@@ -871,14 +871,7 @@ function goBack(state: NavigationState, context: NavigationContext): NavigationS
     }
   }
 
-  if (
-    state.currentScreen === 'quickAnswer' ||
-    state.currentScreen === 'hint' ||
-    state.currentScreen === 'approach' ||
-    state.currentScreen === 'pseudocode' ||
-    state.currentScreen === 'solution' ||
-    state.currentScreen === 'edgeCases'
-  ) {
+  if (isProblemContentScreen(state.currentScreen)) {
     if (state.problemEntrySource === 'study') {
       return {
         ...state,
@@ -919,7 +912,7 @@ export function transitionNavigation(
   }
 
   if (state.currentScreen === 'exitConfirm') {
-    return moveSelectedMenu(state, delta, EXIT_CONFIRM_ACTION_COUNT)
+    return moveSelectedMenu(state, delta, EXIT_CONFIRM_ACTIONS.length)
   }
 
   if (state.currentScreen === 'categories') {
@@ -991,14 +984,7 @@ export function transitionNavigation(
     }
   }
 
-  if (
-    state.currentScreen === 'quickAnswer' ||
-    state.currentScreen === 'hint' ||
-    state.currentScreen === 'approach' ||
-    state.currentScreen === 'pseudocode' ||
-    state.currentScreen === 'solution' ||
-    state.currentScreen === 'edgeCases'
-  ) {
+  if (isProblemContentScreen(state.currentScreen)) {
     return movePage(state, delta, context.pageCount)
   }
 
@@ -1015,7 +1001,7 @@ export function transitionNavigationToIndex(
   }
 
   if (state.currentScreen === 'exitConfirm') {
-    return setSelectedMenuIndex(state, targetIndex, EXIT_CONFIRM_ACTION_COUNT)
+    return setSelectedMenuIndex(state, targetIndex, EXIT_CONFIRM_ACTIONS.length)
   }
 
   if (state.currentScreen === 'categories') {

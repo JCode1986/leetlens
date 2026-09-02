@@ -2,12 +2,12 @@ import { getCategories } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
 import { createSelectableListTextObjects } from './selectableList'
 
-export function createCategoriesTextObjects(state: NavigationState) {
-  const categories = getCategories()
+const CATEGORY_ITEMS = getCategories()
 
+export function createCategoriesTextObjects(state: NavigationState) {
   return createSelectableListTextObjects({
     title: 'Categories',
-    items: categories,
+    items: CATEGORY_ITEMS,
     selectedIndex: state.selectedMenuIndex,
     itemNamePrefix: 'category',
     formatItem: (category) => category,

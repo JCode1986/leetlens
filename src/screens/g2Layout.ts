@@ -123,13 +123,6 @@ export function getPaddedScreenTextGeometry() {
   }
 }
 
-export function getCenteredContentTextGeometry() {
-  return {
-    x: CONTENT_TEXT_X,
-    width: CONTENT_TEXT_WIDTH,
-  }
-}
-
 export function getCenteredContentBlockGeometry(content: string | string[]) {
   return getCenteredLineGeometry(
     content,
@@ -244,7 +237,15 @@ export function createTextObjects(specs: TextSpec[]): TextContainerProperty[] {
 }
 
 export function countEventCaptureContainers(textObject: TextContainerProperty[]): number {
-  return textObject.filter((text) => text.isEventCapture === 1).length
+  let count = 0
+
+  for (const text of textObject) {
+    if (text.isEventCapture === 1) {
+      count += 1
+    }
+  }
+
+  return count
 }
 
 export function createStartUpPage(textObject: TextContainerProperty[]): CreateStartUpPageContainer {

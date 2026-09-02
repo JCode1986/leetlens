@@ -41,10 +41,24 @@ export const PROBLEM_TABS = [
   { label: 'Edge Cases', screen: 'edgeCases' },
 ] as const
 
+export type ProblemTab = (typeof PROBLEM_TABS)[number]['screen']
+
+export const PROBLEM_CONTENT_SCREENS: readonly ProblemTab[] = PROBLEM_TABS.map(
+  (tab) => tab.screen,
+)
+
+const PROBLEM_CONTENT_SCREEN_SET = new Set<NavigationScreen>(PROBLEM_CONTENT_SCREENS)
+
 export const PROBLEM_FAVORITE_MENU_INDEX = PROBLEM_TABS.length
 export const PROBLEM_MENU_ITEM_COUNT = PROBLEM_TABS.length + 1
 
-export type ProblemTab = (typeof PROBLEM_TABS)[number]['screen']
+export type ProblemContentScreen = (typeof PROBLEM_CONTENT_SCREENS)[number]
+
+export function isProblemContentScreen(
+  screen: NavigationScreen,
+): screen is ProblemContentScreen {
+  return PROBLEM_CONTENT_SCREEN_SET.has(screen)
+}
 
 export const HOME_MENU_ITEMS = [
   { label: 'Categories', screen: 'categories' },
@@ -57,6 +71,9 @@ export const HOME_MENU_ITEMS = [
   { label: 'Settings', screen: 'settings' },
   { label: 'Exit App', screen: 'exitConfirm' },
 ] as const
+
+export const EXIT_CONFIRM_ACTIONS = ['Cancel', 'Exit App'] as const
+export const EXIT_CONFIRM_EXIT_INDEX = 1
 
 export const SETTINGS_MENU_ITEMS = [
   { label: 'Language', screen: 'language' },

@@ -5,7 +5,7 @@ import { createSelectableListTextObjects } from './selectableList'
 export function createDifficultyListTextObjects(state: NavigationState) {
   return createSelectableListTextObjects({
     title: 'By Difficulty',
-    items: [...DIFFICULTIES],
+    items: DIFFICULTIES,
     selectedIndex: state.selectedMenuIndex,
     itemNamePrefix: 'difficulty',
     formatItem: (difficulty) => difficulty,

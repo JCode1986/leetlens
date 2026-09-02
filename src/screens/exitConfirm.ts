@@ -1,3 +1,7 @@
+import {
+  EXIT_CONFIRM_ACTIONS,
+  EXIT_CONFIRM_EXIT_INDEX,
+} from '../types/navigation'
 import type { NavigationState } from '../types/navigation'
 import {
   createTextObjects,
@@ -12,19 +16,18 @@ const EXIT_MESSAGE_Y = 82
 const EXIT_MENU_Y = 142
 const EXIT_MENU_LINE_HEIGHT = 30
 
-const EXIT_ACTIONS = ['Cancel', 'Exit App']
-
 export function isExitActionSelected(state: NavigationState): boolean {
-  return state.currentScreen === 'exitConfirm' && state.selectedMenuIndex === 1
+  return state.currentScreen === 'exitConfirm' &&
+    state.selectedMenuIndex === EXIT_CONFIRM_EXIT_INDEX
 }
 
 export function createExitConfirmTextObjects(state: NavigationState) {
-  const selectedIndex = Math.max(0, Math.min(EXIT_ACTIONS.length - 1, state.selectedMenuIndex))
-  const menuContent = EXIT_ACTIONS.map((action, index) =>
+  const selectedIndex = Math.max(0, Math.min(EXIT_CONFIRM_ACTIONS.length - 1, state.selectedMenuIndex))
+  const menuContent = EXIT_CONFIRM_ACTIONS.map((action, index) =>
     `${index === selectedIndex ? '>' : ' '} ${action}`,
   ).join('\n')
   const menuGeometry = getNavigableTextGeometry(
-    EXIT_ACTIONS.map((action) => `> ${action}`),
+    EXIT_CONFIRM_ACTIONS.map((action) => `> ${action}`),
     140,
   )
 
@@ -49,7 +52,7 @@ export function createExitConfirmTextObjects(state: NavigationState) {
       x: menuGeometry.x,
       y: EXIT_MENU_Y,
       width: menuGeometry.width,
-      height: EXIT_ACTIONS.length * EXIT_MENU_LINE_HEIGHT,
+      height: EXIT_CONFIRM_ACTIONS.length * EXIT_MENU_LINE_HEIGHT,
       name: `exit-confirm-${selectedIndex}`,
       content: menuContent,
       textColor: 4,

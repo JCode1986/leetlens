@@ -5,7 +5,7 @@ import { createSelectableListTextObjects } from './selectableList'
 export function createStudyTextObjects(state: NavigationState) {
   return createSelectableListTextObjects({
     title: 'Study',
-    items: [...STUDY_MENU_ITEMS],
+    items: STUDY_MENU_ITEMS,
     selectedIndex: state.selectedMenuIndex,
     itemNamePrefix: 'study',
     formatItem: (item) => item.label,

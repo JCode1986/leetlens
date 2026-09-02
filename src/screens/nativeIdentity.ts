@@ -43,8 +43,8 @@ export interface NativeIdentityTransitionDiagnostic {
 }
 
 let acceptedNativeIdentitySlots: NativeIdentitySlot[] = []
-let currentLogicalTargetsByNativeName = new Map<string, string>()
-let currentLogicalTargetsByNativeID = new Map<number, string>()
+const currentLogicalTargetsByNativeName = new Map<string, string>()
+const currentLogicalTargetsByNativeID = new Map<number, string>()
 let lastNativeIdentityTransitionDiagnostic: NativeIdentityTransitionDiagnostic | undefined
 
 const PRESERVED_NATIVE_IDENTITY_SCREENS = new Set<NavigationScreen>([
@@ -81,8 +81,8 @@ function captureNativeIdentitySlots(textObject: TextContainerProperty[]): Native
 }
 
 function clearCurrentLogicalTargets(): void {
-  currentLogicalTargetsByNativeName = new Map()
-  currentLogicalTargetsByNativeID = new Map()
+  currentLogicalTargetsByNativeName.clear()
+  currentLogicalTargetsByNativeID.clear()
 }
 
 function setCurrentLogicalTargets(
@@ -288,11 +288,15 @@ export function getLastNativeIdentityTransitionDiagnostic():
 export function getUnsupportedNativeContainerKeys(
   textObject: TextContainerProperty[],
 ): string[] {
-  return [
-    ...new Set(
-      textObject.flatMap((container) =>
-        Object.keys(container).filter((key) => !SUPPORTED_TEXT_CONTAINER_KEYS.has(key)),
-      ),
-    ),
-  ].sort()
+  const unsupportedKeys = new Set<string>()
+
+  for (const container of textObject) {
+    for (const key of Object.keys(container)) {
+      if (!SUPPORTED_TEXT_CONTAINER_KEYS.has(key)) {
+        unsupportedKeys.add(key)
+      }
+    }
+  }
+
+  return [...unsupportedKeys].sort()
 }

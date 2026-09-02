@@ -17,7 +17,7 @@ const ROW_HEIGHT = 30
 
 interface SelectableListOptions<T> {
   title: string
-  items: T[]
+  items: readonly T[]
   selectedIndex: number
   itemNamePrefix: string
   formatItem: (item: T) => string
