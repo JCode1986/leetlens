@@ -38,6 +38,12 @@ import {
   countEventCaptureContainers,
   renderTextObjectsDomPreview,
 } from './screens/g2Layout'
+import {
+  getTargetContainerIndex,
+  getUnsupportedNativeContainerKeys,
+  prepareNativeTextObjectsForRebuild,
+  recordAcceptedNativeTextObjects,
+} from './screens/nativeIdentity'
 import { createScreenTextObjects, getCurrentScreenPageCount } from './screens/renderScreen'
 import { PROBLEM_FAVORITE_MENU_INDEX } from './types/navigation'
 import type { NavigationState } from './types/navigation'
@@ -101,19 +107,12 @@ function getCurrentSelectableIndex(state: NavigationState): number {
   return state.selectedMenuIndex
 }
 
-function getTargetContainerIndex(containerName: string | undefined): number | undefined {
-  const match = containerName?.match(/-(\d+)(?:-\d+)?$/)
-
-  if (!match) {
-    return undefined
-  }
-
-  return Number.parseInt(match[1], 10)
-}
-
 function getTargetIndex(event: EvenHubEvent): number | undefined {
   const targetIndex = event.listEvent?.currentSelectItemIndex ??
-    getTargetContainerIndex(event.textEvent?.containerName ?? event.listEvent?.containerName)
+    getTargetContainerIndex(
+      event.textEvent?.containerName ?? event.listEvent?.containerName,
+      event.textEvent?.containerID ?? event.listEvent?.containerID,
+    )
 
   return targetIndex
 }
@@ -250,6 +249,8 @@ async function startLeetLens(): Promise<void> {
   let voiceService = new VoiceService()
   let voiceRunId = 0
   let lastVoiceTranscriptRenderMs = 0
+  let lastNativeRenderState: NavigationState | undefined
+  let lastNativeTextObject: ReturnType<typeof createScreenTextObjects> | undefined
 
   function getNavigationContext(state: NavigationState): NavigationContext {
     return {
@@ -266,8 +267,18 @@ async function startLeetLens(): Promise<void> {
     renderTextObjectsDomPreview(root, createScreenTextObjects(navigationState))
   }
 
-  async function renderNative(bridge: EvenAppBridge, state: NavigationState): Promise<void> {
-    const textObject = createScreenTextObjects(state)
+  async function renderNative(
+    bridge: EvenAppBridge,
+    state: NavigationState,
+    previousState = lastNativeRenderState,
+    previousTextObject = lastNativeTextObject,
+  ): Promise<void> {
+    const textObject = prepareNativeTextObjectsForRebuild(
+      previousState,
+      previousTextObject,
+      state,
+      createScreenTextObjects(state),
+    )
     const captureCount = countEventCaptureContainers(textObject)
 
     if (captureCount !== 1) {
@@ -275,17 +286,33 @@ async function startLeetLens(): Promise<void> {
       return
     }
 
+    const unsupportedKeys = getUnsupportedNativeContainerKeys(textObject)
+
+    if (unsupportedKeys.length > 0) {
+      console.error(`LeetLens native text container has unsupported keys: ${unsupportedKeys.join(', ')}`)
+      return
+    }
+
     const rebuilt = await bridge.rebuildPageContainer(createRebuildPage(textObject))
 
     if (!rebuilt) {
       console.error('Failed to rebuild LeetLens page container.')
+      return
     }
+
+    recordAcceptedNativeTextObjects(textObject)
+    lastNativeRenderState = state
+    lastNativeTextObject = textObject
   }
 
   function applyNavigationState(nextState: NavigationState, bridge?: EvenAppBridge): void {
+    const previousStateSnapshot = navigationState
     const previousLanguage = navigationState.selectedLanguage
     const previousScreen = navigationState.currentScreen
     const previousProblemId = navigationState.selectedProblemId
+    const previousNativeTextObject = bridge
+      ? lastNativeTextObject ?? createScreenTextObjects(previousStateSnapshot)
+      : undefined
 
     navigationState = nextState
 
@@ -309,7 +336,7 @@ async function startLeetLens(): Promise<void> {
     if (bridge) {
       const stateSnapshot = navigationState
       nativeRenderQueue = nativeRenderQueue.then(async () => {
-        await renderNative(bridge, stateSnapshot)
+        await renderNative(bridge, stateSnapshot, previousStateSnapshot, previousNativeTextObject)
         await waitForNativeActivation()
 
         if (navigationState === stateSnapshot) {
