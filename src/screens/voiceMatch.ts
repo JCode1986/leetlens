@@ -2,11 +2,13 @@ import { getProblemById } from '../services/problemService'
 import type { NavigationState } from '../types/navigation'
 import { wrapHeader, wrapParagraph } from '../utils/text'
 import {
+  alignContentToX,
   createTextObjects,
   G2_TEXT_LAYOUT,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
   getCenteredTextGeometry,
+  getPaddedScreenTextGeometry,
 } from './g2Layout'
 
 const EXACT_MENU_ITEMS = ['Open', 'Search Again'] as const
@@ -22,6 +24,11 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
       'Try saying the problem name again.',
       G2_TEXT_LAYOUT.proseCharsPerLine,
     ).slice(0, 2)
+    const retryGeometry = getCenteredTextGeometry(
+      '> Search Again',
+      160,
+      G2_TEXT_LAYOUT.listItemWidth,
+    )
 
     return createTextObjects([
       {
@@ -54,10 +61,10 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
         textColor: 3,
       })),
       {
-        ...getCenteredTextGeometry('> Search Again', 160, G2_TEXT_LAYOUT.listItemWidth),
+        ...getPaddedScreenTextGeometry(),
         y: 204,
         name: 'voice-no-match-retry',
-        content: '> Search Again',
+        content: alignContentToX('> Search Again', retryGeometry.x),
         textColor: 4,
       },
     ])
@@ -134,11 +141,10 @@ export function createVoiceMatchTextObjects(state: NavigationState) {
       const selected = index === selectedIndex
 
       return {
-        x: menuGeometry.x,
+        ...getPaddedScreenTextGeometry(),
         y: menuY + index * 30,
-        width: menuGeometry.width,
         name: `voice-match-${index}`,
-        content: `${selected ? '>' : ' '} ${item}`,
+        content: alignContentToX(`${selected ? '>' : ' '} ${item}`, menuGeometry.x),
         textColor: selected ? 4 : 3,
       }
     }),

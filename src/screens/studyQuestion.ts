@@ -2,11 +2,13 @@ import { getProblemById } from '../services/problemService'
 import type { NavigationState, StudyChoice } from '../types/navigation'
 import { wrapHeader } from '../utils/text'
 import {
+  alignContentToX,
+  centerContentInPaddedScreen,
+  centerTitleContentInPaddedScreen,
   createTextObjects,
   G2_TEXT_LAYOUT,
-  getCenteredTitleContent,
-  getCenteredTitleGeometry,
   getCenteredTextGeometry,
+  getPaddedScreenTextGeometry,
 } from './g2Layout'
 
 function getCorrectChoice(choices: StudyChoice[]): StudyChoice | undefined {
@@ -30,17 +32,17 @@ export function createStudyQuestionTextObjects(state: NavigationState) {
   if (!problem || choices.length === 0 || !getCorrectChoice(choices)) {
     return createTextObjects([
       {
-        ...getCenteredTitleGeometry('STUDY'),
+        ...getPaddedScreenTextGeometry(),
         y: 24,
         name: 'study-question-title',
-        content: getCenteredTitleContent('STUDY'),
+        content: centerTitleContentInPaddedScreen('STUDY'),
         textColor: 4,
       },
       {
-        ...getCenteredTextGeometry('No question available.'),
+        ...getPaddedScreenTextGeometry(),
         y: 74,
         name: 'study-question-empty',
-        content: 'No question available.',
+        content: centerContentInPaddedScreen('No question available.'),
         textColor: 3,
       },
     ])
@@ -61,31 +63,30 @@ export function createStudyQuestionTextObjects(state: NavigationState) {
 
   return createTextObjects([
     {
-      ...getCenteredTitleGeometry(titleLines),
+      ...getPaddedScreenTextGeometry(),
       y: 14,
       height: titleLines.length * 26,
       name: 'study-question-title',
-      content: getCenteredTitleContent(titleLines),
+      content: centerTitleContentInPaddedScreen(titleLines),
       textColor: 4,
     },
     {
-      ...getCenteredTextGeometry(questionLabel),
+      ...getPaddedScreenTextGeometry(),
       y: labelY,
       height: 24,
       name: 'study-question-label',
-      content: questionLabel,
+      content: centerContentInPaddedScreen(questionLabel),
       textColor: 3,
     },
     ...choices.map((choice, index) => {
       const selected = index === selectedIndex
 
       return {
-        x: choiceGeometry.x,
+        ...getPaddedScreenTextGeometry(),
         y: choiceY + index * 34,
-        width: choiceGeometry.width,
         height: 26,
         name: `study-choice-${index}`,
-        content: `${selected ? '>' : ' '} ${choice.label}`,
+        content: alignContentToX(`${selected ? '>' : ' '} ${choice.label}`, choiceGeometry.x),
         textColor: selected ? 4 : 3,
       }
     }),

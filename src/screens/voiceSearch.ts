@@ -1,11 +1,13 @@
 import type { NavigationState } from '../types/navigation'
 import { wrapParagraph } from '../utils/text'
 import {
+  alignContentToX,
   createTextObjects,
   G2_TEXT_LAYOUT,
   getCenteredTitleContent,
   getCenteredTitleGeometry,
   getCenteredTextGeometry,
+  getPaddedScreenTextGeometry,
 } from './g2Layout'
 
 function createErrorLines(message: string): string[] {
@@ -75,6 +77,11 @@ export function createVoiceSearchTextObjects(state: NavigationState) {
 
   if (state.voiceSearchStatus === 'error') {
     const lines = createErrorLines(state.voiceError ?? 'Voice search unavailable.')
+    const retryGeometry = getCenteredTextGeometry(
+      '> Click to retry',
+      160,
+      G2_TEXT_LAYOUT.listItemWidth,
+    )
     const title = state.voiceError === 'Deepgram API key is not configured.'
       ? 'SETUP REQUIRED'
       : state.voiceError === 'Connection error.'
@@ -110,10 +117,10 @@ export function createVoiceSearchTextObjects(state: NavigationState) {
         textColor: 3,
       })),
       {
-        ...getCenteredTextGeometry('> Click to retry', 160, G2_TEXT_LAYOUT.listItemWidth),
+        ...getPaddedScreenTextGeometry(),
         y: 196,
         name: 'voice-search-retry',
-        content: '> Click to retry',
+        content: alignContentToX('> Click to retry', retryGeometry.x),
         textColor: 4,
       },
     ])

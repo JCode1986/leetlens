@@ -16,7 +16,7 @@ import { PROBLEM_TABS } from '../types/navigation'
 import type { NavigationScreen, NavigationState, ProblemTab } from '../types/navigation'
 import { createProblemTextObjects } from './problem'
 import { createProblemListTextObjects } from './problemList'
-import { countEventCaptureContainers } from './g2Layout'
+import { countEventCaptureContainers, G2_TEXT_LAYOUT } from './g2Layout'
 import { createScreenTextObjects, getCurrentScreenPageCount } from './renderScreen'
 import {
   getLastNativeIdentityTransitionDiagnostic,
@@ -211,6 +211,26 @@ function assertProblemLayoutPreserved(
     assertEqual(container.content, baseContainer.content, `slot ${index} content should be preserved`)
     assertEqual(container.textColor, baseContainer.textColor, `slot ${index} textColor should be preserved`)
   })
+}
+
+function assertVisibleTextUsesPaddedScreenGeometry(
+  textObject: TextContainerProperty[],
+  label: string,
+): void {
+  textObject
+    .filter((container) => container.isEventCapture !== 1)
+    .forEach((container) => {
+      assertEqual(
+        container.xPosition,
+        G2_TEXT_LAYOUT.defaultTextX,
+        `${label} ${container.containerName ?? 'container'} should use padded screen x`,
+      )
+      assertEqual(
+        container.width,
+        G2_TEXT_LAYOUT.defaultTextWidth,
+        `${label} ${container.containerName ?? 'container'} should use padded screen width`,
+      )
+    })
 }
 
 function assertLogicalMappingMatches(
@@ -880,6 +900,22 @@ function runStudyNativeIdentityFlow(): void {
   )
 
   assertEqual(randomQuestionState.currentScreen, 'studyQuestion', 'Study -> Random Problem should reach studyQuestion')
+  assertVisibleTextUsesPaddedScreenGeometry(
+    createScreenTextObjects(randomQuestionState),
+    'study question',
+  )
+
+  const randomFeedbackState = transitionNavigation(
+    randomQuestionState,
+    'select',
+    createNavigationContext(randomQuestionState),
+  )
+
+  assertEqual(randomFeedbackState.currentScreen, 'studyFeedback', 'Study question answer should reach studyFeedback')
+  assertVisibleTextUsesPaddedScreenGeometry(
+    createScreenTextObjects(randomFeedbackState),
+    'study feedback',
+  )
 
   const [backToStudyState, backToStudyTextObject] = prepareAndAssertRealTransition(
     randomQuestionState,
